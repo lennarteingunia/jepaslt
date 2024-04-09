@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 #
 
+from typing import Union
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -60,21 +61,84 @@ class Attention(nn.Module):
 
     def forward(self, x, mask=None):
         B, N, C = x.shape
-        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
+        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C //
+                                  self.num_heads).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0], qkv[1], qkv[2]  # [B, num_heads, N, D]
 
         if self.use_sdpa:
             with torch.backends.cuda.sdp_kernel():
-                x = F.scaled_dot_product_attention(q, k, v, dropout_p=self.proj_drop_prob)
+                x = F.scaled_dot_product_attention(
+                    q, k, v, dropout_p=self.proj_drop_prob)
                 attn = None
         else:
-            attn = (q @ k.transpose(-2, -1)) * self.scale  # [B, num_heads, D, D]
+            attn = (q @ k.transpose(-2, -1)) * \
+                self.scale  # [B, num_heads, D, D]
             attn = attn.softmax(dim=-1)
             attn = self.attn_drop(attn)
             x = (attn @ v)
         x = x.transpose(1, 2).reshape(B, N, C)
         x = self.proj(x)
         x = self.proj_drop(x)
+        return x, attn
+
+
+class MixedAttention(nn.Module):
+    def __init__(
+            self,
+            *args,
+            dim: int,
+            num_heads: int = 8,
+            qkv_bias: bool = False,
+            qk_scale: Union[float, None] = None,
+            attn_drop: float = 0.,
+            proj_drop: float = 0.,
+            use_sdpa: bool = True,
+            **kwargs,
+    ) -> None:
+        super(MixedAttention, self).__init__(*args, **kwargs)
+
+        self._num_heads = num_heads
+        head_dim = dim // num_heads
+        self._scale = qk_scale or head_dim ** -0.5
+        self._qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
+        self._q = nn.Linear(dim, dim, bias=qkv_bias)
+        self._kv = nn.Linear(dim, dim, bias=qkv_bias)
+        self._attn_drop = nn.Dropout(attn_drop)
+        self._proj = nn.Linear(dim, dim)
+        self._proj_drop_prob = proj_drop
+        self._proj_drop = nn.Dropout(proj_drop)
+        self._use_sdpa = use_sdpa
+
+    def forward(
+        self,
+        image_features: torch.Tensor,
+        language_features:
+        torch.Tensor,
+        mask: Union[None, torch.Tensor] = None
+    ) -> torch.Tensor:
+        B, I, C = image_features.shape
+        _, L, _ = language_features.shape
+
+        q = self._q(image_features).reshape(B, I, 1, self._num_heads,
+                                            C // self._num_heads).permute(2, 0, 3, 1, 4)
+        kv = self._kv(language_features).reshape(
+            B, L, 2, self._num_heads, C // self._num_heads).permute(2, 0, 3, 1, 4)
+
+        q = q[0]
+        k, v = kv[0], kv[1]
+
+        if self._use_sdpa:
+            with torch.backends.cuda.sdp_kernel():
+                x = F.scaled_dot_product_attention(
+                    q, k, v, dropout_p=self._proj_drop_prob)
+                attn = None
+        else:
+            attn = (q @ k.transpose(-2, -1)) * self._scale
+            attn = attn.softmax(dim=-1)
+            x = (attn @ v)
+        x = x.transpose(1, 2).reshape(B, I, C)
+        x = self._proj(x)
+        x = self._proj_drop(x)
         return x, attn
 
 
@@ -120,6 +184,61 @@ class Block(nn.Module):
         return x
 
 
+class MixedBlock(nn.Module):
+    def __init__(
+        self,
+        *args,
+        dim: int,
+        num_heads: int,
+        mlp_ratio: float = 4.,
+        qkv_bias: bool = False,
+        qk_scale: Union[float, None] = None,
+        drop: float = 0.,
+        attn_drop: float = 0.,
+        act_layer=nn.GELU,
+        norm_layer=nn.LayerNorm,
+        **kwargs
+    ) -> None:
+        super(MixedBlock, self).__init__(*args, **kwargs)
+
+        self._norm1 = norm_layer(dim)
+        self._attn = MixedAttention(
+            dim=dim,
+            num_heads=num_heads,
+            qkv_bias=qkv_bias,
+            qk_scale=qk_scale,
+            attn_drop=attn_drop,
+            proj_drop=drop,
+        )
+
+        self._norm2 = norm_layer(dim)
+        hidden_mlp_dim = int(dim * mlp_ratio)
+        self._mlp = MLP(
+            in_features=dim,
+            hidden_features=hidden_mlp_dim,
+            act_layer=act_layer,
+            drop=drop
+        )
+
+    def forward(
+        self,
+        image_features: torch.Tensor,
+        language_features: torch.Tensor,
+        return_attention: bool = False, mask:
+        Union[None, torch.Tensor] = None
+    ) -> torch.Tensor:
+        y, attn = self._attn(
+            image_features=self._norm1(image_features),
+            language_features=self._norm2(language_features),
+            mask=mask
+        )
+        if return_attention:
+            return attn
+        image_features = image_features + y
+        image_features = image_features + self._mlp(self._norm2(image_features))
+        return image_features
+
+
 class CrossAttention(nn.Module):
     def __init__(
         self,
@@ -139,23 +258,27 @@ class CrossAttention(nn.Module):
 
     def forward(self, q, x):
         B, n, C = q.shape
-        q = self.q(q).reshape(B, n, self.num_heads, C // self.num_heads).permute(0, 2, 1, 3)
+        q = self.q(q).reshape(B, n, self.num_heads, C //
+                              self.num_heads).permute(0, 2, 1, 3)
 
         B, N, C = x.shape
-        kv = self.kv(x).reshape(B, N, 2, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
-        k, v = kv[0], kv[1]  # (batch_size, num_heads, seq_len, feature_dim_per_head)
+        kv = self.kv(x).reshape(B, N, 2, self.num_heads, C //
+                                self.num_heads).permute(2, 0, 3, 1, 4)
+        # (batch_size, num_heads, seq_len, feature_dim_per_head)
+        k, v = kv[0], kv[1]
 
         if self.use_sdpa:
             with torch.backends.cuda.sdp_kernel():
                 q = F.scaled_dot_product_attention(q, k, v)
         else:
             xattn = (q @ k.transpose(-2, -1)) * self.scale
-            xattn = xattn.softmax(dim=-1)  # (batch_size, num_heads, query_len, seq_len)
+            # (batch_size, num_heads, query_len, seq_len)
+            xattn = xattn.softmax(dim=-1)
             q = (xattn @ v)
 
         q = q.transpose(1, 2).reshape(B, n, C)
         q = self.proj(q)
-    
+
         return q
 
 
@@ -171,10 +294,12 @@ class CrossAttentionBlock(nn.Module):
     ):
         super().__init__()
         self.norm1 = norm_layer(dim)
-        self.xattn = CrossAttention(dim, num_heads=num_heads, qkv_bias=qkv_bias)
+        self.xattn = CrossAttention(
+            dim, num_heads=num_heads, qkv_bias=qkv_bias)
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = MLP(in_features=dim, hidden_features=mlp_hidden_dim, act_layer=act_layer)
+        self.mlp = MLP(in_features=dim,
+                       hidden_features=mlp_hidden_dim, act_layer=act_layer)
 
     def forward(self, q, x):
         y = self.xattn(q, self.norm1(x))

@@ -1,5 +1,6 @@
 import logging
 import sys
+from typing import Union
 import torch
 import src.models.vision_transformer as vision_transformer
 
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def init_video_model(
     *,
-    device: torch.cuda.device | str,
+    device: Union[torch.cuda.device, str],
     patch_size: int = 16,
     num_frames: int = 16,
     tubelet_size: int = 2,
@@ -30,9 +31,17 @@ def init_video_model(
     encoder.to(device)
 
     logger.info(encoder)
-    logger.info(f"Encoder number of parameters: {count_parameters(encoder)}")
+    logger.info(
+        f"Encoder number of trainable parameters: {count_trainable_parameters(encoder)}")
+    logger.info(
+        f"Encoder number of total parameters: {count_parameters(encoder)}")
 
     return encoder
 
-def count_parameters(model: torch.nn.Module) -> int:
+
+def count_trainable_parameters(model: torch.nn.Module) -> int:
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
+def count_parameters(model: torch.nn.Module) -> int:
+    return sum(p.numel() for p in model.parameters())

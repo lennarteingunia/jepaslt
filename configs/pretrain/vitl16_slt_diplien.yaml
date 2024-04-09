@@ -29,7 +29,7 @@ data_aug:
     - 1.0
   reprob: 0.0
 logging:
-  folder: /home/lenny/jepaslt/.logs/
+  folder: /home/einglenn/jepaslt/.logs/
   write_tag: jepaslt
 loss:
   loss_exp: 1.0
