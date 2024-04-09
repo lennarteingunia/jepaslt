@@ -90,6 +90,6 @@ def main(args, resume_preempt=False):
         device = torch.device("cuda:0")
         torch.cuda.set_device(device)
 
-    encoder = init_video_model(
+    encoder, predictor = init_video_model(
         device=device,
     )

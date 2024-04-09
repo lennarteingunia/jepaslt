@@ -46,3 +46,26 @@ class PredictorMultiMaskWrapper(nn.Module):
         for i, (zi, hi, mc, mt) in enumerate(zip(ctxt, tgt, masks_ctxt, masks_tgt)):
             outs += [self.backbone(zi, hi, mc, mt, mask_index=i)]
         return outs
+    
+class SLTPredictorMultiMaskWrapper(nn.Module):
+
+    def __init__(self, backbone):
+        super(SLTPredictorMultiMaskWrapper, self).__init__()
+        self._backbone = backbone
+
+    def forward(self, img_ctxt, lang_ctxt, mask_tgt, masks_ctxt_indices, masks_tgt_indices):
+        if type(img_ctxt) is not list:
+            img_ctxt = [img_ctxt]
+        if type(lang_ctxt) is not list:
+            lang_ctxt = [lang_ctxt]
+        if type(mask_tgt) is not list:
+            masks_tgt = [masks_tgt]
+        if type(masks_ctxt_indices) is not list:
+            masks_ctxt_indices = [masks_ctxt_indices]
+        if type(masks_tgt_indices) is not list:
+            masks_tgt_indices = [masks_tgt_indices]
+
+        outs = []
+        for idx, (zi, li, hi, mc, mt) in enumerate(zip(img_ctxt, lang_ctxt, masks_tgt, masks_ctxt_indices, masks_tgt_indices)):
+            outs += [self._backbone(zi, li, hi, mc, mt, mask_index=idx)]
+        return outs
