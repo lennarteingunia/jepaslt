@@ -1,3 +1,4 @@
+import definitions
 import multiprocessing
 import os
 
@@ -25,6 +26,7 @@ torch.backends.cudnn.benchmark = True
 
 logger = get_logger(__name__)
 
+
 def main(args, resume_preempt=False):
     # TODO: Basically read the config file.
 
@@ -48,7 +50,8 @@ def main(args, resume_preempt=False):
     dataset_paths = cfg_data.get("datasets", list())
     datasets_weights = cfg_data.get("datasets_weights", None)
     if datasets_weights:
-        assert len(datasets_weights) == len(dataset_paths), "Must have a weighting factor for every dataset"
+        assert len(datasets_weights) == len(
+            dataset_paths), "Must have a weighting factor for every dataset"
     batch_size = cfg_data.get("batch_size")
     num_clips = cfg_data.get("num_clips")
     num_frames = cfg_data.get("num_frames")
@@ -66,6 +69,9 @@ def main(args, resume_preempt=False):
     # -- LOGGING
     cfg_logging = args.get("logging")
     log_folder = cfg_logging.get("folder")
+    if not cfg_logging.get("use_relative_folder", False):
+        log_folder = os.path.join(
+            definitions.ROOT_DIR, log_folder)
     tag = cfg_logging.get("write_tag")
 
     # ----------------------------------------------------------------------- #
