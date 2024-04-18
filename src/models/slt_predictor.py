@@ -5,11 +5,11 @@ import torch
 
 from src.masks.utils import apply_masks
 from src.models.utils.pos_embs import get_2d_sincos_pos_embed, get_3d_sincos_pos_embed
-from src.models.utils.modules import MultiCrossAttentionBlock
+from src.models.utils.modules import Block, CrossAttentionBlock
 from src.utils.tensors import repeat_interleave_batch, trunc_normal_
 
 
-class SLTPredictor(torch.nn.Module):
+class MultimodalVisionTransformerPredictor(torch.nn.Module):
 
     def __init__(
         self,
@@ -33,7 +33,7 @@ class SLTPredictor(torch.nn.Module):
         num_mask_tokens: int = 2,
         zero_init_mask_tokens: bool = True,
     ):
-        super(SLTPredictor, self).__init__()
+        super(MultimodalVisionTransformerPredictor, self).__init__()
 
         self._predictor_embed_dim = predictor_embed_dim
         self._predictor_embed = torch.nn.Linear(
@@ -74,7 +74,7 @@ class SLTPredictor(torch.nn.Module):
         )
 
         self._predictor_blocks = torch.nn.ModuleList([
-            MultiCrossAttentionBlock(
+            Block(
                 dim=predictor_embed_dim,
                 num_heads=num_heads,
                 mlp_ratio=mlp_ratio,
@@ -168,12 +168,14 @@ class SLTPredictor(torch.nn.Module):
 
         B = len(img_ctxt) // len(masks_ctxt_indices)
 
-        x = self._predictor_embed(img_ctxt)
-        _, N_ctxt, _ = x.shape
+        x_1 = self._predictor_embed(img_ctxt)
+        x_2 = self._predictor_embed(lang_ctxt)
+        _, N_ctxt, _ = x_1.shape
+        _, N_lang_ctxt, _ = lang_ctxt.shape
 
         if self._predictor_pos_embed:
             img_ctxt_pos_embed = self._predictor_pos_embed.repeat(B, 1, 1)
-            x += apply_masks(img_ctxt_pos_embed, masks_ctxt_indices)
+            x_1 += apply_masks(img_ctxt_pos_embed, masks_ctxt_indices)
 
         if not self._mask_tokens:
             pred_tokens = self._predictor_embed(mask_tgt)
@@ -189,29 +191,33 @@ class SLTPredictor(torch.nn.Module):
             pos_embeds = apply_masks(pos_embeds, masks_tgt_indices)
             pos_embeds = repeat_interleave_batch(
                 pos_embeds, B, repeat=len(masks_ctxt_indices))
-            
-        x = x.repeat(len(masks_tgt_indices), 1, 1)
-        x = torch.cat([x, pred_tokens], dim=1)
+
+        x_1 = x_1.repeat(len(masks_tgt_indices), 1, 1)
+        x = torch.cat([x_2, x_1, pred_tokens], dim=1)
 
         masks_ctxt_indices = torch.cat(masks_ctxt_indices, dim=0)
         masks_tgt_indices = torch.cat(masks_tgt_indices, dim=0)
         masks = torch.cat([masks_ctxt_indices, masks_tgt_indices], dim=1)
 
         for block in self._predictor_blocks:
-            x = block(x, lang_ctxt, masks)
+            # TODO Prepend lang_ctxt to image tokens
+            x = block(x, masks)
         x = self._predictor_norm(x)
 
         x = x[:, N_ctxt:]
         x = self._predictor_proj(x)
 
-        return x        
+        return x
 
 
 def slt_predictor(**kwargs):
-    model = SLTPredictor(
+    model = MultimodalVisionTransformerPredictor(
         mlp_ratio=4.,
         qkv_bias=True,
         norm_layer=partial(torch.nn.LayerNorm, eps=1e-6),
         **kwargs
     )
     return model
+
+if __name__ == "__main__":
+    predictor = M

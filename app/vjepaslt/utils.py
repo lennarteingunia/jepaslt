@@ -1,10 +1,17 @@
+import json
 import logging
+import os
+import pathlib
 import sys
-from typing import Union
+import definitions
+from typing import Tuple, Union
 import torch
 from src.models.utils.multimask import MultiMaskWrapper, SLTPredictorMultiMaskWrapper
 import src.models.vision_transformer as vision_transformer
 import src.models.slt_predictor as slt_predictor
+from src.utils.schedulers import CosineWDSchedule, WarmupCosineSchedule
+
+import torch.nn.functional
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -67,6 +74,62 @@ def init_video_model(
         f"Predictor number of total parameters: {count_parameters(predictor)}")
 
     return encoder, predictor
+
+
+def init_opt(
+    encoder: torch.nn.Module,
+    predictor: torch.nn.Module,
+    iterations_per_epoch: int,
+    start_lr: float,
+    ref_lr: float,
+    warmup: int,
+    num_epochs: int,
+    weight_decay: float = 1e-6,
+    final_weight_decay: float = 1e-6,
+    final_lr: float = 0.0,
+    mixed_precision: bool = False,
+    ipe_scale: float = 1.25,
+    betas: Tuple[float, float] = (0.9, 0.999),
+    eps: float = 1e-8,
+    zero_init_bias_weight_decay: bool = True
+):
+    param_groups = [
+        {
+            "params": (p for n, p in encoder.named_parameters() if "bias" not in n and len(p.shape) != 1)
+        },
+        {
+            "params": (p for n, p in predictor.named_parameters() if "bias" not in n and len(p.shape) != 1)
+        },
+        {
+            "params": (p for n, p in encoder.named_parameters() if "bias" in n or len(p.shape) == 1),
+            "WD_exclude": zero_init_bias_weight_decay,
+            "weight_decay": 0
+        },
+        {
+            "params": (p for n, p in predictor.named_parameters() if "bias" in n or len(p.shape) == 1),
+            "WD_exclude": zero_init_bias_weight_decay,
+            "weight_decay": 0,
+        }
+    ]
+
+    logger.info("Using AdamW optimizer.")
+    optimizer = torch.optim.AdamW(param_groups, betas=betas, eps=eps)
+    scheduler = WarmupCosineSchedule(
+        optimizer,
+        warmup_steps=int(warmup * iterations_per_epoch),
+        start_lr=start_lr,
+        ref_lr=ref_lr,
+        final_lr=final_lr,
+        T_max=int(ipe_scale * num_epochs * iterations_per_epoch)
+    )
+    weight_decay_scheduler = CosineWDSchedule(
+        optimizer,
+        ref_wd=weight_decay,
+        final_wd=final_weight_decay,
+        T_max=int(ipe_scale * num_epochs * iterations_per_epoch)
+    )
+    scaler = torch.cuda.amp.GradScaler() if mixed_precision else None
+    return optimizer, scaler, scheduler, weight_decay_scheduler
 
 
 def count_trainable_parameters(model: torch.nn.Module) -> int:
