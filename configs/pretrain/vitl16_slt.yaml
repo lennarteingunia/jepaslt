@@ -4,8 +4,7 @@ tasks_per_node: 8
 data:
   dataset_type: VideoDataset
   datasets:
-    - /hier_muss_ich_noch_den_gewünschten_slt_datensatz_einfügen.csv
-    - /auch_mehrere_sind_möglich.csv
+    - /data/datasets/WLASL2000_vjepa/all.csv
   decode_one_clip: true
   batch_size: 24
   num_clips: 1
