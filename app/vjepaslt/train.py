@@ -194,11 +194,10 @@ def main(args, resume_preempt=False):
     )
     target_encoder = timm.utils.ModelEmaV3(model=encoder)
 
-    logger.info("Downloading and initializing fasttext models.")
-    fasttext.util.download_model("en", if_exists="ignore")
-    embedder = fasttext.load_model("cc.en.300.bin")
+    # logger.info("Downloading and initializing fasttext models.")
+    # fasttext.util.download_model("en", if_exists="ignore")
+    # embedder = fasttext.load_model("cc.en.300.bin")
 
-    # TODO: How are these mask collators any different?
     if mask_type == "multiblock3d":
         logger.info("Initializing basic multi-block masking.")
         mask_collator = MaskCollator(
@@ -350,14 +349,12 @@ def main(args, resume_preempt=False):
             assert len(masks_enc) == len(
                 masks_pred), "Currently require the number of encoder masks to be the number of predictor masks."
 
-            def load_clips():
+            def load_clips_and_words():
                 # Put each clip on the GPU and concat along batch dimension
                 clips = torch.cat([u.to(device, non_blocking=True)
                                   for u in udata[0]], dim=0)
-                
-                words = torch.cat([torch.from_numpy(embedder.get_word_vector(word)).to(
-                    device, non_blocking=True) for word in udata[-2]], dim=0)
 
+                
                 # Put each mask pair on the GPU and reuse the same mask pair for each clip
                 _masks_enc, _masks_pred = [], []
                 for _me, _mp in zip(masks_enc, masks_pred):
@@ -372,8 +369,6 @@ def main(args, resume_preempt=False):
 
                 return clips, _masks_enc, _masks_pred
 
-            clips, masks_enc, masks_pred = load_clips()
+            clips, masks_enc, masks_pred = load_clips_and_words()
 
-            def train_step():
-                _new_lr = scheduler.step()
-                _new_wd = weight_decay_scheduler.step()
+            clips = encoder(clips, masks_enc)
