@@ -4,6 +4,7 @@ import os
 import pathlib
 import click
 import pandas as pd
+import tqdm
 import definitions
 import ffmpeg
 
@@ -21,11 +22,19 @@ def create_vjepa_compatible_WLASL_csv(
         "all": []
     }
 
-    for gloss_entry in metadata:
+    glosses = {}
+
+    for gloss_entry in tqdm.tqdm(metadata):
 
         gloss = gloss_entry["gloss"]
+        if gloss in glosses:
+            gloss = glosses[gloss]
+        else:
+            glosses[gloss] = len(glosses)
+            gloss = len(glosses) - 1
+        
 
-        for instance in gloss_entry["instances"]:
+        for instance in tqdm.tqdm(gloss_entry["instances"], leave=False):
             split = instance["split"]
             video_id = instance["video_id"]
             start_frame = int(instance["frame_start"])
@@ -46,10 +55,13 @@ def create_vjepa_compatible_WLASL_csv(
             output_path = os.path.join(
                 output_dir, f"{split}", f"{video_id}_{start_frame}_{end_frame}.mp4")
 
-            video = ffmpeg.input(input_path)
-            output_file = ffmpeg.output(video.trim(
-                start_frame=start_frame, end_frame=end_frame), output_path)
-            ffmpeg.run(output_file)
+            (ffmpeg
+                .input(input_path)
+                .trim(start_frame=start_frame, end_frame=end_frame)
+                .output(output_path, loglevel="quiet")
+                .overwrite_output()
+                .run_async()
+            )
 
             if split not in outputs:
                 outputs[split] = []

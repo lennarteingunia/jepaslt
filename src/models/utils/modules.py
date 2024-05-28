@@ -173,7 +173,7 @@ class CrossAttention(nn.Module):
         q = q.transpose(1, 2).reshape(B, N_1, C)
         q = self.proj(q)
         q = self.proj_drop(q)
-        return q, attn
+        return q
 
 
 class CrossAttentionBlock(nn.Module):
@@ -208,10 +208,8 @@ class CrossAttentionBlock(nn.Module):
             drop=drop
         )
 
-    def forward(self, q, x, return_attention: bool = False, mask: Union[None, torch.Tensor] = None):
-        y, attn = self.xattn(q, self.norm1(x), mask=mask)
-        if return_attention:
-            return attn
+    def forward(self, q, x, mask: Union[None, torch.Tensor] = None):
+        y = self.xattn(q, self.norm1(x), _mask=mask)
         q = q + y
         q = q + self.mlp(self.norm2(q))
         return q
