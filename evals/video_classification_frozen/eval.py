@@ -113,7 +113,8 @@ def main(args_eval, resume_preempt=False):
     use_bfloat16 = args_opt.get('use_bfloat16')
 
     # -- EXPERIMENT-ID/TAG (optional)
-    resume_checkpoint = args_eval.get('resume_checkpoint', False) or resume_preempt
+    resume_checkpoint = args_eval.get(
+        'resume_checkpoint', False) or resume_preempt
     eval_tag = args_eval.get('tag', None)
 
     # ----------------------------------------------------------------------- #
@@ -289,10 +290,14 @@ def main(args_eval, resume_preempt=False):
             data_loader=val_loader,
             use_bfloat16=use_bfloat16)
 
-        logger.info('[%5d] train: %.3f%% test: %.3f%%' % (epoch + 1, train_acc, val_acc))
+        logger.info('[%5d] train: %.3f%% test: %.3f%%' %
+                    (epoch + 1, train_acc, val_acc))
         if rank == 0:
             csv_logger.log(epoch + 1, train_acc, val_acc)
         save_checkpoint(epoch + 1)
+
+
+_labels = {}
 
 
 def run_one_epoch(
@@ -324,7 +329,8 @@ def run_one_epoch(
 
             # Load data and put on GPU
             clips = [
-                [dij.to(device, non_blocking=True) for dij in di]  # iterate over spatial views of clip
+                [dij.to(device, non_blocking=True)
+                 for dij in di]  # iterate over spatial views of clip
                 for di in data[0]  # iterate over temporal index of clip
             ]
             clip_indices = [d.to(device, non_blocking=True) for d in data[2]]
@@ -338,24 +344,30 @@ def run_one_epoch(
                     if attend_across_segments:
                         outputs = [classifier(o) for o in outputs]
                     else:
-                        outputs = [[classifier(ost) for ost in os] for os in outputs]
+                        outputs = [[classifier(ost) for ost in os]
+                                   for os in outputs]
             if training:
                 if attend_across_segments:
                     outputs = [classifier(o) for o in outputs]
                 else:
-                    outputs = [[classifier(ost) for ost in os] for os in outputs]
+                    outputs = [[classifier(ost) for ost in os]
+                               for os in outputs]
 
         # Compute loss
         if attend_across_segments:
             loss = sum([criterion(o, labels) for o in outputs]) / len(outputs)
         else:
-            loss = sum([sum([criterion(ost, labels) for ost in os]) for os in outputs]) / len(outputs) / len(outputs[0])
+            loss = sum([sum([criterion(ost, labels) for ost in os])
+                       for os in outputs]) / len(outputs) / len(outputs[0])
         with torch.no_grad():
             if attend_across_segments:
-                outputs = sum([F.softmax(o, dim=1) for o in outputs]) / len(outputs)
+                outputs = sum([F.softmax(o, dim=1)
+                              for o in outputs]) / len(outputs)
             else:
-                outputs = sum([sum([F.softmax(ost, dim=1) for ost in os]) for os in outputs]) / len(outputs) / len(outputs[0])
-            top1_acc = 100. * outputs.max(dim=1).indices.eq(labels).sum() / batch_size
+                outputs = sum([sum([F.softmax(ost, dim=1) for ost in os])
+                              for os in outputs]) / len(outputs) / len(outputs[0])
+            top1_acc = 100. * \
+                outputs.max(dim=1).indices.eq(labels).sum() / batch_size
             top1_acc = float(AllReduce.apply(top1_acc))
             top1_meter.update(top1_acc)
 
@@ -394,7 +406,8 @@ def load_checkpoint(
         # -- loading encoder
         pretrained_dict = checkpoint['classifier']
         msg = classifier.load_state_dict(pretrained_dict)
-        logger.info(f'loaded pretrained classifier from epoch {epoch} with msg: {msg}')
+        logger.info(
+            f'loaded pretrained classifier from epoch {epoch} with msg: {msg}')
 
         # -- loading optimizer
         opt.load_state_dict(checkpoint['opt'])
@@ -423,18 +436,20 @@ def load_pretrained(
     except Exception:
         pretrained_dict = checkpoint['encoder']
 
-    pretrained_dict = {k.replace('module.', ''): v for k, v in pretrained_dict.items()}
-    pretrained_dict = {k.replace('backbone.', ''): v for k, v in pretrained_dict.items()}
+    pretrained_dict = {k.replace('module.', '')                       : v for k, v in pretrained_dict.items()}
+    pretrained_dict = {k.replace('backbone.', '')                       : v for k, v in pretrained_dict.items()}
     for k, v in encoder.state_dict().items():
         if k not in pretrained_dict:
             logger.info(f'key "{k}" could not be found in loaded state dict')
         elif pretrained_dict[k].shape != v.shape:
-            logger.info(f'key "{k}" is of different shape in model and loaded state dict')
+            logger.info(
+                f'key "{k}" is of different shape in model and loaded state dict')
             pretrained_dict[k] = v
     msg = encoder.load_state_dict(pretrained_dict, strict=False)
     print(encoder)
     logger.info(f'loaded pretrained model with msg: {msg}')
-    logger.info(f'loaded pretrained encoder from epoch: {checkpoint["epoch"]}\n path: {pretrained}')
+    logger.info(
+        f'loaded pretrained encoder from epoch: {checkpoint["epoch"]}\n path: {pretrained}')
     del checkpoint
     return encoder
 
@@ -515,7 +530,8 @@ def init_model(
     )
 
     encoder.to(device)
-    encoder = load_pretrained(encoder=encoder, pretrained=pretrained, checkpoint_key=checkpoint_key)
+    encoder = load_pretrained(
+        encoder=encoder, pretrained=pretrained, checkpoint_key=checkpoint_key)
     return encoder
 
 
