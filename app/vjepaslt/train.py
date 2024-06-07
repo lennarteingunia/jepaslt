@@ -1,116 +1,92 @@
+import argparse
+import logging
 import os
-import warnings
+import shutil
+import sys
+import time
+from typing import Optional, Union
+import lightning
+import yaml
 
-try:
-    os.environ["CUDA_VISIBLE_DEVICES"] = os.environ["SLURM_LOCALID"]
-except Exception:
-    warnings.warn(f"Could not set $CUDA_VISIBLE_DEVICES to $SLURM_LOCALID. This could mean many things, most likely you are not training on a slurm cluster though.")
+def build_lightning_module(vjepa_cfg: dict, model_cfg: dict):
+    pass
 
-import torch
-import multiprocessing
+def get_logger(
+    *,
+    name: Optional[str] = None,
+    level: Union[str, int] = logging.INFO,
+    format: str = "[%(levelname)-8s][%(asctime)s][%(funcName)-25s] %(message)s",
+    datefmt: str = "%Y-%m-%d %H:%M:%S",
+) -> logging.Logger:
+    logging.basicConfig(
+        stream=sys.stdout,
+        level=level,
+        format=format,
+        datefmt=datefmt
+    )
+    return logging.getLogger(name=name)
 
-from typing import Any, Dict
-from app.vjepaslt.utils import init_encoder, init_predictor
+def get_argument_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', required=True, type=str, help='path to config file')
+    parser.add_argument('--root', required=True, type=str, help='path to root  for logging etc.')
+    parser.add_argument('--accelerator', choices=['cuda', 'cpu'], default='cuda')
+    parser.add_argument('--devices', nargs='+', default=[0])
+    parser.add_argument('--num_nodes', type=int, default=1)
+    parser.add_argument('--strategy', type=str, default='ddp')
+    parser.add_argument('--test', action='store_true')
+    return parser
 
-from src.utils.distributed import init_distributed
+def cleanup(
+    logger: logging.Logger,
+    logging_root: str,
+    *,
+    test_mode: Optional[bool] = None   
+) -> None:
+    logger.info(f'Performing cleanup routine.')
+    if test_mode:
+        logger.info(f'Performing test mode cleanup routine.')
+        logger.debug(f'Removing {logging_root=}')
+        shutil.rmtree(logging_root)
+    
 
+def load_config(config_path: str) -> dict:
+    with open(config_path, 'r') as ymlfile:
+        cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
+    return cfg
 
-def main(args: Dict[str, Any], resume_preempt: bool = False) -> None:
+def main(program_args: argparse.Namespace, cfg: dict) -> None:
 
-    # -- PRETRAINING ARGUMENTS
-    args_pretrain = args.get('pretrain')
+    logging_cfg = cfg.get('logging', dict())
+    logger = get_logger(**logging_cfg)
+    if len(logging_cfg) == 0:
+        logger.info('No logging configuration was given, using default.')
 
-    args_pretrain_enc = args_pretrain.get('encoder')
-    checkpoint_key = args_pretrain_enc.get('checkpoint_key', 'target_encoder')
-    model_name = args_pretrain_enc.get('model_name', None)
-    patch_size = args_pretrain_enc.get('patch_size', None)
-    pretrain_folder = args_pretrain_enc.get('folder', None)
-    enc_ckpt_fname = args_pretrain_enc.get('checkpoint', None)
-    enc_use_sdpa = args_pretrain_enc.get('use_sdpa', True)
-    use_SiLU = args_pretrain_enc.get('use_silu', False)
-    tight_SiLU = args_pretrain_enc.get('tight_silu', True)
-    uniform_power = args_pretrain_enc.get('uniform_power', False)
-    enc_ckpt_path = os.path.join(pretrain_folder, enc_ckpt_fname)
-    tubelet_size = args_pretrain_enc.get('tubelet_size', 2)
-    pretrain_frames_per_clip = args_pretrain_enc.get('frames_per_clip', 16)
+    logging_root = os.path.join(program_args.root, cfg['experiment'], time.strftime("%Y%m%d-%H%M%S"))
+    logger.info(f'Creating logging folder at {logging_root}')
+    os.makedirs(logging_root, exist_ok=True)
+    logger.info(f'Copying used configuration to {logging_root}.')
+    shutil.copy2(program_args.config, logging_root)
 
-    args_pretrain_pred = args_pretrain.get('predictor')
-    pred_ckpt_fname = args_pretrain_pred.get('checkpoint', None)
-    pred_depth = args_pretrain_pred.get('depth', 6)
-    pred_embed_dim = args_pretrain_pred.get('pred_embed_dim')
-    pred_use_sdpa = args_pretrain_pred.get('use_sdpa', True)
-    pred_ckpt_path = os.path.join(pretrain_folder, pred_ckpt_fname)
+    logger.info(f'Creating lightning trainer using\n\t{logging_root=}\n\t{program_args.accelerator=}\n\t{program_args.devices=}\n\t{program_args.num_nodes=}\n\t{program_args.strategy=}')
 
-        # device=device,
-        # pretrained_checkpoint_path=pretrained_checkpoint_path,
-        # patch_size=patch_size,
-        # frames_per_clip=pretrain_frames_per_clip,
-        # tubelet_size=tubelet_size,
-        # crop_size=resolution,
-        # depth=predictor_depth,
-        # num_heads=encoder.backbone.num_heads,
-        # encoder_embed_dim=encoder.backbone.embed_dim,
-        # embed_dim=predictor_embed_dim,
-        # uniform_power=uniform_power,
-        # use_mask_tokens=use_mask_tokens,
-        # num_mask_tokens=num_mask_tokens, # TODO: len(cfgs_mask)
-        # zero_init_mask_tokens=zero_init_mask_tokens,
-        # use_sdpa=use_sdpa
-
-    # -- OPTIMIZATION
-    args_opt = args.get('optimization')
-    resolution = args_opt.get('resolution', 224)
-    batch_size = args_opt.get('batch_size')
-    attend_across_segments = args_opt.get('attend_across_segments', False)
-    num_epochs = args_opt.get('num_epochs')
-    wd = args_opt.get('weight_decay')
-    start_lr = args_opt.get('start_lr')
-    lr = args_opt.get('lr')
-    final_lr = args_opt.get('final_lr')
-    warmup = args_opt.get('warmup')
-    use_bfloat16 = args_opt.get('use_bfloat16')
-
-    try:
-        multiprocessing.set_start_method("spawn")
-    except Exception:
-        warnings.warn(f"Could not set start method to 'spawn'.")
-
-    if not torch.cuda.is_available():
-        device = torch.device("cpu")
-    else:
-        device = torch.device("cuda:0")
-        torch.cuda.set_device(device)
-
-    world_size, rank = init_distributed()
-
-    encoder = init_encoder(
-        device=device,
-        pretrained_checkpoint_path=enc_ckpt_path,
-        model_name=model_name,
-        patch_size=patch_size,
-        crop_size=resolution,
-        frames_per_clip=pretrain_frames_per_clip,
-        tubelet_size=tubelet_size,
-        use_SiLU=use_SiLU,
-        tight_SiLU=tight_SiLU,
-        use_sdpa=enc_use_sdpa,
-        checkpoint_key=checkpoint_key
+    trainer = lightning.Trainer(
+        default_root_dir=logging_root,
+        accelerator=program_args.accelerator,
+        devices=program_args.devices,
+        num_nodes=program_args.num_nodes,
+        strategy=program_args.strategy
     )
 
-    predictor = init_predictor(
-        device=device,
-        pretrained_checkpoint_path=pred_ckpt_path,
-        patch_size=patch_size,
-        frames_per_clip=pretrain_frames_per_clip,
-        tubelet_size=tubelet_size,
-        crop_size=resolution,
-        depth=pred_depth,
-        num_heads=encoder.backbone.num_heads,
-        encoder_embed_dim=encoder.backbone.embed_dim,
-        embed_dim=pred_embed_dim,
-        uniform_power=uniform_power,
-        use_mask_tokens=use_mask_tokens,
-        num_mask_tokens=num_mask_tokens, # TODO: len(cfgs_mask)
-        zero_init_mask_tokens=zero_init_mask_tokens,
-        use_sdpa=enc_use_sdpa
+    cleanup(
+        logger=logger,
+        logging_root=logging_root, 
+        test_mode=program_args.test
     )
+    
+
+if __name__ == "__main__":
+    parser = get_argument_parser()
+    program_args = parser.parse_args()
+    cfg = load_config(program_args.config)
+    main(program_args, cfg)

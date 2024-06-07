@@ -1,0 +1,11 @@
+experiment: vjepaslt
+
+pretrain:
+  models:
+    null
+
+data:
+  train:
+    null
+  val:
+    null

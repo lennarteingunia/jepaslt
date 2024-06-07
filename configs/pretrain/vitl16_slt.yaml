@@ -1,5 +1,5 @@
 app: vjepaslt
-nodes: 16,
+nodes: 16
 tasks_per_node: 8
 data:
   dataset_type: VideoDataset
