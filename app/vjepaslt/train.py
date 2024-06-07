@@ -31,8 +31,8 @@ def get_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument('--config', required=True, type=str, help='path to config file')
     parser.add_argument('--root', required=True, type=str, help='path to root  for logging etc.')
     parser.add_argument('--accelerator', choices=['cuda', 'cpu'], default='cuda')
-    parser.add_argument('--devices', nargs='+', default=[0])
-    parser.add_argument('--num_nodes', type=int, default=1)
+    parser.add_argument('--devices', type=int, nargs='+', default=[0])
+    parser.add_argument('--num-nodes', type=int, default=1)
     parser.add_argument('--strategy', type=str, default='ddp')
     parser.add_argument('--test', action='store_true')
     return parser
