@@ -1,11 +1,44 @@
-experiment: vjepaslt
+seed_everything: true
 
-pretrain:
-  models:
-    null
+trainer:
+
+  accelerator: cuda
+  strategy: ddp
+  devices: 
+    - 0
+    - 1
+  num_nodes: 1
+  precision: bf16-mixed
+  max_epochs: 10
+  min_epochs: 1
+  enable_progress_bar: true
+  enable_model_summary: true
+  deterministic: false
+
+  logger: 
+    - class_path: lightning.pytorch.loggers.WandbLogger
+      init_args:
+        name: vjepaslt
+        save_dir: Please use --trainer.logger.init_args.save_dir to access this parameter during the training call.
+        project: Please use --trainer.logger.init_args.project to set this parameter during the training call.
+        log_model: all
+        checkpoint_name: vjepa
+        # kwargs: This parameter can be used to set wandb.init() additionally.
+
+  callbacks:
+    - class_path: lightning.pytorch.callbacks.EarlyStopping
+      init_args:
+        monitor: This is where my metric name will go.
+        patience: 5
+        verbose: true
+        strict: true
+        check_finite: true
 
 data:
-  train:
-    null
-  val:
-    null
+  modules:
+    - class_path: datasets.phoenix14t.Phoenix14T
+      init_args:
+        dataset:
+          root: /mnt/datasets/phoenix14t/PHOENIX-2014-T-release-v3/PHOENIX-2014-T
+        dataloader:
+          batch_size: 4

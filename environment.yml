@@ -5,11 +5,12 @@ channels:
   - conda-forge
   - nodefaults
 dependencies:
-  - python=3.9
+  - python=3.10
   - pip
   - pytorch
   - torchvision
-  - pytorch-cuda=11.8
+  - torchaudio
+  - pytorch-cuda=12.1
   - pyyaml
   - numpy
   - pandas
@@ -23,3 +24,6 @@ dependencies:
   - pip:
     - opencv-python
     - decord
+    - lightning
+    - lightning[pytorch-extra]
+    - wandb
