@@ -25,20 +25,16 @@ trainer:
         checkpoint_name: vjepa
         # kwargs: This parameter can be used to set wandb.init() additionally.
 
-  callbacks:
-    - class_path: lightning.pytorch.callbacks.EarlyStopping
-      init_args:
-        monitor: This is where my metric name will go.
-        patience: 5
-        verbose: true
-        strict: true
-        check_finite: true
+  # TODO: Check that callbacks are there.
+
+  # callbacks:
+  #   - class_path: lightning.pytorch.callbacks.EarlyStopping
+  #     init_args:
+  #       monitor: This is where my metric name will go.
+  #       patience: 5
+  #       verbose: true
+  #       strict: true
+  #       check_finite: true
 
 data:
-  modules:
-    - class_path: datasets.phoenix14t.Phoenix14T
-      init_args:
-        dataset:
-          root: /mnt/datasets/phoenix14t/PHOENIX-2014-T-release-v3/PHOENIX-2014-T
-        dataloader:
-          batch_size: 4
+  root: /mnt/datasets/phoenix14t/PHOENIX-2014-T-release-v3/PHOENIX-2014-T/

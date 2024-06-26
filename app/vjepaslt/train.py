@@ -7,11 +7,13 @@ from lightning.pytorch.demos.boring_classes import DemoModel
 from lightning.pytorch.utilities.types import EVAL_DATALOADERS
 import torch
 
-from datasets.concat import ConcatDataModule
 from datasets.phoenix14t import Phoenix14T
 
 def cli_main():
-    cli = LightningCLI(DemoModel, ConcatDataModule)
+    cli = LightningCLI(
+        model_class=DemoModel, 
+        datamodule_class=Phoenix14T
+    )
 
 if __name__ == "__main__":
 
