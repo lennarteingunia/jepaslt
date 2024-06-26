@@ -1,65 +1,3 @@
-import glob
-import logging
-import os
-from typing import Any, Dict, Literal, Optional
-import PIL
-import lightning
-import pandas as pd
-import torch
-import torchvision
-import torch.utils
-import torch.utils.data
-import torchvision.transforms.functional
-
-from datasets.clipable_video_dataset import ClipableVideoDataset
-
-
-class Phoenix14T(lightning.LightningDataModule):
-
-    def __init__(
-        self,
-        dataset: dict = dict(),
-        train_dataset: dict = dict(),
-        val_dataset: dict = dict(),
-        test_dataset: dict = dict(),
-        dataloader: dict = dict(),
-        train_dataloader: dict = dict(),
-        val_dataloader: dict = dict(),
-        test_dataloader: dict = dict()
-    ) -> None:
-        super(Phoenix14T, self).__init__()
-
-        self.train_dataset_cfg = dataset
-        self.train_dataset_cfg.update(train_dataset)
-        self.train_dataset_cfg['split'] = 'train'
-        self.val_dataset_cfg = dataset
-        self.val_dataset_cfg.update(val_dataset)
-        self.val_dataset_cfg['split'] = 'dev'
-        self.test_dataset_cfg = dataset
-        self.test_dataset_cfg.update(test_dataset)
-        self.test_dataset_cfg['split'] = 'test'
-
-        self.train_dataloader_cfg = dataloader
-        self.train_dataloader_cfg.update(train_dataloader)
-        self.val_dataloader_cfg = dataloader
-        self.val_dataloader_cfg.update(val_dataloader)
-        self.test_dataloader_cfg = dataloader
-        self.test_dataloader_cfg.update(test_dataloader)
-
-        # TODO: This should go in the setup() method, but is not being called however
-        self.train_dataset = Phoenix14TDataset(**self.train_dataset_cfg)
-        self.val_dataset = Phoenix14TDataset(**self.val_dataset_cfg)
-        self.test_dataset = Phoenix14TDataset(**self.test_dataset_cfg)
-
-    def train_dataloader(self) -> Any:
-        return torch.utils.data.DataLoader(self.train_dataset, **self.train_dataloader_cfg)
-
-    def val_dataloader(self) -> Any:
-        return torch.utils.data.DataLoader(self.val_dataset, **self.val_dataloader_cfg)
-
-    def test_dataloader(self) -> Any:
-        return torch.utils.data.DataLoader(self.test_dataset, **self.test_dataloader_cfg)
-
 # README:
 #
 # ===========================================================================================
@@ -134,135 +72,108 @@ class Phoenix14T(lightning.LightningDataModule):
 #     └─── languageModels
 
 
-class Phoenix14TDataset(ClipableVideoDataset):
+import glob
+import os
+import lightning
+import pandas as pd
+import ffmpeg
+
+from datasets.video import VideoDataset
+
+
+class Phoenix14T(lightning.LightningDataModule):
 
     def __init__(
         self,
         root: str,
-        split: Literal['train', 'train-complex-annotation', 'test', 'dev'],
-        *,
-        min_len: Optional[int] = None,
-        max_len: Optional[int] = None,
-        logger: logging.Logger = logging.getLogger(__name__),
+        frames_per_clip: int = 16,
+        frame_step: int = 4,
+        num_clips: int = 1,
+        shared_transforms: list = list(),
+        clip_transforms: list = list(),
+        label_transforms: list = list(),
+        random_clip_sampling: bool = True,
+        allow_clip_overlap: bool = False
     ) -> None:
+        super(Phoenix14T, self).__init__()
+
         self.root = root
-        self.split = split
-        super(Phoenix14TDataset, self).__init__(min_len, max_len)
+        self.frames_per_clip = frames_per_clip
+        self.frame_step = frame_step
+        self.num_clips = num_clips
+        self.shared_transforms = shared_transforms
+        self.clip_transforms = clip_transforms
+        self.label_transforms = label_transforms
+        self.random_clip_sampling = random_clip_sampling
+        self.allow_clip_overlap = allow_clip_overlap
 
-    def init_meta(self) -> pd.DataFrame:
-        annotations_path = calc_annotations_path(self.root, self.split)
-        meta_path = calc_meta_path(calc_meta_dir(self.root), self.split)
-        annotations = read_annotations(annotations_path)
-        meta = read_meta(meta_path)
-        return meta.merge(annotations, how='inner', on='video_name')
+        self.prepare_split(self.root, 'train')
+        self.prepare_split(self.root, 'dev')
+        self.prepare_split(self.root, 'test')
 
-    def __len__(self) -> int:
-        return len(self.meta)
+    def prepare_data(self) -> None:
+        meta_root = os.path.join(self.root, 'annotations', 'manual')
+        self.train_ds = self.make_dataset(os.path.join(meta_root, 'train.csv'))
+        self.val_ds = self.make_dataset(os.path.join(meta_root, 'dev.csv'))
+        self.test_ds = self.make_dataset(os.path.join(meta_root, 'test.csv'))
 
-    def __getitem__(
-        self,
-        index: int
-    ) -> Dict[str, Any]:
-        # TODO: Unstretch images according to README.md
-        row = self.meta.iloc[index]
-        sample = dict(frames=load_video(self.root, self.split, row.video_name))
-        sample.update(row.to_dict())
-        return sample
+    def make_dataset(self, path) -> None:
+        return VideoDataset(
+            path,
+            frames_per_clip=self.frames_per_clip,
+            frame_step=self.frame_step,
+            num_clips=self.num_clips,
+            shared_transforms=self.shared_transforms,
+            clip_transforms=self.clip_transforms,
+            label_transforms=self.label_transforms,
+            random_clip_sampling=self.random_clip_sampling,
+            allow_clip_overlap=self.allow_clip_overlap
+        )
 
-
-def load_video(root: str, split: Literal['train', 'test', 'dev', 'train-complex-annotations'], video_name: str) -> torch.Tensor:
-    frame_paths = glob.glob(video_glob_pattern(root, split, video_name))
-    frame_paths = sorted(frame_paths)
-    frames = []
-    for path in frame_paths:
-        frame = PIL.Image.open(path)
-        frame = torchvision.transforms.functional.pil_to_tensor(frame)
-        frames.append(frame)
-    frames = torch.stack(frames)
-    return frames
-
-
-def calc_annotations_path(root: str, split: str) -> str:
-    return os.path.join(root, 'annotations', 'manual', f'PHOENIX-2014-T.{split}.corpus.csv')
-
-
-def calc_meta_path(meta_dir: str, split: str) -> str:
-    return os.path.join(meta_dir, f'{split}.csv')
-
-
-def calc_meta_dir(root: str) -> str:
-    return os.path.join(root, 'meta')
-
-
-def read_annotations(path: str) -> pd.DataFrame:
-    annot = pd.read_csv(
-        filepath_or_buffer=path,
-        sep='|',
-        dtype=dict(
+    def prepare_split(self, root: str, split: str) -> None:
+        meta_path = os.path.join(root, 'annotations', 'manual', f'{split}.csv')
+        if os.path.exists(meta_path):
+            return
+        old_meta = os.path.join(root, 'annotations', 'manual',
+                                f'PHOENIX-2014-T.{split}.corpus.csv')
+        data = pd.read_csv(old_meta, sep='|', dtype=dict(
             name=str,
             video=str,
             start=int,
             end=int,
             speaker=str,
             orth=str,
-            translation=str
-        )
-    )
-    # This renaming is done, because the column name 'name' from the file clashes with how pandas indexes single DataFrame rows.
-    annot.columns = ['video_name'] + annot.columns.to_list()[1:]
-    return annot
+            translation=str,
+        ))
+        video_dir = os.path.join(root, 'videos', split)
+        if not os.path.exists(video_dir):
+            os.makedirs(os.path.join(root, 'videos', split))
+        new_data = []
+        for _index, row in data.iterrows():
+            frame_pattern = os.path.join(
+                root, 'features', 'fullFrame-210x260px', split, row["name"], '*.png')
+            output_path = os.path.join(video_dir, f'{row["name"]}.mp4')
 
+            if not os.path.exists(output_path):
 
-def read_meta(path: str):
-    return pd.read_csv(
-        filepath_or_buffer=path,
-        sep=';',
-        dtype=dict(
-            video_name=str,
-            num_frames=int
-        )
-    )
+                # Globbing all images and then outputting them in the resized size. -> NO resizing is needed as a transform
+                (
+                    ffmpeg
+                    .input(frame_pattern, pattern_type='glob')
+                    .filter('deflicker', mode='pm', size=10)
+                    .filter('scale', width='-1', height='300')
+                    .output(output_path, crf=20, preset='slower', movflags='faststart', pix_fmt='yuv420p')
+                    .run()
+                )
 
+                # Make a new meta entry
+                new_data.append(dict(
+                    fname=output_path,
+                    video_length=len(glob.glob(frame_pattern)),
+                    speaker=row.speaker,
+                    glosses=row.orth,
+                    label=row.translation,
+                ))
 
-def video_glob_pattern(root: str, split: Literal['train', 'dev', 'test', 'train-complex-annotations'], video_name: str) -> str:
-    return os.path.join(root, 'features', 'fullFrame-210x260px', split, video_name, '*.png')
-
-
-def create_meta(root: str, split: str, *, annotations: Optional[pd.DataFrame] = None, meta_path: Optional[str] = None, overwrite: bool = False) -> None:
-    # TODO: This does not work for train-complex-annotations split. why?
-
-    if meta_path is None:
-        meta_dir = calc_meta_dir(root)
-        meta_path = calc_meta_path(meta_dir, split)
-    else:
-        meta_dir = os.path.dirname(meta_path)
-    if os.path.exists(meta_path) and not overwrite:
-        return
-    if annotations is None:
-        annotations = read_annotations(calc_annotations_path(root, split))
-    ds = []
-    for _index, row in annotations.iterrows():
-        video_path = video_glob_pattern(root, split, row.video_name)
-        frame_paths = glob.glob(video_path)
-        ds.append(
-            dict(
-                video_name=row.video_name,
-                num_frames=len(frame_paths)
-            )
-        )
-    meta = pd.DataFrame(ds)
-
-    if not os.path.exists(meta_dir):
-        os.mkdir(meta_dir)
-
-    meta.to_csv(meta_path, sep=';', index=False)
-
-
-if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--root', required=True, type=str)
-    args = parser.parse_args()
-    for split in ['train', 'dev', 'test']:
-        create_meta(args.root, split, annotations=read_annotations(
-            calc_annotations_path(args.root, split)))
+        new_meta = pd.DataFrame(new_data)
+        new_meta.to_csv(meta_path, sep=';')
