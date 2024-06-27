@@ -75,8 +75,13 @@
 import glob
 import os
 import lightning
+from lightning.pytorch.utilities.types import TRAIN_DATALOADERS
 import pandas as pd
 import ffmpeg
+import torch
+import torch.utils
+import torch.utils.data
+import tqdm
 
 from datasets.video import VideoDataset
 
@@ -93,7 +98,10 @@ class Phoenix14T(lightning.LightningDataModule):
         clip_transforms: list = list(),
         label_transforms: list = list(),
         random_clip_sampling: bool = True,
-        allow_clip_overlap: bool = False
+        allow_clip_overlap: bool = False,
+        batch_size: int = 4,
+        shuffle: bool = True,
+        num_workers: int = 8,
     ) -> None:
         super(Phoenix14T, self).__init__()
 
@@ -107,17 +115,53 @@ class Phoenix14T(lightning.LightningDataModule):
         self.random_clip_sampling = random_clip_sampling
         self.allow_clip_overlap = allow_clip_overlap
 
-        self.prepare_split(self.root, 'train')
-        self.prepare_split(self.root, 'dev')
-        self.prepare_split(self.root, 'test')
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.num_workers = num_workers
+
+
+    def setup(self, stage: str) -> None:
+        meta_root = os.path.join(self.root, 'annotations', 'manual')
+        if stage == "fit":
+            self.train_ds = self.make_dataset(
+                os.path.join(meta_root, 'train.csv'))
+            self.val_ds = self.make_dataset(os.path.join(meta_root, 'dev.csv'))
+        if stage == "test":
+            self.test_ds = self.make_dataset(
+                os.path.join(meta_root, 'test.csv'))
+        if stage == "predict":
+            raise NotImplementedError()
 
     def prepare_data(self) -> None:
-        meta_root = os.path.join(self.root, 'annotations', 'manual')
-        self.train_ds = self.make_dataset(os.path.join(meta_root, 'train.csv'))
-        self.val_ds = self.make_dataset(os.path.join(meta_root, 'dev.csv'))
-        self.test_ds = self.make_dataset(os.path.join(meta_root, 'test.csv'))
+        Phoenix14T.prepare_split(self.root, 'train')
+        Phoenix14T.prepare_split(self.root, 'dev')
+        Phoenix14T.prepare_split(self.root, 'test')
 
-    def make_dataset(self, path) -> None:
+    def train_dataloader(self):
+        return torch.utils.data.DataLoader(
+            self.train_ds,
+            batch_size=self.batch_size,
+            shuffle=self.shuffle,
+            num_workers=self.num_workers
+        )
+    
+    def val_dataloader(self):
+        return torch.utils.data.DataLoader(
+            self.val_ds,
+            batch_size=self.batch_size,
+            shuffle=False,
+            num_workers=self.num_workers
+        )
+    
+    def test_dataloader(self):
+        return torch.utils.data.DataLoader(
+            self.test_ds,
+            batch_size=self.batch_size,
+            shuffle=False,
+            num_workers=self.num_workers
+        )
+
+    def make_dataset(self, path) -> VideoDataset:
         return VideoDataset(
             path,
             frames_per_clip=self.frames_per_clip,
@@ -130,10 +174,12 @@ class Phoenix14T(lightning.LightningDataModule):
             allow_clip_overlap=self.allow_clip_overlap
         )
 
-    def prepare_split(self, root: str, split: str) -> None:
+    @staticmethod
+    def prepare_split(root: str, split: str) -> None:
+        print(f"Preparing the {split} split of the Phoenix14T dataset...")
         meta_path = os.path.join(root, 'annotations', 'manual', f'{split}.csv')
         if os.path.exists(meta_path):
-            return
+            return # This means we already prepared this once.
         old_meta = os.path.join(root, 'annotations', 'manual',
                                 f'PHOENIX-2014-T.{split}.corpus.csv')
         data = pd.read_csv(old_meta, sep='|', dtype=dict(
@@ -147,9 +193,9 @@ class Phoenix14T(lightning.LightningDataModule):
         ))
         video_dir = os.path.join(root, 'videos', split)
         if not os.path.exists(video_dir):
-            os.makedirs(os.path.join(root, 'videos', split))
+            os.makedirs(video_dir)
         new_data = []
-        for _index, row in data.iterrows():
+        for _index, row in tqdm.tqdm(data.iterrows(), total=len(data)):
             frame_pattern = os.path.join(
                 root, 'features', 'fullFrame-210x260px', split, row["name"], '*.png')
             output_path = os.path.join(video_dir, f'{row["name"]}.mp4')
@@ -162,10 +208,12 @@ class Phoenix14T(lightning.LightningDataModule):
                     .input(frame_pattern, pattern_type='glob')
                     .filter('deflicker', mode='pm', size=10)
                     .filter('scale', width='-1', height='300')
-                    .output(output_path, crf=20, preset='slower', movflags='faststart', pix_fmt='yuv420p')
+                    .output(output_path, crf=20, preset='slower', movflags='faststart', pix_fmt='yuv420p', loglevel='quiet')
                     .run()
                 )
 
+            if os.path.exists(output_path):
+                # This might seem confusing, but guarantees, that only videos that have been converted are indexed.
                 # Make a new meta entry
                 new_data.append(dict(
                     fname=output_path,

@@ -7,11 +7,12 @@ from lightning.pytorch.demos.boring_classes import DemoModel
 from lightning.pytorch.utilities.types import EVAL_DATALOADERS
 import torch
 
-from datasets.phoenix14t import Phoenix14T
+from src.models.vjepa import GlossVJEPA
+from src.datasets.phoenix14t import Phoenix14T
 
 def cli_main():
     cli = LightningCLI(
-        model_class=DemoModel, 
+        model_class=GlossVJEPA, 
         datamodule_class=Phoenix14T
     )
 
