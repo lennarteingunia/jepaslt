@@ -1,4 +1,3 @@
 #!/bin/bash
 
-cd jepaslt
-python -m app.vjepaslt.train --config configs/pretrain/minimal_working_example.yaml --accelerator cuda --devices 0 1 --num-nodes 1 --strategy=ddp --root .logs/
+python -m app.vjepaslt.train fit -c $PWD/configs/pretrain/minimal_working_example.yaml --trainer.logger.init_args.save_dir $PWD/.logs/$(date +%Y%m%d%H%M%S) --trainer.logger.init_args.project BIGEKO
