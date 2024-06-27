@@ -108,9 +108,9 @@ class WLASL(lightning.LightningDataModule):
         
         if num_classes != 2000: # No need to possibly do this twice
             meta_2000 = pd.read_csv(meta_2000_path, sep=';') # Now we have the meta file in correct structure but with possibly too many entries
-            print(meta_2000)
+            # TODO: This needs to actually be done. Split it!
                 
 
 if __name__ == "__main__":
-    ds = WLASL(root="/mnt/datasets/wlasl/WLASL2000")
+    ds = WLASL(root="/mnt/datasets/wlasl/WLASL2000", num_classes="1000")
     ds.prepare_data()
