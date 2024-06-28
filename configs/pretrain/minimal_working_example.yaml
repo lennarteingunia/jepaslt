@@ -38,3 +38,7 @@ trainer:
 
 data:
   root: /mnt/datasets/phoenix14t/PHOENIX-2014-T-release-v3/PHOENIX-2014-T/
+
+model:
+  checkpoint_path: Please use --model.checkpoint_path to set this parameter during the training call.
+  model_name: vit_huge

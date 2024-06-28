@@ -20,9 +20,9 @@ dependencies:
   - timm
   - einops
   - beartype
-  - ffmpeg
   - pip:
     - opencv-python
+    - ffmpeg-python
     - decord
     - lightning
     - lightning[pytorch-extra]

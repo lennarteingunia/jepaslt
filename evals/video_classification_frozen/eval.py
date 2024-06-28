@@ -446,7 +446,6 @@ def load_pretrained(
                 f'key "{k}" is of different shape in model and loaded state dict')
             pretrained_dict[k] = v
     msg = encoder.load_state_dict(pretrained_dict, strict=False)
-    print(encoder)
     logger.info(f'loaded pretrained model with msg: {msg}')
     logger.info(
         f'loaded pretrained encoder from epoch: {checkpoint["epoch"]}\n path: {pretrained}')

@@ -1,18 +1,11 @@
-
-import importlib
-import lightning
-
 from lightning.pytorch.cli import LightningCLI
-from lightning.pytorch.demos.boring_classes import DemoModel
-from lightning.pytorch.utilities.types import EVAL_DATALOADERS
-import torch
 
-from src.models.vjepa import GlossVJEPA
-from src.datasets.phoenix14t import Phoenix14T
+from lightning_modules.jepaslt import JepaSLTStage1
+from lightning_data_modules.phoenix14t import Phoenix14T
 
 def cli_main():
     cli = LightningCLI(
-        model_class=GlossVJEPA, 
+        model_class=JepaSLTStage1, 
         datamodule_class=Phoenix14T
     )
 
