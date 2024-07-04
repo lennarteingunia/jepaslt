@@ -3,6 +3,7 @@ import sys
 import lightning
 import torch
 from evals.video_classification_frozen.utils import ClipAggregation
+from models.lora_vision_transformer import LoRAVisionTransformer
 import src.models.vision_transformer as vision_transformer
 from utils.schedulers import CosineWDSchedule, LRWDSchedule, WarmupCosineLRSchedule
 
@@ -79,6 +80,8 @@ class JepaSLTStage1(lightning.LightningModule):
         logger.info(
             f"Loaded pretrained encoder model from epoch: {checkpoint['epoch']}")
         del checkpoint
+
+        encoder = LoRAVisionTransformer.from_vit(encoder) # TODO: Rank parameters and the like.
 
         # if pretrain_frames_per_clip == 1:
         #     # Process each frame independently and aggregate
