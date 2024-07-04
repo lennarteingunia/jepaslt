@@ -17,7 +17,7 @@ import src.models.vision_transformer as video_vit
 import src.models.predictor as vit_pred
 from src.models.utils.multimask import MultiMaskWrapper, PredictorMultiMaskWrapper
 from src.utils.schedulers import (
-    WarmupCosineSchedule,
+    WarmupCosineLRSchedule,
     CosineWDSchedule)
 from src.utils.tensors import trunc_normal_
 
@@ -192,7 +192,7 @@ def init_opt(
 
     logger.info('Using AdamW')
     optimizer = torch.optim.AdamW(param_groups, betas=betas, eps=eps)
-    scheduler = WarmupCosineSchedule(
+    scheduler = WarmupCosineLRSchedule(
         optimizer,
         warmup_steps=int(warmup * iterations_per_epoch),
         start_lr=start_lr,

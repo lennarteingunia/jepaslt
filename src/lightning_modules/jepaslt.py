@@ -3,14 +3,12 @@ import sys
 import lightning
 import torch
 from evals.video_classification_frozen.utils import ClipAggregation
-from src.models.utils.multimask import MultiMaskWrapper, PredictorMultiMaskWrapper
 import src.models.vision_transformer as vision_transformer
-import src.models.predictor as vit_predictor
-from utils.schedulers import CosineWDSchedule, WarmupCosineSchedule
-from utils.tensors import trunc_normal_
+from utils.schedulers import CosineWDSchedule, LRWDSchedule, WarmupCosineLRSchedule
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger()
+
 
 class JepaSLTStage1(lightning.LightningModule):
 
@@ -30,7 +28,7 @@ class JepaSLTStage1(lightning.LightningModule):
     ) -> None:
         super(JepaSLTStage1, self).__init__()
 
-        self.automatic_optimization = False # IMPORTANT!
+        self.automatic_optimization = False  # IMPORTANT!
 
         self.checkpoint_path = checkpoint_path
         self.model_name = model_name
@@ -43,7 +41,8 @@ class JepaSLTStage1(lightning.LightningModule):
         self.tight_SiLU = tight_SiLU
         self.uniform_power = uniform_power
         self.checkpoint_key = checkpoint_key
-        
+
+        self.warmup = 2  # TODO: This needs to be included in the training parameters
 
     def setup(self, stage) -> None:
         encoder = vision_transformer.__dict__[self.model_name](
@@ -57,15 +56,19 @@ class JepaSLTStage1(lightning.LightningModule):
             tight_SiLU=self.tight_SiLU
         )
 
-        logger.info(f'Loading pretrained encoder model from {self.checkpoint_path}')
+        logger.info(
+            f'Loading pretrained encoder model from {self.checkpoint_path}')
         checkpoint = torch.load(self.checkpoint_path, map_location="cpu")
         pretrained_dict = checkpoint[self.checkpoint_key]
-        pretrained_dict = {k.replace('module.', ''): v for k, v in pretrained_dict.items()}
-        pretrained_dict = {k.replace('backbone.', ''): v for k, v in pretrained_dict.items()}
+        pretrained_dict = {
+            k.replace('module.', ''): v for k, v in pretrained_dict.items()}
+        pretrained_dict = {
+            k.replace('backbone.', ''): v for k, v in pretrained_dict.items()}
 
         for k, v in encoder.state_dict().items():
             if k not in pretrained_dict:
-                logger.info(f"Key '{k}' could not be found in loaded state dict")
+                logger.info(
+                    f"Key '{k}' could not be found in loaded state dict")
             elif pretrained_dict[k].shape != v.shape:
                 logger.info(
                     f"Key '{k}' is of different shape in model and loaded state dict")
@@ -73,9 +76,9 @@ class JepaSLTStage1(lightning.LightningModule):
 
         msg = encoder.load_state_dict(pretrained_dict, strict=False)
         logger.info(f"Loaded pretrained encoder model with msg: {msg}")
-        logger.info(f"Loaded pretrained encoder model from epoch: {checkpoint['epoch']}")
+        logger.info(
+            f"Loaded pretrained encoder model from epoch: {checkpoint['epoch']}")
         del checkpoint
-
 
         # if pretrain_frames_per_clip == 1:
         #     # Process each frame independently and aggregate
@@ -92,18 +95,12 @@ class JepaSLTStage1(lightning.LightningModule):
 
     def forward(self, x):
         return 0
-    
-    def training_step(self, batch, batch_idx):
-        optimizers = self.optimizers()
-        lr_schedulers = self.lr_schedulers()
-        
-    
-    def validation_step(self, batch, batch_idx):
-        pass
 
-    def lr_scheduler_step(self, scheduler):
+    def training_step(self, batch, batch_idx):
+
+        scheduler = self.lr_schedulers()
         scheduler.step()
-    
+
     def configure_optimizers(self):
         param_groups = [
             {
@@ -115,5 +112,33 @@ class JepaSLTStage1(lightning.LightningModule):
                 'weight_decay': 0
             }
         ]
-        optimizer =  torch.optim.AdamW(param_groups)
-        return optimizer
+        optimizer = torch.optim.AdamW(param_groups)
+        total_iterations = self.trainer.estimated_stepping_batches
+        warmup_steps = int(total_iterations * self.warmup /
+                           self.trainer.max_epochs)
+        # TODO: These values are still needed
+        lr_scheduler = WarmupCosineLRSchedule(
+            optimizer=optimizer,
+            warmup_steps=warmup_steps,
+            start_lr=0,
+            ref_lr=0,
+            final_lr=0,
+            T_max=total_iterations
+        )
+        wd_scheduler = CosineWDSchedule(
+            optimizer=optimizer,
+            ref_wd=0,
+            final_wd=0,
+            T_max=total_iterations
+        )
+        # Luckily there are no type checks being performed here. This means we can fake a learning rate scheduler, that also schedules weight decay.
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": LRWDSchedule(
+                    lr_scheduler=lr_scheduler,
+                    wd_scheduler=wd_scheduler
+                ),
+                "frequency": 1
+            }
+        }

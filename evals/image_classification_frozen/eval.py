@@ -40,7 +40,7 @@ from src.utils.distributed import (
     AllReduce
 )
 from src.utils.schedulers import (
-    WarmupCosineSchedule,
+    WarmupCosineLRSchedule,
     CosineWDSchedule,
 )
 from src.utils.logging import (
@@ -487,7 +487,7 @@ def init_opt(
 
     logger.info('Using AdamW')
     optimizer = torch.optim.AdamW(param_groups)
-    scheduler = WarmupCosineSchedule(
+    scheduler = WarmupCosineLRSchedule(
         optimizer,
         warmup_steps=int(warmup*iterations_per_epoch),
         start_lr=start_lr,
