@@ -47,6 +47,11 @@ class VideoDataset(torch.utils.data.Dataset):
         sample = self.data.iloc[index]
         label = sample.label
         clips, clip_indices = self._load_video(sample.fname)
+
+        # This is the replacement for the split_into_clips function from META
+        clips = [clips[i * self.frames_per_clip: (i + 1) * self.frames_per_clip]
+                 for i in range(self.num_clips)]
+
         # TODO: Actually use the transforms
         return {
             'clips': clips,

@@ -1,5 +1,6 @@
 import logging
 import sys
+import loralib
 import lightning
 import torch
 from evals.video_classification_frozen.utils import ClipAggregation
@@ -81,7 +82,10 @@ class JepaSLTStage1(lightning.LightningModule):
             f"Loaded pretrained encoder model from epoch: {checkpoint['epoch']}")
         del checkpoint
 
-        encoder = LoRAVisionTransformer.from_vit(encoder) # TODO: Rank parameters and the like.
+        # TODO: Rank parameters and the like.
+        encoder = LoRAVisionTransformer.from_vit(encoder)
+        # This way only the LoRA are trainable
+        loralib.mark_only_lora_as_trainable(encoder)
 
         # if pretrain_frames_per_clip == 1:
         #     # Process each frame independently and aggregate
@@ -93,16 +97,24 @@ class JepaSLTStage1(lightning.LightningModule):
             # attend_across_segments=attend_across_segments This will cause the clip aggregation to also attend across different video segments. I don't think I need this.
         )
 
-        # TODO: This will also need to be LoRA wrapped.
         # TODO: Load the predictor as well.
-
-    def forward(self, x):
-        return 0
 
     def training_step(self, batch, batch_idx):
 
+        clips, clip_indices, label = batch['clips'], batch['clip_indices'], batch['label']
+        clips = [[dji for dji in di] for di in clips]
+        clip_indices = [d for d in clip_indices]
+
+        outputs = self.encoder(clips, clip_indices)
+        # TODO: wrap in if statement
+        if True: #  This is supposed to be 'attend_across_segments'
+            outputs = []
+
+        # TODO: Configure gradient clipping
+        optimizer = self.optimizers()
+        optimizer.step()
         scheduler = self.lr_schedulers()
-        scheduler.step()
+        scheduler.step()  # This was moved to the bottom for interface conformity
 
     def configure_optimizers(self):
         param_groups = [
