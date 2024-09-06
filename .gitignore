@@ -7,6 +7,6 @@ build
 .logs
 .slurmlogs
 
-logs/*
-data/*
-models/*
+logs
+data
+models
