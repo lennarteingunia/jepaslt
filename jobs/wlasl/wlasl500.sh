@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### Slurm Options ###
-#SBATCH --job-name=jepaslt-wlasl2000
+#SBATCH --job-name=jepaslt-wlasl500
 #SBATCH --time=24-0
 #SBATCH --output=/mnt/slurm/lennart/jepaslt/logs/%x-%j.log
 #SBATCH --cpus-per-task=10
@@ -38,16 +38,16 @@ rsync -havzP --stats --delete /mnt/datasets/wlasl/wlasl_vjepa /mnt/data/
 # We need to rewrite the csvs, because they are not formatted correctly
 # I need to specify the correct PYTHONPATH
 export PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/jepaslt/
-python /mnt/slurm/lennart/jepaslt/slurm/rewrite_filepath_prefixes_in_csv.py --file=/mnt/data/wlasl_vjepa/train2000.csv --prefix=/mnt/data/wlasl_vjepa/train --output=/mnt/slurm/lennart/jepaslt/data/train2000.csv
-python /mnt/slurm/lennart/jepaslt/slurm/rewrite_filepath_prefixes_in_csv.py --file=/mnt/data/wlasl_vjepa/val2000.csv --prefix=/mnt/data/wlasl_vjepa/val --output=/mnt/slurm/lennart/jepaslt/data/val2000.csv
+python /mnt/slurm/lennart/jepaslt/slurm/rewrite_filepath_prefixes_in_csv.py --file=/mnt/data/wlasl_vjepa/train500.csv --prefix=/mnt/data/wlasl_vjepa/train --output=/mnt/slurm/lennart/jepaslt/data/train500.csv
+python /mnt/slurm/lennart/jepaslt/slurm/rewrite_filepath_prefixes_in_csv.py --file=/mnt/data/wlasl_vjepa/val500.csv --prefix=/mnt/data/wlasl_vjepa/val --output=/mnt/slurm/lennart/jepaslt/data/val500.csv
 
 # Actually run the evaluation script
 
-python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_wlasl2000_16x8x3.yaml --devices cuda:0
+python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_wlasl500_16x8x3.yaml --devices cuda:1
 
 # I also need to "unexport" the path, because otherwise I will clutter this env variable.
 export PYTHONPATH=${PYTHONPATH%:/mnt/slurm/lennart/jepaslt/jepaslt/}
 
 # After this I also remove rewritten csvs in case anything changes in the future with the dataset
-rm /mnt/slurm/lennart/jepaslt/data/train2000.csv
-rm /mnt/slurm/lennart/jepaslt/data/val2000.csv
+rm /mnt/slurm/lennart/jepaslt/data/train500.csv
+rm /mnt/slurm/lennart/jepaslt/data/val500.csv

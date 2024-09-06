@@ -1,13 +1,13 @@
 nodes: 8
 tasks_per_node: 8
-tag: ravdess_1-16x8x3
+tag: wlasl1000-16x8x3
 eval_name: video_classification_frozen
 resume_checkpoint: false
 data:
-  dataset_train: /data/datasets/RAVDESS/1_train.csv
-  dataset_val: /data/datasets/RAVDESS/1_val.csv
+  dataset_train: /mnt/slurm/lennart/jepaslt/data/train1000.csv
+  dataset_val: /mnt/slurm/lennart/jepaslt/data/val1000.csv
   dataset_type: VideoDataset
-  num_classes: 8
+  num_classes: 1000
   frames_per_clip: 16
   num_segments: 8
   num_views_per_segment: 3
@@ -34,6 +34,6 @@ pretrain:
   tight_silu: false
   use_sdpa: true
   patch_size: 16
-  folder: /data/models/
+  folder: /mnt/slurm/lennart/jepaslt/models/
   checkpoint: vith16-384.pth.tar
-  write_tag: jepaslt_ravdess
+  write_tag: jepaslt

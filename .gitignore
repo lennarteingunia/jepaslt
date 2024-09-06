@@ -5,3 +5,8 @@ src/jepa.egg-info
 build
 
 .logs
+.slurmlogs
+
+logs/*
+data/*
+models/*

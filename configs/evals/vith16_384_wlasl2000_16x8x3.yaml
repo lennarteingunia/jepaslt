@@ -4,8 +4,8 @@ tag: wlasl2000-16x8x3
 eval_name: video_classification_frozen
 resume_checkpoint: false
 data:
-  dataset_train: /data/datasets/WLASL2000_vjepa/train.csv
-  dataset_val: /data/datasets/WLASL2000_vjepa/val.csv
+  dataset_train: /mnt/slurm/lennart/jepaslt/data/train2000.csv
+  dataset_val: /mnt/slurm/lennart/jepaslt/data/val2000.csv
   dataset_type: VideoDataset
   num_classes: 2000
   frames_per_clip: 16
@@ -34,6 +34,6 @@ pretrain:
   tight_silu: false
   use_sdpa: true
   patch_size: 16
-  folder: /data/models/
+  folder: /mnt/slurm/lennart/jepaslt/models/
   checkpoint: vith16-384.pth.tar
   write_tag: jepaslt
