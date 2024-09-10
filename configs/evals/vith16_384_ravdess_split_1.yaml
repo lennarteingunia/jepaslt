@@ -1,6 +1,6 @@
 nodes: 8
 tasks_per_node: 8
-tag: ravdess_0-16x8x3
+tag: ravdess_1-16x8x3
 eval_name: video_classification_frozen
 resume_checkpoint: false
 data:
