@@ -43,7 +43,7 @@ python /mnt/slurm/lennart/jepaslt/slurm/rewrite_filepath_prefixes_in_csv.py --fi
 
 # Actually run the evaluation script
 
-python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_wlasl2000_16x8x3.yaml --devices cuda:0
+python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_wlasl2000_16x8x3.yaml --devices cuda:0 cuda:1 cuda:2
 
 # I also need to "unexport" the path, because otherwise I will clutter this env variable.
 export PYTHONPATH=${PYTHONPATH%:/mnt/slurm/lennart/jepaslt/jepaslt/}
