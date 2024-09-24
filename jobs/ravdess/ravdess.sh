@@ -49,6 +49,6 @@ python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384
 # I also need to "unexport" the path, because otherwise I will clutter this env variable.
 export PYTHONPATH=${PYTHONPATH%:/mnt/slurm/lennart/jepaslt/}
 conda deactivate
-conda env remove -n $env_name
+conda env remove -n $env_name -y
 
 # conda config --set solver classic
