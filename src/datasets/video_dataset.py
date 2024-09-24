@@ -120,7 +120,8 @@ class VideoDataset(torch.utils.data.Dataset):
         self.duration = duration
 
         if VideoReader is None:
-            raise ImportError('Unable to import "decord" which is required to read videos.')
+            raise ImportError(
+                'Unable to import "decord" which is required to read videos.')
 
         # Load video paths and labels
         samples, labels = [], []
@@ -192,9 +193,12 @@ class VideoDataset(torch.utils.data.Dataset):
             return [], None
 
         _fsize = os.path.getsize(fname)
-        if _fsize < 1 * 1024:  # avoid hanging issue
-            warnings.warn(f'video too short {fname=}')
-            return [], None
+
+        # TODO: This part of the code is originally used to avoid hanging issues during distributed training. Can we ignore this?
+        # if _fsize < 1 * 1024:  # avoid hanging issue
+        #     warnings.warn(f'video too short {fname=}')
+        #     return [], None
+
         if _fsize > self.filter_long_videos:
             warnings.warn(f'skipping long video of size {_fsize=} (bytes)')
             return [], None
@@ -235,7 +239,8 @@ class VideoDataset(torch.utils.data.Dataset):
                     end_indx = np.random.randint(clip_len, partition_len)
                 start_indx = end_indx - clip_len
                 indices = np.linspace(start_indx, end_indx, num=fpc)
-                indices = np.clip(indices, start_indx, end_indx-1).astype(np.int64)
+                indices = np.clip(indices, start_indx,
+                                  end_indx-1).astype(np.int64)
                 # --
                 indices = indices + i * partition_len
             else:
@@ -243,9 +248,12 @@ class VideoDataset(torch.utils.data.Dataset):
                 # then repeatedly append the last frame in the segment until
                 # we reach the desired clip length
                 if not self.allow_clip_overlap:
-                    indices = np.linspace(0, partition_len, num=partition_len // fstp)
-                    indices = np.concatenate((indices, np.ones(fpc - partition_len // fstp) * partition_len,))
-                    indices = np.clip(indices, 0, partition_len-1).astype(np.int64)
+                    indices = np.linspace(
+                        0, partition_len, num=partition_len // fstp)
+                    indices = np.concatenate(
+                        (indices, np.ones(fpc - partition_len // fstp) * partition_len,))
+                    indices = np.clip(
+                        indices, 0, partition_len-1).astype(np.int64)
                     # --
                     indices = indices + i * partition_len
 
@@ -253,13 +261,17 @@ class VideoDataset(torch.utils.data.Dataset):
                 # then start_indx of segment i+1 will lie within segment i
                 else:
                     sample_len = min(clip_len, len(vr)) - 1
-                    indices = np.linspace(0, sample_len, num=sample_len // fstp)
-                    indices = np.concatenate((indices, np.ones(fpc - sample_len // fstp) * sample_len,))
-                    indices = np.clip(indices, 0, sample_len-1).astype(np.int64)
+                    indices = np.linspace(
+                        0, sample_len, num=sample_len // fstp)
+                    indices = np.concatenate(
+                        (indices, np.ones(fpc - sample_len // fstp) * sample_len,))
+                    indices = np.clip(
+                        indices, 0, sample_len-1).astype(np.int64)
                     # --
                     clip_step = 0
                     if len(vr) > clip_len:
-                        clip_step = (len(vr) - clip_len) // (self.num_clips - 1)
+                        clip_step = (
+                            len(vr) - clip_len) // (self.num_clips - 1)
                     indices = indices + i * clip_step
 
             clip_indices.append(indices)
