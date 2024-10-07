@@ -36,4 +36,4 @@ pretrain:
   patch_size: 16
   folder: /mnt/slurm/lennart/jepaslt/models
   checkpoint: vith16-384.pth.tar
-  write_tag: jepaslt_ravdess_0
+  write_tag: jepaslt_ravdess_2
