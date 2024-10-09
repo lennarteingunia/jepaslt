@@ -107,7 +107,6 @@ def run(root, output_dir, k):
 
     infos = [get_info_from_filepath(path) for path in paths]
     actors = list(set(info['actor_id'] for info in infos))
-    emotions = list(set(info['emotion'] for info in infos))
 
     df = pd.DataFrame([dict(path=path) | info for path,
                       info in zip(paths, infos)])
@@ -130,8 +129,6 @@ def run(root, output_dir, k):
         val_split_path = get_split_file_path(output_dir, split_num, 'val')
         val_split.to_csv(val_split_path, sep=' ', index=False, header=False)
         click.echo(f'Wrote validation split {split_num} to {val_split_path}')
-
-        # TODO: Integer valued emotions
 
         config = template.render(
             dict(
