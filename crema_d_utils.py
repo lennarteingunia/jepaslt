@@ -54,7 +54,7 @@ def analyze(root: str, output_dir: str) -> None:
     make_feature_bar_plot(train_infos, val_infos, 'sex')
     make_feature_bar_plot(train_infos, val_infos, 'race')
     make_feature_bar_plot(train_infos, val_infos, 'ethnicity')
-    
+
 
 def make_feature_bar_plot(train_infos, val_infos, key: str) -> None:
 
@@ -95,6 +95,7 @@ def make_feature_bar_plot(train_infos, val_infos, key: str) -> None:
 
     plt.show()
 
+
 @cli.command()
 @click.argument('root', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path(exists=True))
@@ -107,6 +108,10 @@ def run(root, output_dir, k):
 
     infos = [get_info_from_filepath(path) for path in paths]
     actors = list(set(info['actor_id'] for info in infos))
+    emotions_mapping = list(set(info['emotion'] for info in infos))
+    emotions_mapping = {emotion: idx for idx,
+                        emotion in enumerate(emotions_mapping)}
+    print(emotions_mapping)
 
     df = pd.DataFrame([dict(path=path) | info for path,
                       info in zip(paths, infos)])
@@ -120,6 +125,10 @@ def run(root, output_dir, k):
 
         train_split = df[df['actor_id'].isin(train_split)][['path', 'emotion']]
         val_split = df[df['actor_id'].isin(val_split)][['path', 'emotion']]
+        train_split['emotion'] = train_split['emotion'].apply(
+            lambda x: emotions_mapping.get(x))
+        val_split['emotion'] = val_split['emotion'].apply(
+            lambda x: emotions_mapping.get(x))
 
         train_split_path = get_split_file_path(output_dir, split_num, 'train')
         train_split.to_csv(train_split_path, sep=' ',
