@@ -4,10 +4,13 @@ import os
 import random
 from typing import List, Literal
 import click
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
 from jinja2 import Environment, FileSystemLoader
+import scipy
+import scipy.stats
 
 
 @click.group('cli')
@@ -51,12 +54,14 @@ def analyze(root: str, output_dir: str) -> None:
         train_infos.append(train_info)
         val_infos.append(val_info)
 
-    make_feature_bar_plot(train_infos, val_infos, 'sex')
-    make_feature_bar_plot(train_infos, val_infos, 'race')
-    make_feature_bar_plot(train_infos, val_infos, 'ethnicity')
+    # make_feature_bar_plot(train_infos, val_infos, 'sex', 'Sexes')
+    # make_feature_bar_plot(train_infos, val_infos, 'race', 'Races')
+    # make_feature_bar_plot(train_infos, val_infos, 'ethnicity', 'Ethnicities')
+
+    make_occurences_bar_plot(train_infos, val_infos)
 
 
-def make_feature_bar_plot(train_infos, val_infos, key: str) -> None:
+def make_feature_bar_plot(train_infos, val_infos, key: str, label: str) -> None:
 
     train_features, val_features = [], []
     for train_info, val_info in zip(train_infos, val_infos):
@@ -86,12 +91,51 @@ def make_feature_bar_plot(train_infos, val_infos, key: str) -> None:
         val_y.append(mean)
         val_err.append(std)
 
+    # plt.figure()
+
+    # x_axis = np.arange(0, 1, 0.001)
+
+    # for y, err, label in zip(train_y, train_err, train_features.columns):
+    #     plt.plot(x_axis, scipy.stats.norm.pdf(
+    #         x_axis, y, err), label=f'Training {label}')
+
+    # for y, err, label in zip(val_y, val_err, val_features.columns):
+    #     plt.plot(x_axis, scipy.stats.norm.pdf(
+    #         x_axis, y, err), label=f'Validation {label}')
+
+    # plt.legend()
+
+    # plt.show()
+
     plt.figure()
+
+    plt.xlabel(label)
+    plt.ylabel('Percentage')
 
     plt.bar(train_features.columns, train_y, -0.2,
             align='edge', label='Training splits', yerr=train_err)
     plt.bar(val_features.columns, val_y, 0.2,
             align='edge', label='Validation splits', yerr=val_err)
+
+    plt.legend()
+
+    plt.show()
+
+
+def make_occurences_bar_plot(train_infos: List[pd.DataFrame], val_infos: List[pd.DataFrame], k: int = 5) -> None:
+
+    train_infos = pd.concat(train_infos)
+    train_counts = train_infos['path'].value_counts(
+    ).value_counts()
+
+    val_infos = pd.concat(val_infos)
+    val_counts = val_infos['path'].value_counts(
+    ).value_counts()
+    val_counts.loc[0] = train_counts.loc[train_counts.index.max()]
+
+    counts = pd.DataFrame(dict(train_counts=train_counts,
+                          val_counts=val_counts))
+    counts.plot.bar()
 
     plt.show()
 
@@ -108,10 +152,10 @@ def run(root, output_dir, k):
 
     infos = [get_info_from_filepath(path) for path in paths]
     actors = list(set(info['actor_id'] for info in infos))
+    random.shuffle(actors)
     emotions_mapping = list(set(info['emotion'] for info in infos))
     emotions_mapping = {emotion: idx for idx,
                         emotion in enumerate(emotions_mapping)}
-    print(emotions_mapping)
 
     df = pd.DataFrame([dict(path=path) | info for path,
                       info in zip(paths, infos)])
@@ -119,39 +163,36 @@ def run(root, output_dir, k):
     template = Environment(loader=FileSystemLoader('./configs/templates'),
                            trim_blocks=True, lstrip_blocks=True).get_template('vith16_384_16x8x3.j2')
 
-    for split_num in range(k):
-        train_split = random.sample(actors, floor(0.8 * len(actors)))
-        val_split = [actor for actor in actors if actor not in train_split]
+    actor_splits = np.array_split(actors, k)
 
-        train_split = df[df['actor_id'].isin(train_split)][['path', 'emotion']]
-        val_split = df[df['actor_id'].isin(val_split)][['path', 'emotion']]
-        train_split['emotion'] = train_split['emotion'].apply(
+    split_paths = list()
+    for split_idx, actor_split in enumerate(actor_splits):
+
+        split = df[df['actor_id'].isin(actor_split)][['path', 'emotion']]
+        split['emotion'] = split['emotion'].apply(
             lambda x: emotions_mapping.get(x))
-        val_split['emotion'] = val_split['emotion'].apply(
-            lambda x: emotions_mapping.get(x))
+        output_path = get_split_file_path(
+            output_dir=output_dir, split_idx=split_idx)
+        split.to_csv(output_path, sep=' ', index=False, header=False)
+        click.echo(f'Wrote split file to {output_path}')
 
-        train_split_path = get_split_file_path(output_dir, split_num, 'train')
-        train_split.to_csv(train_split_path, sep=' ',
-                           index=False, header=False)
-        click.echo(f'Wrote training split {split_num} to {train_split_path}')
+        split_paths.append(output_path)
 
-        val_split_path = get_split_file_path(output_dir, split_num, 'val')
-        val_split.to_csv(val_split_path, sep=' ', index=False, header=False)
-        click.echo(f'Wrote validation split {split_num} to {val_split_path}')
+    for split_idx, val_split_path in enumerate(split_paths):
 
         config = template.render(
             dict(
-                tag=f'crema_d_{split_num}',
-                train_split_path=train_split_path,
-                val_split_path=val_split_path
+                tag=f'crema_d_{split_idx}',
+                train_split_paths=split_paths[:split_idx] +
+                    split_paths[split_idx+1:],
+                val_split_paths=[val_split_path]
             )
         )
 
-        config_file_path = get_config_file_path(split_num)
+        config_file_path = get_config_file_path(split_idx)
         with open(config_file_path, 'w') as config_file:
             config_file.write(config)
         click.echo(f'Wrote new config file to {config_file_path}')
-
 
 @cli.command()
 @click.argument('output_dir', type=click.Path(exists=True))
@@ -177,8 +218,8 @@ def get_config_file_path(split_num: int) -> str:
     return f'./configs/evals/vith16_384_crema_d_split_{split_num}_16x8x3.yaml'
 
 
-def get_split_file_path(output_dir: str, split_num: int, split: Literal['train', 'val']) -> str:
-    return os.path.join(output_dir, f'{split}_{split_num}.csv')
+def get_split_file_path(output_dir: str, split_idx: int) -> str:
+    return os.path.join(output_dir, f'split_{split_idx}.csv')
 
 
 def get_analysis_file_path(output_dir: str, split_num: int, split: Literal['train', 'val']) -> str:
@@ -193,7 +234,8 @@ def get_info_from_filepath(path: str):
         actor_id=actor_id,
         sentence=sentence,
         emotion=emotion,
-        intensity=intensity
+        intensity=intensity,
+        path=path
     )
 
 

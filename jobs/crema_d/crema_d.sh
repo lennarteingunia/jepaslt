@@ -16,8 +16,7 @@ env_yml_path=/mnt/slurm/lennart/jepaslt/environment.yml
 env_name=$(grep 'name:' $env_yml_path | awk '{print $2}')
 env_path=/mnt/data/miniconda/envs/$env_name
 
-if [ ! -d $env_path ]
-then
+if [ ! -d $env_path ]; then
 	echo "Specified environment does not exist. CREATING..."
 	conda env create --debug --file=$env_yml_path
 else
@@ -31,13 +30,10 @@ conda activate $env_name
 echo "RSyncing datasets..."
 rsync -havzP --stats --delete /mnt/datasets/CREMA-D /mnt/data/ --exclude .git/
 
-export PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt
-mkdir /mnt/data/CREMA-D/additional/splits/$SLURM_JOB_ID/
-python crema_d_utils.py run /mnt/data/CREMA-D/ /mnt/data/CREMA-D/additional/splits/$SLURM_JOB_ID/
-
 # The splits used here are created with the crema_d_utils.py utility.
-CUDA_VISIBLE_DEVICES=0 python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_0_16x8x3.yaml --devices cuda:0
-CUDA_VISIBLE_DEVICES=0 python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_1_16x8x3.yaml --devices cuda:0
-CUDA_VISIBLE_DEVICES=0 python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_2_16x8x3.yaml --devices cuda:0
-CUDA_VISIBLE_DEVICES=0 python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_3_16x8x3.yaml --devices cuda:0
-CUDA_VISIBLE_DEVICES=0 python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_4_16x8x3.yaml --devices cuda:0
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_0_16x8x3.yaml --devices cuda:0 &
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_1_16x8x3.yaml --devices cuda:0 &
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_2_16x8x3.yaml --devices cuda:0 &
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_3_16x8x3.yaml --devices cuda:0 &
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_4_16x8x3.yaml --devices cuda:0
+wait
