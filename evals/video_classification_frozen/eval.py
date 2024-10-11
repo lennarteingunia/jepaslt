@@ -89,8 +89,12 @@ def main(args_eval, resume_preempt=False):
 
     # -- DATA
     args_data = args_eval.get('data')
-    train_data_path = [args_data.get('dataset_train')]
-    val_data_path = [args_data.get('dataset_val')]
+    train_data_path = args_data.get('dataset_train')
+    if not (type(train_data_path) is list):
+        train_data_path = [train_data_path]
+    val_data_path = args_data.get('dataset_val')
+    if not (type(val_data_path) is list):
+        val_data_path = [val_data_path]
     dataset_type = args_data.get('dataset_type', 'VideoDataset')
     num_classes = args_data.get('num_classes')
     eval_num_segments = args_data.get('num_segments', 1)

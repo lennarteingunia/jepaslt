@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=vjepa-crema-d
 #SBATCH --time=24-0
-#SBATCH --output=/mnt/slurm/lennart/jepaslt/logs/%x-%j.log
+#SBATCH --output=/mnt/slurm/lennart/jepaslt/logs/%j-%x.log
 #SBATCH --cpus-per-task=10
 #SBATCH --gres=gpu:0
 #SBATCH --mem=40G
