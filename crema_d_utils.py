@@ -24,21 +24,24 @@ def cli() -> None:
 def analyze(root: str, output_dir: str) -> None:
 
     click.echo(f'Searching for split files in {output_dir}.')
-    paths = list(sorted(glob.glob(get_split_file_path(output_dir, '*', '*'))))
-    click.echo(f'Found a total of {len(paths)} split files in {output_dir}/*.')
+    pattern = os.path.join(output_dir, '*.csv')
+    paths = list(sorted(glob.glob(pattern)))
+    click.echo(f'Found a total of {len(paths)} split files in {output_dir}.')
 
     video_demo_path = os.path.join(root, 'VideoDemographics.csv')
     click.echo(f'Reading video demographics from {video_demo_path}')
     video_demo = pd.read_csv(video_demo_path)
     video_demo.columns = ['actor_id', 'age', 'sex', 'race', 'ethnicity']
 
-    paths = list(zip(paths[:len(paths)//2], paths[len(paths)//2:]))
+    train_infos, val_infos = [], []
+    for val_idx, val_split in enumerate(paths):
 
-    train_infos = []
-    val_infos = []
-    for train_split_path, val_split_path in paths:
-        train_split = pd.read_csv(train_split_path, sep=' ', header=None)
-        val_split = pd.read_csv(val_split_path, sep=' ', header=None)
+        train_split = paths[:val_idx] + paths[val_idx + 1:]
+        val_split = pd.read_csv(val_split, sep=' ', header=None)
+
+        train_split = [pd.read_csv(split, sep=' ', header=None)
+                       for split in train_split]
+        train_split = pd.concat(train_split)
 
         train_paths = train_split[0].to_list()
         val_paths = val_split[0].to_list()
@@ -54,11 +57,39 @@ def analyze(root: str, output_dir: str) -> None:
         train_infos.append(train_info)
         val_infos.append(val_info)
 
-    # make_feature_bar_plot(train_infos, val_infos, 'sex', 'Sexes')
-    # make_feature_bar_plot(train_infos, val_infos, 'race', 'Races')
-    # make_feature_bar_plot(train_infos, val_infos, 'ethnicity', 'Ethnicities')
+    make_age_norm_plot(train_infos, val_infos)
 
-    make_occurences_bar_plot(train_infos, val_infos)
+
+def make_age_norm_plot(train_infos: List[pd.DataFrame], val_infos: List[pd.DataFrame]) -> None:
+    train_infos = [train_info['age'] for train_info in train_infos]
+    val_infos = [val_info['age'] for val_info in val_infos]
+    train_mean_ages = [train_info.mean() for train_info in train_infos]
+    val_mean_ages = [val_info.mean() for val_info in val_infos]
+
+    train_mean_mean_age = sum(train_mean_ages) / len(train_mean_ages)
+    val_mean_mean_age = sum(val_mean_ages) / len(val_mean_ages)
+
+    train_std_mean_ages = (sum([((x - train_mean_mean_age) ** 2)
+                           for x in train_mean_ages]) / len(train_mean_ages)) ** 0.5
+    val_std_mean_ages = (sum([((x - val_mean_mean_age) ** 2)
+                         for x in val_mean_ages]) / len(val_mean_ages)) ** 0.5
+
+    plt.figure()
+
+    x_axis = np.arange(0, 100, step=0.001)
+
+    plt.xlabel('Age [a]')
+
+    plt.plot(x_axis, scipy.stats.norm.pdf(
+        x_axis, train_mean_mean_age, train_std_mean_ages), label='Training data')
+    plt.plot(x_axis, scipy.stats.norm.pdf(
+        x_axis, val_mean_mean_age, val_std_mean_ages), label='Validation data')
+    
+    plt.title('Distribution of mean ages within all training/validation splits.')
+    plt.legend()
+
+    plt.show()
+
 
 
 def make_feature_bar_plot(train_infos, val_infos, key: str, label: str) -> None:
@@ -91,22 +122,6 @@ def make_feature_bar_plot(train_infos, val_infos, key: str, label: str) -> None:
         val_y.append(mean)
         val_err.append(std)
 
-    # plt.figure()
-
-    # x_axis = np.arange(0, 1, 0.001)
-
-    # for y, err, label in zip(train_y, train_err, train_features.columns):
-    #     plt.plot(x_axis, scipy.stats.norm.pdf(
-    #         x_axis, y, err), label=f'Training {label}')
-
-    # for y, err, label in zip(val_y, val_err, val_features.columns):
-    #     plt.plot(x_axis, scipy.stats.norm.pdf(
-    #         x_axis, y, err), label=f'Validation {label}')
-
-    # plt.legend()
-
-    # plt.show()
-
     plt.figure()
 
     plt.xlabel(label)
@@ -118,24 +133,6 @@ def make_feature_bar_plot(train_infos, val_infos, key: str, label: str) -> None:
             align='edge', label='Validation splits', yerr=val_err)
 
     plt.legend()
-
-    plt.show()
-
-
-def make_occurences_bar_plot(train_infos: List[pd.DataFrame], val_infos: List[pd.DataFrame], k: int = 5) -> None:
-
-    train_infos = pd.concat(train_infos)
-    train_counts = train_infos['path'].value_counts(
-    ).value_counts()
-
-    val_infos = pd.concat(val_infos)
-    val_counts = val_infos['path'].value_counts(
-    ).value_counts()
-    val_counts.loc[0] = train_counts.loc[train_counts.index.max()]
-
-    counts = pd.DataFrame(dict(train_counts=train_counts,
-                          val_counts=val_counts))
-    counts.plot.bar()
 
     plt.show()
 
@@ -193,6 +190,7 @@ def run(root, output_dir, k):
         with open(config_file_path, 'w') as config_file:
             config_file.write(config)
         click.echo(f'Wrote new config file to {config_file_path}')
+
 
 @cli.command()
 @click.argument('output_dir', type=click.Path(exists=True))
