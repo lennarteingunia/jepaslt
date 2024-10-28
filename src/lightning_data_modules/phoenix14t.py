@@ -83,7 +83,7 @@ import torch.utils
 import torch.utils.data
 import tqdm
 
-from datasets.video import VideoDataset
+from datasets.video import FullVideoDataset
 
 
 class Phoenix14T(lightning.LightningDataModule):
@@ -161,8 +161,8 @@ class Phoenix14T(lightning.LightningDataModule):
             num_workers=self.num_workers
         )
 
-    def make_dataset(self, path) -> VideoDataset:
-        return VideoDataset(
+    def make_dataset(self, path) -> FullVideoDataset:
+        return FullVideoDataset(
             path,
             frames_per_clip=self.frames_per_clip,
             frame_step=self.frame_step,

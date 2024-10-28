@@ -44,7 +44,8 @@ def load_encoder_weights(
     checkpoint_key: str = 'encoder',
     logger: logging.Logger = logging.getLogger(__name__),
 ) -> torch.nn.Module:
-    checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
+    checkpoint = torch.load(
+        checkpoint_path, map_location=torch.device('cpu'), weights_only=True)
     checkpoint = checkpoint[checkpoint_key]
     checkpoint = {k.replace('module.', ''): v for k, v in checkpoint.items()}
     checkpoint = {k.replace('backbone.', ''): v for k, v in checkpoint.items()}
@@ -79,7 +80,7 @@ def load_attentive_classifier_weights(
     remove_module_from_entry_key: bool = True
 ) -> AttentiveClassifier:
     checkpoint = torch.load(
-        checkpoint_path, map_location='cpu')
+        checkpoint_path, map_location='cpu', weights_only=True)
     classifier_checkpoint = checkpoint['classifier']
     if remove_module_from_entry_key:
         checkpoint_path = {

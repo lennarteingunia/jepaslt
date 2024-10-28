@@ -6,7 +6,7 @@ import lightning
 import pandas as pd
 import tqdm
 
-from datasets.video import VideoDataset
+from datasets.video import FullVideoDataset
 
 
 class WLASL(lightning.LightningDataModule):
@@ -48,8 +48,8 @@ class WLASL(lightning.LightningDataModule):
         WLASL.prepare_split(self.root, 'val', self.num_classes, self.version)
         WLASL.prepare_split(self.root, 'test', self.num_classes, self.version)
 
-    def make_dataset(self, path) -> VideoDataset:
-        return VideoDataset(
+    def make_dataset(self, path) -> FullVideoDataset:
+        return FullVideoDataset(
             path,
             frames_per_clip=self.frames_per_clip,
             frame_step=self.frame_step,
