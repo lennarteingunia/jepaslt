@@ -3,7 +3,40 @@ import numpy as np
 import pandas as pd
 import torch
 import decord
+import torch.utils.data.distributed
 import tqdm
+
+
+def make_fullvideodata(
+    data_paths: List[str],
+    batch_size: int,
+    world_size: int,
+    rank: int,
+    *,
+    num_workers: int = 10
+):
+    dataset = FullVideoDataset(
+        data_paths=data_paths
+    )
+
+    sampler = torch.utils.data.distributed.DistributedSampler(
+        dataset=dataset,
+        num_replicas=world_size,
+        rank=rank,
+        shuffle=False
+    )
+
+    data_loader = torch.utils.data.DataLoader(
+        dataset=dataset,
+        sampler=sampler,
+        batch_size=batch_size,
+        drop_last=False,
+        pin_memory=True,
+        num_workers=num_workers,
+        persistent_workers=num_workers > 0,
+    )
+
+    return dataset, data_loader, sampler
 
 
 class FullVideoDataset(torch.utils.data.Dataset):
@@ -43,6 +76,7 @@ class FullVideoDataset(torch.utils.data.Dataset):
         return len(self.samples)
 
     def __getitem__(self, index) -> Any:
+        decord.bridge.set_bridge('torch')
 
         sample = self.samples[index]
 
@@ -58,5 +92,5 @@ if __name__ == '__main__':
         ['/mnt/datasets/CREMA-D/additional/splits/split_0.csv']
     )
     print(f'Dataset Length is: {len(dataset)}')
-    for clip, label in tqdm.tqdm(dataset):
+    for clip, label, meta in tqdm.tqdm(dataset):
         pass

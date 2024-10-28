@@ -8,6 +8,7 @@ import torch.multiprocessing.spawn
 import torch.multiprocessing.spawn
 import torch.nn.functional as F
 
+from datasets.video import make_fullvideodata
 from evals.video_classification_frozen.eval import make_dataloader
 from evals.video_classification_frozen.utils import ClipAggregation
 from experiments import build_attentive_classifier, build_encoder, load_config
@@ -53,24 +54,31 @@ def run_eval(
     #     p.requires_grad = False
 
     logger.info(f'Building the data loader.')
-    val_dataloader = make_dataloader(
-        dataset_type=config.get('data').get('dataset_type', 'VideoDataset'),
-        root_path=config.get('data').get('dataset_val'),
-        resolution=config.get('optimization').get('resolution', 224),
-        frames_per_clip=config.get('data').get('frames_per_clip', 16),
-        frame_step=config.get('pretrain').get('frame_step', 4),
-        num_segments=config.get('data').get('num_segments', 1),
-        eval_duration=config.get('pretrain').get('clip_duration', None),
-        num_views_per_segment=config.get(
-            'data').get('num_views_per_segment', 1),
-        allow_segment_overlap=True,
+    # dataloader = make_dataloader(
+    #     dataset_type=config.get('data').get('dataset_type', 'VideoDataset'),
+    #     root_path=config.get('data').get('dataset_val'),
+    #     resolution=config.get('optimization').get('resolution', 224),
+    #     frames_per_clip=config.get('data').get('frames_per_clip', 16),
+    #     frame_step=config.get('pretrain').get('frame_step', 4),
+    #     num_segments=config.get('data').get('num_segments', 1),
+    #     eval_duration=config.get('pretrain').get('clip_duration', None),
+    #     num_views_per_segment=config.get(
+    #         'data').get('num_views_per_segment', 1),
+    #     allow_segment_overlap=True,
+    #     batch_size=config.get('optimization').get('batch_size'),
+    #     world_size=world_size,
+    #     rank=rank,
+    #     training=False
+    # )
+
+    _, dataloader, _ = make_fullvideodata(
+        data_paths=config.get('data').get('dataset_val'),
         batch_size=config.get('optimization').get('batch_size'),
         world_size=world_size,
         rank=rank,
-        training=False
     )
 
-    logger.info(f'{len(val_dataloader)=}')
+    logger.info(f'{len(dataloader)=}')
     # for itr, data in enumerate(val_dataloader):
 
     #     with torch.cuda.amp.autocast(dtype=torch.float16, enabled=config.get('optimization').get('use_bfloat16')):
