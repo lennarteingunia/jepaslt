@@ -83,7 +83,7 @@ import torch.utils
 import torch.utils.data
 import tqdm
 
-from datasets.video import FullVideoDataset
+from datasets.full_video_dataset import FullVideoDataset
 
 
 class Phoenix14T(lightning.LightningDataModule):

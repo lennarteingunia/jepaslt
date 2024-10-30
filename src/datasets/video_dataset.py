@@ -194,10 +194,9 @@ class VideoDataset(torch.utils.data.Dataset):
 
         _fsize = os.path.getsize(fname)
 
-        # TODO: This part of the code is originally used to avoid hanging issues during distributed training. Can we ignore this?
-        # if _fsize < 1 * 1024:  # avoid hanging issue
-        #     warnings.warn(f'video too short {fname=}')
-        #     return [], None
+        if _fsize < 1 * 1024:  # avoid hanging issue
+            warnings.warn(f'video too short {fname=}')
+            return [], None
 
         if _fsize > self.filter_long_videos:
             warnings.warn(f'skipping long video of size {_fsize=} (bytes)')

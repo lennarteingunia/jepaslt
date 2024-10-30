@@ -6,7 +6,7 @@ import lightning
 import pandas as pd
 import tqdm
 
-from datasets.video import FullVideoDataset
+from datasets.full_video_dataset import FullVideoDataset
 
 
 class WLASL(lightning.LightningDataModule):

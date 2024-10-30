@@ -14,6 +14,7 @@ from models.attentive_pooler import AttentiveClassifier
 def build_encoder(
     config: Dict[str, Any],
     *,
+    overwrite_checkpoint: Optional[str] = None,
     checkpoint_key: str = 'target_encoder',
     drop_checkpoint: bool = False,
 ) -> vision_transformer.VisionTransformer:
@@ -30,7 +31,10 @@ def build_encoder(
         use_SiLU=config.get('pretrain').get('use_silu', False),
         tight_SiLU=config.get('pretrain').get('tight_silu', True),
     )
-    checkpoint_path = os.path.join(pretrain_folder, encoder_checkpoint)
+    if overwrite_checkpoint is not None:
+        checkpoint_path = overwrite_checkpoint
+    else:
+        checkpoint_path = os.path.join(pretrain_folder, encoder_checkpoint)
     if not drop_checkpoint:
         encoder = load_encoder_weights(
             encoder, checkpoint_path, checkpoint_key=checkpoint_key)
