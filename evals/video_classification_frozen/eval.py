@@ -319,6 +319,7 @@ def run_one_epoch(
     classifier.train(mode=training)
     criterion = torch.nn.CrossEntropyLoss()
     top1_meter = AverageMeter()
+    # Data is of form (buffer, label, indices)
     for itr, data in enumerate(data_loader):
 
         if training:

@@ -21,6 +21,7 @@ from evals.video_classification_frozen.eval import make_dataloader
 from evals.video_classification_frozen.utils import ClipAggregation
 from experiments import build_attentive_classifier, build_encoder, load_config
 from utils.distributed import AllReduce
+from utils.logging import AverageMeter
 
 
 def ddp_setup(rank: int, world_size: int):
@@ -73,7 +74,8 @@ def run_eval(
         logger=logger
     )
 
-    for itr, (clips, labels, metas) in tqdm.tqdm(enumerate(dataloader)):
+    top1_meter = AverageMeter()
+    for itr, (clips, labels, metas) in tqdm.tqdm(enumerate(dataloader), total=len(dataloader)):
 
         # Data transformations for inference.
 
@@ -100,53 +102,114 @@ def run_eval(
         clips = clips.to(rank)
         clips = [[clips]]
         clip_indices = metas['indices']
+        labels = labels.to(rank)
 
-        with torch.cuda.amp.autocast(enabled=True, dtype=torch.float16):
+        with torch.cuda.amp.autocast(dtype=torch.float16, enabled=True):
+
+            # Forward and prediction
             with torch.no_grad():
                 outputs = encoder(clips, clip_indices)
-                outputs = [classifier(o) for o in outputs]
-                cls_prob = sum([F.softmax(o, dim=1)
-                               for o in outputs]) / len(outputs)
-                prediction = torch.argmax(cls_prob, dim=1)
-                print(prediction, labels)
+                if config.get('optimization').get('attend_across_segments', False):
+                    outputs = [classifier(o) for o in outputs]
+                else:
+                    outputs = [[classifier(ost) for ost in os]
+                               for os in outputs]
 
-                # for itr, data in enumerate(val_dataloader):
+        with torch.no_grad():
+            if config.get('optimization').get('attend_across_segments', False):
+                outputs = sum([F.softmax(o, dim=1)
+                              for o in outputs]) / len(outputs)
+            else:
+                outputs = sum([sum([F.softmax(ost, dim=1) for ost in os])
+                              for os in outputs]) / len(outputs) / len(outputs[0])
+            top1_acc = 100. * \
+                outputs.max(dim=1).indices.eq(labels).sum() / len(labels)
+            top1_acc = float(AllReduce.apply(top1_acc))
+            top1_meter.update(top1_acc)
 
-                #     with torch.cuda.amp.autocast(dtype=torch.float16, enabled=config.get('optimization').get('use_bfloat16')):
+        print(top1_meter.avg)
 
-                #         # Load data and put on GPU
-                #         clips = [
-                #             [dij.to(rank, non_blocking=True)
-                #              for dij in di]  # iterate over spatial views of clip
-                #             for di in data[0]  # iterate over temporal index of clip
-                #         ]
-                #         clip_indices = [d.to(rank, non_blocking=True) for d in data[2]]
-                #         labels = data[1].to(rank)
-                #         batch_size = len(labels)
+        # if itr % 20 == 0:
+        #     logger.info('[%5d] %.3f%% (loss: %.3f) [mem: %.2e]'
+        #                 % (itr, top1_meter.avg, loss,
+        #                    torch.cuda.max_memory_allocated() / 1024.**2))
 
-                #         # Forward and prediction
-                #         with torch.no_grad():
-                #             outputs = encoder(clips, clip_indices)
-                #             if config.get(
-                #                     'optimization').get('attend_across_segments', False):
-                #                 outputs = [classifier(o) for o in outputs]
-                #             else:
-                #                 outputs = [[classifier(ost) for ost in os]
-                #                            for os in outputs]
+        # with torch.cuda.amp.autocast(enabled=True, dtype=torch.float16):
+        #     with torch.no_grad():
+        #         outputs = encoder(clips, clip_indices)
+        #         if config.get('optimization').get('attend_across_segments', False):
+        #             outputs = [classifier(o) for o in outputs]
+        #         else:
+        #             outputs = [[classifier(ost) for ost in os]
+        #                        for os in outputs]
 
-                #     with torch.no_grad():
-                #         if config.get(
-                #                 'optimization').get('attend_across_segments', False):
-                #             outputs = sum([F.softmax(o, dim=1)
-                #                           for o in outputs]) / len(outputs)
-                #         else:
-                #             outputs = sum([sum([F.softmax(ost, dim=1) for ost in os])
-                #                           for os in outputs]) / len(outputs) / len(outputs[0])
-                #         top1_acc = 100. * \
-                #             outputs.max(dim=1).indices.eq(labels).sum() / batch_size
-                #         top1_acc = float(AllReduce.apply(top1_acc))
+        #         class_probabilities = sum([F.softmax(o, dim=1)
+        #                                    for o in outputs]) / len(outputs)
 
-                #     logger.info(top1_acc)
+        #         for path, cls_prob, label in zip(metas['path'], class_probabilities, labels):
+        #             if path in prediction_cls_probabilities:
+        #                 prediction_cls_probabilities[path] = {
+        #                     'probabilities': prediction_cls_probabilities[path]['probabilities'] + cls_prob,
+        #                     'number_pred': prediction_cls_probabilities[path]['number_pred'] + 1,
+        #                     'label': prediction_cls_probabilities[path]['label']
+        #                 }
+        #             else:
+        #                 prediction_cls_probabilities[path] = {
+        #                     'probabilities': cls_prob,
+        #                     'number_pred': 1,
+        #                     'label': label
+        #                 }
+
+        #         positives = 0
+        #         negatives = 0
+        #         for path, prediction_cls_probability in prediction_cls_probabilities.items():
+
+        #             prediction = torch.argmax(prediction_cls_probability['probabilities'] / prediction_cls_probability['number_pred'])
+        #             if prediction_cls_probability['label'] == prediction:
+        #                 positives += 1
+        #             else:
+        #                 negatives += 1
+
+        #         accuracy = positives / (positives + negatives)
+        #         print(accuracy)
+
+        # for itr, data in enumerate(val_dataloader):
+
+        #     with torch.cuda.amp.autocast(dtype=torch.float16, enabled=config.get('optimization').get('use_bfloat16')):
+
+        #         # Load data and put on GPU
+        #         clips = [
+        #             [dij.to(rank, non_blocking=True)
+        #              for dij in di]  # iterate over spatial views of clip
+        #             for di in data[0]  # iterate over temporal index of clip
+        #         ]
+        #         clip_indices = [d.to(rank, non_blocking=True) for d in data[2]]
+        #         labels = data[1].to(rank)
+        #         batch_size = len(labels)
+
+        #         # Forward and prediction
+        #         with torch.no_grad():
+        #             outputs = encoder(clips, clip_indices)
+        #             if config.get(
+        #                     'optimization').get('attend_across_segments', False):
+        #                 outputs = [classifier(o) for o in outputs]
+        #             else:
+        #                 outputs = [[classifier(ost) for ost in os]
+        #                            for os in outputs]
+
+        #     with torch.no_grad():
+        #         if config.get(
+        #                 'optimization').get('attend_across_segments', False):
+        #             outputs = sum([F.softmax(o, dim=1)
+        #                           for o in outputs]) / len(outputs)
+        #         else:
+        #             outputs = sum([sum([F.softmax(ost, dim=1) for ost in os])
+        #                           for os in outputs]) / len(outputs) / len(outputs[0])
+        #         top1_acc = 100. * \
+        #             outputs.max(dim=1).indices.eq(labels).sum() / batch_size
+        #         top1_acc = float(AllReduce.apply(top1_acc))
+
+        #     logger.info(top1_acc)
 
     logger.info(f'Distributed data paralell teardown.')
     torch.distributed.destroy_process_group()
