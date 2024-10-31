@@ -25,39 +25,23 @@ def analyze(root: str, output_dir: str) -> None:
 
     click.echo(f'Searching for split files in {output_dir}.')
     pattern = os.path.join(output_dir, '*.csv')
-    paths = list(sorted(glob.glob(pattern)))
-    click.echo(f'Found a total of {len(paths)} split files in {output_dir}.')
+    split_paths = list(sorted(glob.glob(pattern)))
+    click.echo(
+        f'Found a total of {len(split_paths)} split files in {output_dir}.')
 
     video_demo_path = os.path.join(root, 'VideoDemographics.csv')
     click.echo(f'Reading video demographics from {video_demo_path}')
-    video_demo = pd.read_csv(video_demo_path)
-    video_demo.columns = ['actor_id', 'age', 'sex', 'race', 'ethnicity']
+    video_demographics = pd.read_csv(video_demo_path)
+    video_demographics.columns = [
+        'actor_id', 'age', 'sex', 'race', 'ethnicity']
 
-    train_infos, val_infos = [], []
-    for val_idx, val_split in enumerate(paths):
-
-        train_split = paths[:val_idx] + paths[val_idx + 1:]
-        val_split = pd.read_csv(val_split, sep=' ', header=None)
-
-        train_split = [pd.read_csv(split, sep=' ', header=None)
-                       for split in train_split]
-        train_split = pd.concat(train_split)
-
-        train_paths = train_split[0].to_list()
-        val_paths = val_split[0].to_list()
-
-        train_info = pd.DataFrame(
-            [get_info_from_filepath(path) for path in train_paths]).astype({'actor_id': 'int64'})
-        val_info = pd.DataFrame([get_info_from_filepath(path)
-                                for path in val_paths]).astype({'actor_id': 'int64'})
-
-        train_info = pd.merge(train_info, video_demo,
-                              how='inner', on='actor_id')
-        val_info = pd.merge(val_info, video_demo, how='inner', on='actor_id')
-        train_infos.append(train_info)
-        val_infos.append(val_info)
-
-    make_age_norm_plot(train_infos, val_infos)
+    for split_idx, split_path in enumerate(split_paths):
+        split = pd.read_csv(split_path, sep=' ', header=None)
+        split.columns = ['path', 'emotion']
+        split = pd.DataFrame([get_info_from_filepath(
+            row['path']) for _, row in split.iterrows()]).astype({'actor_id': 'int64'})
+        split = pd.merge(split, video_demographics, how='inner', on='actor_id')
+        split.to_csv(os.path.join(output_dir, f'split_info_{split_idx}.csv'))
 
 
 def make_age_norm_plot(train_infos: List[pd.DataFrame], val_infos: List[pd.DataFrame]) -> None:
@@ -84,12 +68,11 @@ def make_age_norm_plot(train_infos: List[pd.DataFrame], val_infos: List[pd.DataF
         x_axis, train_mean_mean_age, train_std_mean_ages), label='Training data')
     plt.plot(x_axis, scipy.stats.norm.pdf(
         x_axis, val_mean_mean_age, val_std_mean_ages), label='Validation data')
-    
+
     plt.title('Distribution of mean ages within all training/validation splits.')
     plt.legend()
 
     plt.show()
-
 
 
 def make_feature_bar_plot(train_infos, val_infos, key: str, label: str) -> None:
