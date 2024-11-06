@@ -14,7 +14,7 @@ import yaml
 
 from src.utils.distributed import init_distributed
 
-from evals.scaffold import main as eval_main
+from evals.scaffold import main
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -22,11 +22,17 @@ parser.add_argument(
     help='name of config file to load',
     default='configs.yaml')
 parser.add_argument(
+    '--resume',
+    required=False,
+    default=False,
+    action='store_true'
+)
+parser.add_argument(
     '--devices', type=str, nargs='+', default=['cuda:0'],
     help='which devices to use on local machine')
 
 
-def process_main(rank, fname, world_size, devices):
+def process_main(rank, fname, world_size, devices, resume: bool = False):
     import os
     os.environ['CUDA_VISIBLE_DEVICES'] = str(devices[rank].split(':')[-1])
 
@@ -53,7 +59,7 @@ def process_main(rank, fname, world_size, devices):
     logger.info(f'Running... (rank: {rank}/{world_size})')
 
     # Launch the eval with loaded config
-    eval_main(params['eval_name'], args_eval=params)
+    main(params['eval_name'], args_eval=params, resume_preempt=resume)
 
 
 if __name__ == '__main__':
@@ -63,5 +69,5 @@ if __name__ == '__main__':
     for rank in range(num_gpus):
         mp.Process(
             target=process_main,
-            args=(rank, args.fname, num_gpus, args.devices)
+            args=(rank, args.fname, num_gpus, args.devices, args.resume)
         ).start()
