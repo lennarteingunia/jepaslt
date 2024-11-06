@@ -7,11 +7,6 @@
 
 import os
 
-
-from datasets.full_video_dataset import make_fullvideodata
-from evals.video_classification_frozen.utils import ClipAggregation, FrameAggregation, make_transforms
-from utils.logging import PerClassConfidenceWeightedFullVideoPredictionMeter, PerClassPredictionPositionMeter, PerClassWeightedFullVideoPredictionMeter
-
 # -- FOR DISTRIBUTED TRAINING ENSURE ONLY 1 DEVICE VISIBLE PER PROCESS
 try:
     # -- WARNING: IF DOING DISTRIBUTED TRAINING ON A NON-SLURM CLUSTER, MAKE
@@ -35,8 +30,26 @@ from torch.nn.parallel import DistributedDataParallel
 
 import src.models.vision_transformer as vit
 from src.models.attentive_pooler import AttentiveClassifier
+from src.datasets.data_manager import (
+    init_data,
+)
 from src.utils.distributed import (
-    init_distributed
+    init_distributed,
+    AllReduce
+)
+from src.utils.schedulers import (
+    WarmupCosineLRSchedule,
+    CosineWDSchedule,
+)
+from src.utils.logging import (
+    AverageMeter,
+    CSVLogger
+)
+
+from evals.video_classification_frozen.utils import (
+    make_transforms,
+    ClipAggregation,
+    FrameAggregation
 )
 
 logging.basicConfig()
@@ -76,22 +89,24 @@ def main(args_eval, resume_preempt=False):
 
     # -- DATA
     args_data = args_eval.get('data')
-    train_data_path = args_data.get('dataset_train')
-    if not (type(train_data_path) is list):
-        train_data_path = [train_data_path]
-    val_data_path = args_data.get('dataset_val')
-    if not (type(val_data_path) is list):
-        val_data_path = [val_data_path]
+    train_data_path = [args_data.get('dataset_train')]
+    val_data_path = [args_data.get('dataset_val')]
+    dataset_type = args_data.get('dataset_type', 'VideoDataset')
     num_classes = args_data.get('num_classes')
+    eval_num_segments = args_data.get('num_segments', 1)
     eval_frames_per_clip = args_data.get('frames_per_clip', 16)
     eval_frame_step = args_pretrain.get('frame_step', 4)
+    eval_duration = args_pretrain.get('clip_duration', None)
+    eval_num_views_per_segment = args_data.get('num_views_per_segment', 1)
 
     # -- OPTIMIZATION
     args_opt = args_eval.get('optimization')
     resolution = args_opt.get('resolution', 224)
     batch_size = args_opt.get('batch_size')
     attend_across_segments = args_opt.get('attend_across_segments', False)
+    use_bfloat16 = args_opt.get('use_bfloat16')
 
+    # -- EXPERIMENT-ID/TAG (optional)
     eval_tag = args_eval.get('tag', None)
 
     # ----------------------------------------------------------------------- #
@@ -117,6 +132,8 @@ def main(args_eval, resume_preempt=False):
     if not os.path.exists(folder):
         os.makedirs(folder, exist_ok=True)
     latest_path = os.path.join(folder, f'{tag}-latest.pth.tar')
+
+    # Initialize model
 
     # -- pretrained encoder (frozen)
     encoder = init_model(
@@ -155,76 +172,54 @@ def main(args_eval, resume_preempt=False):
     ).to(device)
 
     val_loader = make_dataloader(
+        dataset_type=dataset_type,
         root_path=val_data_path,
         resolution=resolution,
         frames_per_clip=eval_frames_per_clip,
         frame_step=eval_frame_step,
+        num_segments=eval_num_segments,
+        eval_duration=eval_duration,
+        num_views_per_segment=eval_num_views_per_segment,
+        allow_segment_overlap=True,
         batch_size=batch_size,
         world_size=world_size,
         rank=rank,
-    )
-
-    ipe = len(val_loader)
-
-    logger.info(f'Dataloader created... iterations per epoch: {ipe}')
+        training=False)
 
     classifier = DistributedDataParallel(classifier, static_graph=True)
 
     classifier = load_checkpoint(
         r_path=latest_path,
-        classifier=classifier,
+        classifier=classifier
     )
 
-    run_validation(
+    # TRAIN LOOP
+
+    val_acc = run_one_epoch(
         device=device,
         attend_across_segments=attend_across_segments,
         encoder=encoder,
         classifier=classifier,
         data_loader=val_loader,
-        world_size=world_size,
-        rank=rank,
-        num_classes=num_classes,
-        write_tag=tag,
+        use_bfloat16=use_bfloat16
     )
 
 
-def run_validation(
+def run_one_epoch(
     device,
     encoder,
     classifier,
     data_loader,
+    use_bfloat16,
     attend_across_segments,
-    world_size,
-    rank,
-    num_classes,
-    *,
-    write_tag: str = ''
 ):
 
     classifier.train(mode=False)
-
-    if rank == 0:
-        if not 'SLURM_JOB_ID' in os.environ:
-            raise ValueError(f'$SLURM_JOB_ID not set! Can\'t log like this.')
-        log_dir = f'/mnt/slurm/lennart/jepaslt/logs/additional/{os.environ["SLURM_JOB_ID"]}'
-        if not os.path.exists(log_dir):
-            os.makedirs(log_dir)
-
-        metrics = PerClassPredictionPositionMeter(num_classes=num_classes)
-        confidence_weighted_video_predictions = PerClassConfidenceWeightedFullVideoPredictionMeter(
-            num_classes=num_classes)
-        weighted_video_predictions = PerClassWeightedFullVideoPredictionMeter(
-            num_classes=num_classes)
-
-    def log(msg, it) -> None:
-        logger.info(f'{it}: {msg}')
-
+    top1_meter = AverageMeter()
     # Data is of form (buffer, label, indices)
-    for _itr, data in enumerate(data_loader):
+    for _, data in enumerate(data_loader):
 
-        def _log(msg): return log(msg=msg, it=_itr)
-
-        with torch.cuda.amp.autocast(dtype=torch.float16, enabled=True):
+        with torch.cuda.amp.autocast(dtype=torch.float16, enabled=use_bfloat16):
 
             # Load data and put on GPU
             clips = [
@@ -232,14 +227,9 @@ def run_validation(
                  for dij in di]  # iterate over spatial views of clip
                 for di in data[0]  # iterate over temporal index of clip
             ]
-            clip_indices = [d.to(device, non_blocking=True)
-                            for d in data[2]['indices']]
+            clip_indices = [d.to(device, non_blocking=True) for d in data[2]]
             labels = data[1].to(device)
-
-            positions = data[2]['position'].to(device)
-            video_lengths = data[2]['video_len'].to(device)
-
-            video_paths = data[2]['path']
+            batch_size = len(labels)
 
             # Forward and prediction
             with torch.no_grad():
@@ -251,105 +241,27 @@ def run_validation(
                                for os in outputs]
 
         with torch.no_grad():
-
             if attend_across_segments:
-
-                outputs = sum(
-                    [F.softmax(o, dim=1) for o in outputs]
-                ) / len(outputs)
-
+                outputs = sum([F.softmax(o, dim=1)
+                              for o in outputs]) / len(outputs)
             else:
-                outputs = sum(
-                    [
-                        sum([F.softmax(ost, dim=1) for ost in os])
-                        for os in outputs
-                    ]
-                ) / len(outputs) / len(outputs[0])
+                outputs = sum([sum([F.softmax(ost, dim=1) for ost in os])
+                              for os in outputs]) / len(outputs) / len(outputs[0])
+            top1_acc = 100. * \
+                outputs.max(dim=1).indices.eq(labels).sum() / batch_size
+            top1_acc = float(AllReduce.apply(top1_acc))
+            top1_meter.update(top1_acc)
 
-            gathered_confidences = [torch.zeros_like(
-                outputs) for _ in range(world_size)]
-            torch.distributed.all_gather(gathered_confidences, outputs)
-            confidences = torch.cat(gathered_confidences)
+        print(top1_meter.avg)
 
-            predictions = outputs.max(dim=1).indices
-
-            gathered_predictions = [torch.zeros_like(
-                predictions) for _ in range(world_size)]
-            torch.distributed.all_gather(
-                gathered_predictions, predictions)
-
-            predictions = torch.cat(gathered_predictions)
-
-            gathered_labels = [torch.zeros_like(
-                labels) for _ in range(world_size)]
-            torch.distributed.all_gather(
-                gathered_labels, labels)
-
-            labels = torch.cat(gathered_labels)
-
-            gathered_positions = [torch.zeros_like(
-                positions) for _ in range(world_size)]
-            torch.distributed.all_gather(
-                gathered_positions,
-                positions
-            )
-            positions = torch.cat(gathered_positions)
-
-            gathered_video_lens = [
-                torch.zeros_like(video_lengths)
-                for _ in range(world_size)
-            ]
-            torch.distributed.all_gather(
-                gathered_video_lens,
-                video_lengths
-            )
-            video_lengths = torch.cat(gathered_video_lens)
-
-            if rank == 0:
-
-                metrics.update(
-                    predictions=predictions,
-                    labels=labels,
-                    positions=positions,
-                    video_lengths=video_lengths
-                )
-
-                confidence_weighted_video_predictions.update(
-                    confidences=confidences,
-                    video_paths=video_paths,
-                    labels=labels
-                )
-
-                weighted_video_predictions.update(
-                    predictions=predictions,
-                    video_paths=video_paths,
-                    labels=labels
-                )
-
-                if _itr % 20 == 0:
-
-                    _log(
-                        f'acc: {metrics.top_1_acc}, pcacc: {metrics.per_class_top1_acc} | {_itr / len(data_loader)}')
-
-                    metrics.to_file(log_dir, file_prefix=f'{write_tag}_')
-                    confidence_weighted_video_predictions.to_file(
-                        log_dir, file_prefix=f'{write_tag}_')
-                    weighted_video_predictions.to_file(
-                        log_dir, file_prefix=f'{write_tag}_')
-
-    if rank == 0:
-
-        metrics.to_file(log_dir, file_prefix=f'{write_tag}_')
-        confidence_weighted_video_predictions.to_file(
-            log_dir, file_prefix=f'{write_tag}_')
-        weighted_video_predictions.to_file(
-            log_dir, file_prefix=f'{write_tag}_')
+    return top1_meter.avg
 
 
 def load_checkpoint(
     r_path,
     classifier,
 ):
+
     checkpoint = torch.load(r_path, map_location=torch.device('cpu'))
     epoch = checkpoint['epoch']
 
@@ -359,6 +271,7 @@ def load_checkpoint(
     logger.info(
         f'loaded pretrained classifier from epoch {epoch} with msg: {msg}')
 
+    logger.info(f'read-path: {r_path}')
     del checkpoint
 
     return classifier
@@ -400,12 +313,17 @@ def make_dataloader(
     batch_size,
     world_size,
     rank,
+    dataset_type='VideoDataset',
     resolution=224,
     frames_per_clip=16,
     frame_step=4,
+    num_segments=8,
+    eval_duration=None,
     num_views_per_segment=1,
+    allow_segment_overlap=True,
     training=False,
     num_workers=12,
+    subset_file=None
 ):
     # Make Video Transforms
     transform = make_transforms(
@@ -420,18 +338,22 @@ def make_dataloader(
         crop_size=resolution,
     )
 
-    _dataset, data_loader, _data_sampler = make_fullvideodata(
-        data_paths=root_path,
-        batch_size=batch_size,
-        frames_per_clip=frames_per_clip,
-        frame_step=frame_step,
+    data_loader, _ = init_data(
+        data=dataset_type,
+        root_path=root_path,
         transform=transform,
+        batch_size=batch_size,
         world_size=world_size,
         rank=rank,
+        clip_len=frames_per_clip,
+        frame_sample_rate=frame_step,
+        duration=eval_duration,
+        num_clips=num_segments,
+        allow_clip_overlap=allow_segment_overlap,
         num_workers=num_workers,
-        logger=logger
-    )
-
+        copy_data=False,
+        drop_last=False,
+        subset_file=subset_file)
     return data_loader
 
 

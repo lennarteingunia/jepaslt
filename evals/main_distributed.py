@@ -15,7 +15,7 @@ import yaml
 
 import submitit
 
-from evals.scaffold import main as main
+from evals.scaffold import main as eval_main
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger()
@@ -60,7 +60,7 @@ class Trainer:
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(args_eval)
 
-        main(
+        eval_main(
             eval_name,
             args_eval=args_eval,
             resume_preempt=resume_preempt)

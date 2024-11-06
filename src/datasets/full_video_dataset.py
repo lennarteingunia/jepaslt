@@ -1,8 +1,6 @@
-from __future__ import annotations
-
 import logging
 import os
-from typing import Any, List
+from typing import Any, List, Tuple
 import numpy as np
 import pandas as pd
 import torch
@@ -12,17 +10,12 @@ import tqdm
 import sha3
 import yaml
 
-from datasets.video_dataset import VideoDataset
-
 
 def make_fullvideodata(
     data_paths: List[str],
     batch_size: int,
     world_size: int,
-    frames_per_clip: int,
-    frame_step: int,
     rank: int,
-    transform,
     *,
     num_workers: int = 10,
     logger: logging.Logger = logging.getLogger(__name__)
@@ -30,9 +23,6 @@ def make_fullvideodata(
 
     dataset = FullVideoDataset(
         data_paths=data_paths,
-        frames_per_clip=frames_per_clip,
-        frame_step=frame_step,
-        transform=transform,
         logger=logger
     )
 
@@ -64,7 +54,6 @@ class FullVideoDataset(torch.utils.data.Dataset):
         frames_per_clip: int = 16,
         frame_step: int = 4,
         *,
-        transform,
         logger: logging.Logger = logging.getLogger(__name__)
     ) -> None:
         super(FullVideoDataset, self).__init__()
@@ -77,7 +66,6 @@ class FullVideoDataset(torch.utils.data.Dataset):
 
         self.clip_len = int(frames_per_clip * frame_step)
         self.logger = logger
-        self.transform = transform
 
         # Creating indexing file path if it exists.
         id_string = ''.join(map(str, video_paths + labels))
@@ -89,57 +77,35 @@ class FullVideoDataset(torch.utils.data.Dataset):
         self.index_file_path = index_file_name
 
         self.samples = []
-
         for video_path, label in tqdm.tqdm(zip(video_paths, labels), total=len(video_paths), desc='Indexing clips...'):
-
             video_reader = decord.VideoReader(
                 video_path, num_threads=-1, ctx=decord.cpu(0))
-            num_clips = len(video_reader) - self.clip_len
-
-            for start_idx in range(num_clips):
-
+            for start_idx in range(len(video_reader) - self.clip_len):
                 end_idx = start_idx + self.clip_len
-
                 indices = np.linspace(
-                    start_idx,
-                    end_idx,
-                    num=frames_per_clip
-                )
-                indices = np.clip(
-                    indices,
-                    start_idx,
-                    end_idx - 1
-                ).astype(np.int64)
-
+                    start_idx, end_idx, num=frames_per_clip)
+                indices = np.clip(indices, start_idx,
+                                    end_idx - 1).astype(np.int64)
                 self.samples.append({
                     'path': video_path,
                     'indices': indices,
-                    'label': label,
-                    'position': start_idx,
-                    'video_len': num_clips
+                    'label': label
                 })
 
     def __len__(self) -> int:
         return len(self.samples)
 
     def __getitem__(self, index) -> Any:
+        decord.bridge.set_bridge('torch')
+
         sample = self.samples[index]
 
         video_reader = decord.VideoReader(
             sample['path'], num_threads=-1, ctx=decord.cpu(0))
 
-        clip = video_reader.get_batch(sample['indices']).asnumpy()
+        clip = video_reader.get_batch(sample['indices'])
 
-        return (
-            [self.transform(clip)],
-            sample['label'],
-            {
-                'path': sample['path'],
-                'indices': [sample['indices']],
-                'position': sample['position'],
-                'video_len': sample['video_len']
-            }
-        )
+        return clip, sample['label'], {'path': sample['path'], 'indices': sample['indices']}
 
     def save_index_to_tmp_file(self):
         if os.path.exists(self.index_file_path):
@@ -155,23 +121,9 @@ class FullVideoDataset(torch.utils.data.Dataset):
 
 
 if __name__ == '__main__':
-
-    dataset = VideoDataset(
-        ['/mnt/datasets/CREMA-D/additional/splits/split_0.csv']
-    )
-    for buffer, label, clip_indices in dataset:
-        for clip in buffer:
-            print(clip.shape)
-        print(label)
-        print(clip_indices)
-        break
-
     dataset = FullVideoDataset(
         ['/mnt/datasets/CREMA-D/additional/splits/split_0.csv']
     )
     print(f'Dataset Length is: {len(dataset)}')
     for clip, label, meta in tqdm.tqdm(dataset):
-        print(clip.shape)
-        print(label)
-        print(meta['indices'])
-        break
+        pass

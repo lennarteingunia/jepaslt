@@ -261,47 +261,24 @@ def main(args_eval, resume_preempt=False):
         if rank == 0:
             torch.save(save_dict, latest_path)
 
-    if not resume_preempt:
-        # TRAIN LOOP
-        for epoch in range(start_epoch, num_epochs):
-            logger.info('Epoch %d' % (epoch + 1))
-            train_acc = run_one_epoch(
-                device=device,
-                training=True,
-                num_temporal_views=eval_num_segments if attend_across_segments else 1,
-                attend_across_segments=attend_across_segments,
-                num_spatial_views=1,
-                encoder=encoder,
-                classifier=classifier,
-                scaler=scaler,
-                optimizer=optimizer,
-                scheduler=scheduler,
-                wd_scheduler=wd_scheduler,
-                data_loader=train_loader,
-                use_bfloat16=use_bfloat16)
+    # TRAIN LOOP
+    for epoch in range(start_epoch, num_epochs):
+        logger.info('Epoch %d' % (epoch + 1))
+        train_acc = run_one_epoch(
+            device=device,
+            training=True,
+            num_temporal_views=eval_num_segments if attend_across_segments else 1,
+            attend_across_segments=attend_across_segments,
+            num_spatial_views=1,
+            encoder=encoder,
+            classifier=classifier,
+            scaler=scaler,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            wd_scheduler=wd_scheduler,
+            data_loader=train_loader,
+            use_bfloat16=use_bfloat16)
 
-            val_acc = run_one_epoch(
-                device=device,
-                training=False,
-                num_temporal_views=eval_num_segments,
-                attend_across_segments=attend_across_segments,
-                num_spatial_views=eval_num_views_per_segment,
-                encoder=encoder,
-                classifier=classifier,
-                scaler=scaler,
-                optimizer=optimizer,
-                scheduler=scheduler,
-                wd_scheduler=wd_scheduler,
-                data_loader=val_loader,
-                use_bfloat16=use_bfloat16)
-
-            logger.info('[%5d] train: %.3f%% test: %.3f%%' %
-                        (epoch + 1, train_acc, val_acc))
-            if rank == 0:
-                csv_logger.log(epoch + 1, train_acc, val_acc)
-            save_checkpoint(epoch + 1)
-
-    else:
         val_acc = run_one_epoch(
             device=device,
             training=False,
@@ -315,8 +292,16 @@ def main(args_eval, resume_preempt=False):
             scheduler=scheduler,
             wd_scheduler=wd_scheduler,
             data_loader=val_loader,
-            use_bfloat16=use_bfloat16
-        )
+            use_bfloat16=use_bfloat16)
+
+        logger.info('[%5d] train: %.3f%% test: %.3f%%' %
+                    (epoch + 1, train_acc, val_acc))
+        if rank == 0:
+            csv_logger.log(epoch + 1, train_acc, val_acc)
+        save_checkpoint(epoch + 1)
+
+
+_labels = {}
 
 
 def run_one_epoch(

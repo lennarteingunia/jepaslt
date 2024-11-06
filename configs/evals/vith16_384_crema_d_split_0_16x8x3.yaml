@@ -39,6 +39,6 @@ pretrain:
     tight_silu: false
     use_sdpa: true
     patch_size: 16
-    folder: /mnt/slurm/lennart/jepaslt/models
+    folder: /mnt/slurm/lennart/jepaslt/models/
     checkpoint: vith16-384.pth.tar
     write_tag: crema_d_0

@@ -6,15 +6,14 @@
 #
 
 import argparse
-
-import multiprocessing as mp
-
+import importlib
 import pprint
+
 import yaml
 
-from src.utils.distributed import init_distributed
+from utils.distributed import init_distributed
+import torch.multiprocessing as mp
 
-from evals.scaffold import main as eval_main
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -53,7 +52,17 @@ def process_main(rank, fname, world_size, devices):
     logger.info(f'Running... (rank: {rank}/{world_size})')
 
     # Launch the eval with loaded config
-    eval_main(params['eval_name'], args_eval=params)
+    main(params['eval_name'], args_eval=params)
+
+
+def main(
+    eval_name,
+    args_eval,
+    resume_preempt=False
+):
+    return importlib.import_module(f'experiments.eval').main(
+        args_eval=args_eval,
+        resume_preempt=resume_preempt)
 
 
 if __name__ == '__main__':
