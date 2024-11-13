@@ -10,6 +10,7 @@ import os
 
 from datasets.full_video_dataset import make_fullvideodata
 from evals.video_classification_frozen.utils import ClipAggregation, FrameAggregation, make_transforms
+from tome.patch.vjepa import apply_patch
 from utils.logging import PerClassConfidenceWeightedFullVideoPredictionMeter, PerClassPredictionPositionMeter, PerClassWeightedFullVideoPredictionMeter
 
 # -- FOR DISTRIBUTED TRAINING ENSURE ONLY 1 DEVICE VISIBLE PER PROCESS
@@ -88,6 +89,7 @@ def main(args_eval, resume_preempt=False):
     resolution = args_opt.get('resolution', 224)
     batch_size = args_opt.get('batch_size')
     attend_across_segments = args_opt.get('attend_across_segments', False)
+    use_tome = args_opt.get('use_tome', False)
 
     eval_tag = args_eval.get('tag', None)
 
@@ -142,6 +144,9 @@ def main(args_eval, resume_preempt=False):
     encoder.eval()
     for p in encoder.parameters():
         p.requires_grad = False
+
+    if use_tome:
+        encoder = apply_patch(encoder, trace_source=False, prop_attn=False)
 
     # -- init classifier
     classifier = AttentiveClassifier(
