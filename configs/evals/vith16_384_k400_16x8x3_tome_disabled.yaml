@@ -1,7 +1,7 @@
 nodes: 1
 tasks_per_node: 3
 tag: k400-16x8x3
-eval_name: video_classification_frozen
+eval_name: tome_classification_frozen
 resume_checkpoint: false
 data:
   dataset_train: /your_path_to_kinetics400_train_csv_file_index.csv
