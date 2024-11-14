@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 from typing import Any, List
+import warnings
 import numpy as np
 import pandas as pd
 import torch
@@ -64,8 +65,9 @@ class FullVideoDataset(torch.utils.data.Dataset):
         frames_per_clip: int = 16,
         frame_step: int = 4,
         *,
-        transform,
-        logger: logging.Logger = logging.getLogger(__name__)
+        transform=None,
+        logger: logging.Logger = logging.getLogger(__name__),
+        min_pad: bool = True
     ) -> None:
         super(FullVideoDataset, self).__init__()
 
@@ -90,11 +92,30 @@ class FullVideoDataset(torch.utils.data.Dataset):
 
         self.samples = []
 
-        for video_path, label in tqdm.tqdm(zip(video_paths, labels), total=len(video_paths), desc='Indexing clips...'):
+        num_dropped_videos = 0
+        total_num_videos = 0
+        p_bar = tqdm.tqdm(zip(video_paths, labels), total=len(video_paths))
+        for video_path, label in p_bar:
 
             video_reader = decord.VideoReader(
                 video_path, num_threads=-1, ctx=decord.cpu(0))
             num_clips = len(video_reader) - self.clip_len
+
+            if num_clips < 1:
+                if not min_pad:
+                    logger.info(
+                        f'Dropping video at {video_path}, because it does not fit a single clip')
+                    num_dropped_videos += 1
+                    continue
+                if min_pad:
+                    # TODO: Calculate number of last possible frame
+                    # TODO: Iterate it enough.
+                    pass
+
+            total_num_videos += 1
+
+            p_bar.set_description(
+                f'Indexing videos. Number of indexed videos: {total_num_videos}; Number of dropped videos: {num_dropped_videos}.')
 
             for start_idx in range(num_clips):
 
@@ -130,8 +151,11 @@ class FullVideoDataset(torch.utils.data.Dataset):
 
         clip = video_reader.get_batch(sample['indices']).asnumpy()
 
+        if self.transform is not None:
+            clip = self.transform(clip)
+
         return (
-            [self.transform(clip)],
+            [clip],
             sample['label'],
             {
                 'path': sample['path'],
@@ -156,22 +180,8 @@ class FullVideoDataset(torch.utils.data.Dataset):
 
 if __name__ == '__main__':
 
-    dataset = VideoDataset(
-        ['/mnt/datasets/CREMA-D/additional/splits/split_0.csv']
-    )
-    for buffer, label, clip_indices in dataset:
-        for clip in buffer:
-            print(clip.shape)
-        print(label)
-        print(clip_indices)
-        break
-
     dataset = FullVideoDataset(
         ['/mnt/datasets/CREMA-D/additional/splits/split_0.csv']
     )
-    print(f'Dataset Length is: {len(dataset)}')
     for clip, label, meta in tqdm.tqdm(dataset):
-        print(clip.shape)
-        print(label)
-        print(meta['indices'])
-        break
+        pass

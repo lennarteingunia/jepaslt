@@ -131,6 +131,11 @@ def main(args_eval, resume_preempt=False):
         use_SiLU=use_SiLU,
         tight_SiLU=tight_SiLU,
         use_sdpa=use_sdpa)
+
+    if use_tome:
+        encoder = apply_patch(encoder, trace_source=False, prop_attn=False)
+        encoder.r = 45
+
     if pretrain_frames_per_clip == 1:
         # Process each frame independently and aggregate
         encoder = FrameAggregation(encoder).to(device)
@@ -144,9 +149,6 @@ def main(args_eval, resume_preempt=False):
     encoder.eval()
     for p in encoder.parameters():
         p.requires_grad = False
-
-    if use_tome:
-        encoder = apply_patch(encoder, trace_source=False, prop_attn=False)
 
     # -- init classifier
     classifier = AttentiveClassifier(
