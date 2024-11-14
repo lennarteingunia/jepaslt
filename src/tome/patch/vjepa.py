@@ -46,7 +46,7 @@ def make_attention_class(attention_class):
             q, k, v = self.qkv(x).reshape(B, N, 3, self.num_heads, C //
                                           self.num_heads).permute(2, 0, 3, 1, 4)
             if self.use_sdpa:
-                with torch.nn.attention.sdpa_kernel(SDPBackend.FLASH_ATTENTION, SDPBackend.MATH, SDPBackend.EFFICIENT_ATTENTION, SDPBackend.CUDNN_ATTENTION):
+                with torch.nn.attention.sdpa_kernel([SDPBackend.FLASH_ATTENTION, SDPBackend.MATH, SDPBackend.EFFICIENT_ATTENTION, SDPBackend.CUDNN_ATTENTION]):
                     x = torch.nn.functional.scaled_dot_product_attention(
                         query=q,
                         key=k,
@@ -87,7 +87,7 @@ def make_attention_class(attention_class):
             k, v = self.kv(x).reshape(B, N_2, 2, self.num_heads,
                                       C // self.num_heads).permute(2, 0, 3, 1, 4)
             if self.use_sdpa:
-                with torch.nn.attention.sdpa_kernel(SDPBackend.FLASH_ATTENTION, SDPBackend.MATH, SDPBackend.EFFICIENT_ATTENTION, SDPBackend.CUDNN_ATTENTION):
+                with torch.nn.attention.sdpa_kernel([SDPBackend.FLASH_ATTENTION, SDPBackend.MATH, SDPBackend.EFFICIENT_ATTENTION, SDPBackend.CUDNN_ATTENTION]):
                     q = torch.nn.functional.scaled_dot_product_attention(
                         q, k, v, dropout_p=self.proj_drop_prob)
             else:
@@ -106,9 +106,9 @@ def make_attention_class(attention_class):
             q = self.proj_drop(q)
             return q
 
-    if issubclass(attention_class, Attention):
+    if attention_class.__name__ == 'Attention':
         return ToMeAttention
-    elif issubclass(attention_class, CrossAttention):
+    elif attention_class.__name__ == 'CrossAttention':
         return ToMeCrossAttention
     else:
         raise ToMeException(
@@ -198,9 +198,9 @@ def make_block_class(block_class):
 
             return q + self.mlp(self.norm2(q))
 
-    if issubclass(block_class, Block):
+    if block_class.__name__ == 'Block':
         return ToMeAttentionBlock
-    elif issubclass(block_class, CrossAttentionBlock):
+    elif block_class.__name__ == 'CrossAttentionBlock':
         return ToMeCrossAttentionBlock
     else:
         raise ToMeException(
@@ -380,12 +380,12 @@ if __name__ == '__main__':
     )
 
     before_tp = benchmark(encoder, device=device, input_size=(
-        3, 16, 384, 384), batch_size=16, use_bfloat16=True)
+        3, 16, 384, 384), batch_size=2, use_bfloat16=True)
 
     encoder = apply_patch(encoder, trace_source=False, prop_attn=False)
     encoder.r = 45
 
     after_tp = benchmark(encoder, device=device, input_size=(
-        3, 16, 384, 384), batch_size=16, use_bfloat16=True)
+        3, 16, 384, 384), batch_size=2, use_bfloat16=True)
 
-    print(f"There was a x{after_tp / before_tp:.2f} thoughput speedup.")
+    print(f"There was a x{after_tp / before_tp:.2f} throughput speedup.")
