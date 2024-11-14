@@ -202,20 +202,6 @@ def main(args_eval, resume_preempt=False):
         num_classes=num_classes,
     ).to(device)
 
-    train_loader = make_dataloader(
-        dataset_type=dataset_type,
-        root_path=train_data_path,
-        resolution=resolution,
-        frames_per_clip=eval_frames_per_clip,
-        frame_step=eval_frame_step,
-        eval_duration=eval_duration,
-        num_segments=eval_num_segments if attend_across_segments else 1,
-        num_views_per_segment=1,
-        allow_segment_overlap=True,
-        batch_size=batch_size,
-        world_size=world_size,
-        rank=rank,
-        training=True)
     val_loader = make_dataloader(
         dataset_type=dataset_type,
         root_path=val_data_path,
@@ -230,8 +216,6 @@ def main(args_eval, resume_preempt=False):
         world_size=world_size,
         rank=rank,
         training=False)
-    ipe = len(train_loader)
-    logger.info(f'Dataloader created... iterations per epoch: {ipe}')
 
     # -- optimizer and scheduler
     optimizer, scaler, scheduler, wd_scheduler = init_opt(
@@ -246,88 +230,29 @@ def main(args_eval, resume_preempt=False):
         use_bfloat16=use_bfloat16)
     classifier = DistributedDataParallel(classifier, static_graph=True)
 
-    # -- load training checkpoint
-    start_epoch = 0
     if resume_checkpoint:
-        classifier, optimizer, scaler, start_epoch = load_checkpoint(
+        classifier, optimizer, scaler, _ = load_checkpoint(
             device=device,
             r_path=latest_path,
             classifier=classifier,
             opt=optimizer,
             scaler=scaler)
-        for _ in range(start_epoch*ipe):
-            scheduler.step()
-            wd_scheduler.step()
 
-    def save_checkpoint(epoch):
-        save_dict = {
-            'classifier': classifier.state_dict(),
-            'opt': optimizer.state_dict(),
-            'scaler': None if scaler is None else scaler.state_dict(),
-            'epoch': epoch,
-            'batch_size': batch_size,
-            'world_size': world_size,
-            'lr': lr
-        }
-        if rank == 0:
-            torch.save(save_dict, latest_path)
-
-    if not resume_preempt:
-        # TRAIN LOOP
-        for epoch in range(start_epoch, num_epochs):
-            logger.info('Epoch %d' % (epoch + 1))
-            train_acc = run_one_epoch(
-                device=device,
-                training=True,
-                num_temporal_views=eval_num_segments if attend_across_segments else 1,
-                attend_across_segments=attend_across_segments,
-                num_spatial_views=1,
-                encoder=encoder,
-                classifier=classifier,
-                scaler=scaler,
-                optimizer=optimizer,
-                scheduler=scheduler,
-                wd_scheduler=wd_scheduler,
-                data_loader=train_loader,
-                use_bfloat16=use_bfloat16)
-
-            val_acc = run_one_epoch(
-                device=device,
-                training=False,
-                num_temporal_views=eval_num_segments,
-                attend_across_segments=attend_across_segments,
-                num_spatial_views=eval_num_views_per_segment,
-                encoder=encoder,
-                classifier=classifier,
-                scaler=scaler,
-                optimizer=optimizer,
-                scheduler=scheduler,
-                wd_scheduler=wd_scheduler,
-                data_loader=val_loader,
-                use_bfloat16=use_bfloat16)
-
-            logger.info('[%5d] train: %.3f%% test: %.3f%%' %
-                        (epoch + 1, train_acc, val_acc))
-            if rank == 0:
-                csv_logger.log(epoch + 1, train_acc, val_acc)
-            save_checkpoint(epoch + 1)
-
-    else:
-        val_acc = run_one_epoch(
-            device=device,
-            training=False,
-            num_temporal_views=eval_num_segments,
-            attend_across_segments=attend_across_segments,
-            num_spatial_views=eval_num_views_per_segment,
-            encoder=encoder,
-            classifier=classifier,
-            scaler=scaler,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            wd_scheduler=wd_scheduler,
-            data_loader=val_loader,
-            use_bfloat16=use_bfloat16
-        )
+    val_acc = run_one_epoch(
+        device=device,
+        training=False,
+        num_temporal_views=eval_num_segments,
+        attend_across_segments=attend_across_segments,
+        num_spatial_views=eval_num_views_per_segment,
+        encoder=encoder,
+        classifier=classifier,
+        scaler=scaler,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        wd_scheduler=wd_scheduler,
+        data_loader=val_loader,
+        use_bfloat16=use_bfloat16
+    )
 
 
 def run_one_epoch(

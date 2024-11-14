@@ -104,15 +104,31 @@ class FullVideoDataset(torch.utils.data.Dataset):
             if num_clips < 1:
                 if not min_pad:
                     logger.info(
+
                         f'Dropping video at {video_path}, because it does not fit a single clip')
                     num_dropped_videos += 1
                     continue
-                if min_pad:
-                    # TODO: Calculate number of last possible frame
-                    # TODO: Iterate it enough.
-                    pass
 
-            total_num_videos += 1
+                if min_pad:
+
+                    indices = np.linspace(
+                        0, len(video_reader), num=len(video_reader) // frame_step)
+                    indices = np.concatenate((indices, np.ones(
+                        frames_per_clip - len(video_reader) // frame_step) * len(video_reader),))
+                    indices = np.clip(indices, 0, len(
+                        video_reader) - 1).astype(np.int64)
+
+                    self.samples.append({
+                        'path': video_path,
+                        'indices': indices,
+                        'label': label,
+                        'position': start_idx,
+                        'video_len': num_clips
+                    })
+
+                    total_num_videos += 1
+            else:
+                total_num_videos += 1
 
             p_bar.set_description(
                 f'Indexing videos. Number of indexed videos: {total_num_videos}; Number of dropped videos: {num_dropped_videos}.')
@@ -181,7 +197,8 @@ class FullVideoDataset(torch.utils.data.Dataset):
 if __name__ == '__main__':
 
     dataset = FullVideoDataset(
-        ['/mnt/datasets/CREMA-D/additional/splits/split_0.csv']
+        ['/mnt/datasets/CREMA-D/additional/splits/split_0.csv'],
+        min_pad=True
     )
     for clip, label, meta in tqdm.tqdm(dataset):
         pass
