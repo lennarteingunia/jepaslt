@@ -34,7 +34,8 @@ def make_fullvideodata(
         frames_per_clip=frames_per_clip,
         frame_step=frame_step,
         transform=transform,
-        logger=logger
+        logger=logger,
+        min_pad=True
     )
 
     sampler = torch.utils.data.distributed.DistributedSampler(
@@ -108,6 +109,8 @@ class FullVideoDataset(torch.utils.data.Dataset):
                         f'Dropping video at {video_path}, because it does not fit a single clip')
                     num_dropped_videos += 1
                     continue
+
+                # If min_pad is enabled we pad the clip index with the last frame of the video.
 
                 if min_pad:
 

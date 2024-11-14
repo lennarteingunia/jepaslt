@@ -334,8 +334,9 @@ class PerClassPredictionPositionMeter(PerClassAverageMeter):
             df = pd.DataFrame(self.summed_relative_start_positions)
             df.to_csv(sasp_file, header=False, index=False)
 
-        with open(os.path.join(dir, f'{file_prefix}bins{file_suffix}.npy'), 'w') as bins_file:
-            self.bins.tofile(bins_file)
+        if self.binning:
+            with open(os.path.join(dir, f'{file_prefix}bins{file_suffix}.npy'), 'w') as bins_file:
+                self.bins.tofile(bins_file)
 
         PerClassAverageMeter.to_file(
             self, dir, file_prefix=file_prefix, file_suffix=file_suffix)

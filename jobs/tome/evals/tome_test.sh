@@ -28,6 +28,6 @@ echo "RSyncing datasets..."
 rsync -havzP --stats --delete /mnt/datasets/CREMA-D /mnt/data/ --exclude .git/
 
 # Actually run the evaluation script
-
+# The initial setup was done with the crema-d dataset for testing. This is simply to validate that ToMe acutally works, even if the original training target was not pixel-level reconstruction.
 CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src time python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_0_16x8x3_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2
 CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src time python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_split_0_16x8x3_pretrained_full_video_tome.yaml --devices cuda:0 cuda:1 cuda:2

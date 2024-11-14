@@ -4,7 +4,6 @@ import warnings
 import torch
 import tqdm
 
-from models.utils.modules import Attention, Block, CrossAttention, CrossAttentionBlock
 from torch.nn.attention import SDPBackend
 from models.vision_transformer import VisionTransformer
 from tome.merge import bipartite_soft_matching, merge_source, merge_wavg

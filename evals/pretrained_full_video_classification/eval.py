@@ -214,7 +214,8 @@ def run_validation(
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
 
-        metrics = PerClassPredictionPositionMeter(num_classes=num_classes)
+        metrics = PerClassPredictionPositionMeter(
+            num_classes=num_classes, binning=False)
         confidence_weighted_video_predictions = PerClassConfidenceWeightedFullVideoPredictionMeter(
             num_classes=num_classes)
         weighted_video_predictions = PerClassWeightedFullVideoPredictionMeter(
@@ -380,10 +381,8 @@ def load_pretrained(
     except Exception:
         pretrained_dict = checkpoint['encoder']
 
-    pretrained_dict = {k.replace('module.', '')
-                                 : v for k, v in pretrained_dict.items()}
-    pretrained_dict = {k.replace('backbone.', '')
-                                 : v for k, v in pretrained_dict.items()}
+    pretrained_dict = {k.replace('module.', '')                       : v for k, v in pretrained_dict.items()}
+    pretrained_dict = {k.replace('backbone.', '')                       : v for k, v in pretrained_dict.items()}
     for k, v in encoder.state_dict().items():
         if k not in pretrained_dict:
             logger.info(f'key "{k}" could not be found in loaded state dict')
