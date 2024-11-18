@@ -7,11 +7,12 @@
 
 import os
 
+import torch.distributed
+
 
 from datasets.full_video_dataset import make_fullvideodata
 from evals.video_classification_frozen.utils import ClipAggregation, FrameAggregation, make_transforms
-from tome.patch.vjepa import apply_patch
-from utils.logging import PerClassConfidenceWeightedFullVideoPredictionMeter, PerClassPredictionPositionMeter, PerClassWeightedFullVideoPredictionMeter
+from utils.logging import FullVideoClassificationMeter
 
 # -- FOR DISTRIBUTED TRAINING ENSURE ONLY 1 DEVICE VISIBLE PER PROCESS
 try:
@@ -89,7 +90,6 @@ def main(args_eval, resume_preempt=False):
     resolution = args_opt.get('resolution', 224)
     batch_size = args_opt.get('batch_size')
     attend_across_segments = args_opt.get('attend_across_segments', False)
-    use_tome = args_opt.get('use_tome', False)
 
     eval_tag = args_eval.get('tag', None)
 
@@ -131,10 +131,6 @@ def main(args_eval, resume_preempt=False):
         use_SiLU=use_SiLU,
         tight_SiLU=tight_SiLU,
         use_sdpa=use_sdpa)
-
-    if use_tome:
-        encoder = apply_patch(encoder, trace_source=False, prop_attn=False)
-        encoder.r = 45
 
     if pretrain_frames_per_clip == 1:
         # Process each frame independently and aggregate
@@ -185,8 +181,6 @@ def main(args_eval, resume_preempt=False):
         encoder=encoder,
         classifier=classifier,
         data_loader=val_loader,
-        world_size=world_size,
-        rank=rank,
         num_classes=num_classes,
         write_tag=tag,
     )
@@ -198,8 +192,6 @@ def run_validation(
     classifier,
     data_loader,
     attend_across_segments,
-    world_size,
-    rank,
     num_classes,
     *,
     write_tag: str = ''
@@ -207,27 +199,21 @@ def run_validation(
 
     classifier.train(mode=False)
 
-    if rank == 0:
-        if not 'SLURM_JOB_ID' in os.environ:
-            raise ValueError(f'$SLURM_JOB_ID not set! Can\'t log like this.')
-        log_dir = f'/mnt/slurm/lennart/jepaslt/logs/additional/{os.environ["SLURM_JOB_ID"]}'
-        if not os.path.exists(log_dir):
-            os.makedirs(log_dir)
+    if not 'SLURM_JOB_ID' in os.environ:
+        raise ValueError(f'$SLURM_JOB_ID not set! Can\'t log like this.')
+    log_dir = f'/mnt/slurm/lennart/jepaslt/logs/additional/{os.environ["SLURM_JOB_ID"]}'
 
-        metrics = PerClassPredictionPositionMeter(
-            num_classes=num_classes, binning=False)
-        confidence_weighted_video_predictions = PerClassConfidenceWeightedFullVideoPredictionMeter(
-            num_classes=num_classes)
-        weighted_video_predictions = PerClassWeightedFullVideoPredictionMeter(
-            num_classes=num_classes)
+    meter = FullVideoClassificationMeter(
+        num_classes=num_classes)
 
     def log(msg, it) -> None:
-        logger.info(f'{it}: {msg}')
+        logger.info(
+            f'rank {torch.distributed.get_rank()}/iteration {it}: {msg}')
 
     # Data is of form (buffer, label, indices)
-    for _itr, data in enumerate(data_loader):
+    for iteration, data in enumerate(data_loader):
 
-        def _log(msg): return log(msg=msg, it=_itr)
+        def _log(msg): return log(msg=msg, it=iteration)
 
         with torch.cuda.amp.autocast(dtype=torch.float16, enabled=True):
 
@@ -240,9 +226,6 @@ def run_validation(
             clip_indices = [d.to(device, non_blocking=True)
                             for d in data[2]['indices']]
             labels = data[1].to(device)
-
-            positions = data[2]['position'].to(device)
-            video_lengths = data[2]['video_len'].to(device)
 
             video_paths = data[2]['path']
 
@@ -271,84 +254,18 @@ def run_validation(
                     ]
                 ) / len(outputs) / len(outputs[0])
 
-            gathered_confidences = [torch.zeros_like(
-                outputs) for _ in range(world_size)]
-            torch.distributed.all_gather(gathered_confidences, outputs)
-            confidences = torch.cat(gathered_confidences)
+            meter.update(confidences=outputs, labels=labels, paths=video_paths)
 
-            predictions = outputs.max(dim=1).indices
+            if iteration % 20 == 0:
 
-            gathered_predictions = [torch.zeros_like(
-                predictions) for _ in range(world_size)]
-            torch.distributed.all_gather(
-                gathered_predictions, predictions)
-
-            predictions = torch.cat(gathered_predictions)
-
-            gathered_labels = [torch.zeros_like(
-                labels) for _ in range(world_size)]
-            torch.distributed.all_gather(
-                gathered_labels, labels)
-
-            labels = torch.cat(gathered_labels)
-
-            gathered_positions = [torch.zeros_like(
-                positions) for _ in range(world_size)]
-            torch.distributed.all_gather(
-                gathered_positions,
-                positions
-            )
-            positions = torch.cat(gathered_positions)
-
-            gathered_video_lens = [
-                torch.zeros_like(video_lengths)
-                for _ in range(world_size)
-            ]
-            torch.distributed.all_gather(
-                gathered_video_lens,
-                video_lengths
-            )
-            video_lengths = torch.cat(gathered_video_lens)
-
-            if rank == 0:
-
-                metrics.update(
-                    predictions=predictions,
-                    labels=labels,
-                    positions=positions,
-                    video_lengths=video_lengths
-                )
-
-                confidence_weighted_video_predictions.update(
-                    confidences=confidences,
-                    video_paths=video_paths,
-                    labels=labels
-                )
-
-                weighted_video_predictions.update(
-                    predictions=predictions,
-                    video_paths=video_paths,
-                    labels=labels
-                )
-
-                if _itr % 20 == 0:
-
-                    _log(
-                        f'acc: {metrics.top_1_acc}, pcacc: {metrics.per_class_top1_acc} | {_itr / len(data_loader)}')
-
-                    metrics.to_file(log_dir, file_prefix=f'{write_tag}_')
-                    confidence_weighted_video_predictions.to_file(
-                        log_dir, file_prefix=f'{write_tag}_')
-                    weighted_video_predictions.to_file(
-                        log_dir, file_prefix=f'{write_tag}_')
-
-    if rank == 0:
-
-        metrics.to_file(log_dir, file_prefix=f'{write_tag}_')
-        confidence_weighted_video_predictions.to_file(
-            log_dir, file_prefix=f'{write_tag}_')
-        weighted_video_predictions.to_file(
-            log_dir, file_prefix=f'{write_tag}_')
+                _log(
+                    f'Current Top 1 Accuracy: {meter.top1_acc}, Current Top 1 PC Accuracy: {meter.top1_pc_acc}')
+                meter.tofile(
+                    log_dir, file_prefix=f'{write_tag}_r{torch.distributed.get_rank()}_')
+    _log(
+        f'Current Top 1 Accuracy: {meter.top1_acc}, Current Top 1 PC Accuracy: {meter.top1_pc_acc}')
+    meter.tofile(
+        log_dir, file_prefix=f'{write_tag}_r{torch.distributed.get_rank()}_')
 
 
 def load_checkpoint(
@@ -381,8 +298,8 @@ def load_pretrained(
     except Exception:
         pretrained_dict = checkpoint['encoder']
 
-    pretrained_dict = {k.replace('module.', '')                       : v for k, v in pretrained_dict.items()}
-    pretrained_dict = {k.replace('backbone.', '')                       : v for k, v in pretrained_dict.items()}
+    pretrained_dict = {k.replace('module.', ''): v for k, v in pretrained_dict.items()}
+    pretrained_dict = {k.replace('backbone.', ''): v for k, v in pretrained_dict.items()}
     for k, v in encoder.state_dict().items():
         if k not in pretrained_dict:
             logger.info(f'key "{k}" could not be found in loaded state dict')
