@@ -26,7 +26,7 @@ python -m pip install pysha3
 # Actually run the evaluation script
 
 CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_ravdess_split_0_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2
-# CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_ravdess_split_1_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2
-# CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_ravdess_split_2_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2
-# CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_ravdess_split_3_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2
-# CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_ravdess_split_4_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2
+CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_ravdess_split_1_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2
+CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_ravdess_split_2_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2
+CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_ravdess_split_3_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2
+CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=$PYTHONPATH:/mnt/slurm/lennart/jepaslt/src python -m evals.main --fname=/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_ravdess_split_4_pretrained_full_video.yaml --devices cuda:0 cuda:1 cuda:2

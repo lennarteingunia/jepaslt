@@ -1,0 +1,1539 @@
+Activating mamba virtual environment.
+Channels:
+ - pytorch
+ - nvidia
+ - conda-forge
+Platform: linux-64
+Collecting package metadata (repodata.json): ...working... done
+Solving environment: ...working... done
+
+
+==> WARNING: A newer version of conda exists. <==
+    current version: 24.7.1
+    latest version: 24.9.2
+
+Please update conda by running
+
+    $ conda update -n base -c conda-forge conda
+
+
+Installing pip dependencies: ...working... Ran pip subprocess with arguments:
+['/mnt/data/miniforge3/envs/jepaslt/bin/python', '-m', 'pip', 'install', '-U', '-r', '/mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt', '--exists-action=b']
+Pip subprocess output:
+Requirement already satisfied: opencv-python in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from -r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 1)) (4.10.0.84)
+Requirement already satisfied: ffmpeg-python in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from -r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 2)) (0.2.0)
+Requirement already satisfied: decord in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from -r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 3)) (0.6.0)
+Requirement already satisfied: lightning in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from -r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (2.4.0)
+Requirement already satisfied: wandb in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from -r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (0.18.7)
+Requirement already satisfied: loralib in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from -r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 7)) (0.1.2)
+Requirement already satisfied: numpy>=1.21.2 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from opencv-python->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 1)) (2.1.3)
+Requirement already satisfied: future in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from ffmpeg-python->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 2)) (1.0.0)
+Requirement already satisfied: PyYAML<8.0,>=5.4 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (6.0.2)
+Requirement already satisfied: fsspec<2026.0,>=2022.5.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (2024.9.0)
+Requirement already satisfied: lightning-utilities<2.0,>=0.10.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (0.11.7)
+Requirement already satisfied: packaging<25.0,>=20.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (24.1)
+Requirement already satisfied: torch<4.0,>=2.1.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (2.5.1)
+Requirement already satisfied: torchmetrics<3.0,>=0.7.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (1.4.2)
+Requirement already satisfied: tqdm<6.0,>=4.57.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (4.66.5)
+Requirement already satisfied: typing-extensions<6.0,>=4.4.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (4.12.2)
+Requirement already satisfied: pytorch-lightning in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (2.4.0)
+Requirement already satisfied: bitsandbytes<1.0,>=0.42.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (0.44.1)
+Requirement already satisfied: hydra-core<2.0,>=1.2.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (1.3.2)
+Requirement already satisfied: jsonargparse<5.0,>=4.27.7 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from jsonargparse[signatures]<5.0,>=4.27.7; extra == "pytorch-extra"->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (4.33.2)
+Requirement already satisfied: matplotlib<4.0,>3.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (3.9.2)
+Requirement already satisfied: omegaconf<3.0,>=2.2.3 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (2.3.0)
+Requirement already satisfied: rich<14.0,>=12.3.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (13.9.2)
+Requirement already satisfied: tensorboardX<3.0,>=2.2 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (2.6.2.2)
+Requirement already satisfied: click!=8.0.0,>=7.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (8.1.7)
+Requirement already satisfied: docker-pycreds>=0.4.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (0.4.0)
+Requirement already satisfied: gitpython!=3.1.29,>=1.0.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (3.1.43)
+Requirement already satisfied: platformdirs in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (4.3.6)
+Requirement already satisfied: protobuf!=4.21.0,!=5.28.0,<6,>=3.19.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (5.28.2)
+Requirement already satisfied: psutil>=5.0.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (6.0.0)
+Requirement already satisfied: requests<3,>=2.0.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (2.32.3)
+Requirement already satisfied: sentry-sdk>=2.0.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (2.15.0)
+Requirement already satisfied: setproctitle in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (1.3.3)
+Requirement already satisfied: setuptools in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (75.1.0)
+Requirement already satisfied: six>=1.4.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from docker-pycreds>=0.4.0->wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (1.16.0)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (3.10.9)
+Requirement already satisfied: gitdb<5,>=4.0.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from gitpython!=3.1.29,>=1.0.0->wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (4.0.11)
+Requirement already satisfied: antlr4-python3-runtime==4.9.* in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from hydra-core<2.0,>=1.2.0->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (4.9.3)
+Requirement already satisfied: docstring-parser>=0.15 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from jsonargparse[signatures]<5.0,>=4.27.7; extra == "pytorch-extra"->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (0.16)
+Requirement already satisfied: typeshed-client>=2.1.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from jsonargparse[signatures]<5.0,>=4.27.7; extra == "pytorch-extra"->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (2.7.0)
+Requirement already satisfied: contourpy>=1.0.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from matplotlib<4.0,>3.1->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (1.3.0)
+Requirement already satisfied: cycler>=0.10 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from matplotlib<4.0,>3.1->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from matplotlib<4.0,>3.1->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (4.54.1)
+Requirement already satisfied: kiwisolver>=1.3.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from matplotlib<4.0,>3.1->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (1.4.7)
+Requirement already satisfied: pillow>=8 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from matplotlib<4.0,>3.1->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (10.4.0)
+Requirement already satisfied: pyparsing>=2.3.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from matplotlib<4.0,>3.1->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (3.1.4)
+Requirement already satisfied: python-dateutil>=2.7 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from matplotlib<4.0,>3.1->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (2.9.0)
+Requirement already satisfied: charset-normalizer<4,>=2 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from requests<3,>=2.0.0->wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (3.3.2)
+Requirement already satisfied: idna<4,>=2.5 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from requests<3,>=2.0.0->wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (3.10)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from requests<3,>=2.0.0->wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (2.2.3)
+Requirement already satisfied: certifi>=2017.4.17 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from requests<3,>=2.0.0->wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (2024.8.30)
+Requirement already satisfied: markdown-it-py>=2.2.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from rich<14.0,>=12.3.0->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (3.0.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from rich<14.0,>=12.3.0->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (2.18.0)
+Requirement already satisfied: filelock in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from torch<4.0,>=2.1.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (3.16.1)
+Requirement already satisfied: networkx in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from torch<4.0,>=2.1.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (3.3)
+Requirement already satisfied: jinja2 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from torch<4.0,>=2.1.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (3.1.4)
+Requirement already satisfied: sympy==1.13.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from torch<4.0,>=2.1.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (1.13.1)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from sympy==1.13.1->torch<4.0,>=2.1.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (1.3.0)
+Requirement already satisfied: aiohappyeyeballs>=2.3.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (2.4.3)
+Requirement already satisfied: aiosignal>=1.1.2 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (1.3.1)
+Requirement already satisfied: attrs>=17.3.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (24.2.0)
+Requirement already satisfied: frozenlist>=1.1.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (1.4.1)
+Requirement already satisfied: multidict<7.0,>=4.5 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (6.1.0)
+Requirement already satisfied: yarl<2.0,>=1.12.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (1.14.0)
+Requirement already satisfied: async-timeout<5.0,>=4.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (4.0.3)
+Requirement already satisfied: smmap<6,>=3.0.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.29,>=1.0.0->wandb->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 6)) (5.0.1)
+Requirement already satisfied: mdurl~=0.1 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from markdown-it-py>=2.2.0->rich<14.0,>=12.3.0->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (0.1.2)
+Requirement already satisfied: importlib-resources>=1.4.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from typeshed-client>=2.1.0->jsonargparse[signatures]<5.0,>=4.27.7; extra == "pytorch-extra"->lightning[pytorch-extra]->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 5)) (6.4.5)
+Requirement already satisfied: MarkupSafe>=2.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from jinja2->torch<4.0,>=2.1.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (3.0.0)
+Requirement already satisfied: propcache>=0.2.0 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (from yarl<2.0,>=1.12.0->aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2026.0,>=2022.5.0->lightning->-r /mnt/slurm/lennart/jepaslt/condaenv.q8vrt4vz.requirements.txt (line 4)) (0.2.0)
+
+done
+#
+# To activate this environment, use
+#
+#     $ conda activate jepaslt
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+Requirement already satisfied: pysha3 in /mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages (1.0.2)
+RSyncing datasets...
+sending incremental file list
+
+Number of files: 22,360 (reg: 22,352, dir: 8)
+Number of created files: 0
+Number of deleted files: 0
+Number of regular files transferred: 0
+Total file size: 3.75G bytes
+Total transferred file size: 0 bytes
+Literal data: 0 bytes
+Matched data: 0 bytes
+File list size: 589.76K
+File list generation time: 0.008 seconds
+File list transfer time: 0.000 seconds
+Total bytes sent: 727.70K
+Total bytes received: 43
+
+sent 727.70K bytes  received 43 bytes  291.10K bytes/sec
+total size is 3.75G  speedup is 5,147.93
+INFO:root:called-params /mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_0_16x8x3_pretrained_full_video.yaml
+INFO:root:loaded params...
+{   'data': {   'dataset_type': 'VideoDataset',
+                'dataset_val': [   '/mnt/datasets/RAVDESS/additional/splits/0_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/1_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/2_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/3_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/4_val.csv'],
+                'frame_step': 4,
+                'frames_per_clip': 16,
+                'num_classes': 8,
+                'num_segments': 8,
+                'num_views_per_segment': 3},
+    'eval_name': 'pretrained_full_video_classification',
+    'nodes': 1,
+    'optimization': {   'attend_across_segments': True,
+                        'batch_size': 12,
+                        'final_lr': 0.0,
+                        'lr': 0.001,
+                        'num_epochs': 20,
+                        'resolution': 384,
+                        'start_lr': 0.001,
+                        'use_bfloat16': True,
+                        'warmup': 0.0,
+                        'weight_decay': 0.01},
+    'pretrain': {   'checkpoint': 'vith16-384.pth.tar',
+                    'checkpoint_key': 'target_encoder',
+                    'clip_duration': None,
+                    'folder': '/mnt/slurm/lennart/jepaslt/models',
+                    'frames_per_clip': 16,
+                    'model_name': 'vit_huge',
+                    'patch_size': 16,
+                    'tight_silu': False,
+                    'tubelet_size': 2,
+                    'uniform_power': True,
+                    'use_sdpa': True,
+                    'use_silu': False,
+                    'write_tag': 'crema_d_0'},
+    'resume_checkpoint': False,
+    'tag': 'crema_d_0-16x8x3',
+    'tasks_per_node': 3}
+INFO:root:Running... (rank: 0/3)
+INFO:root:Running evaluation: pretrained_full_video_classification
+{   'data': {   'dataset_type': 'VideoDataset',
+                'dataset_val': [   '/mnt/datasets/RAVDESS/additional/splits/0_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/1_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/2_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/3_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/4_val.csv'],
+                'frame_step': 4,
+                'frames_per_clip': 16,
+                'num_classes': 8,
+                'num_segments': 8,
+                'num_views_per_segment': 3},
+    'eval_name': 'pretrained_full_video_classification',
+    'nodes': 1,
+    'optimization': {   'attend_across_segments': True,
+                        'batch_size': 12,
+                        'final_lr': 0.0,
+                        'lr': 0.001,
+                        'num_epochs': 20,
+                        'resolution': 384,
+                        'start_lr': 0.001,
+                        'use_bfloat16': True,
+                        'warmup': 0.0,
+                        'weight_decay': 0.01},
+    'pretrain': {   'checkpoint': 'vith16-384.pth.tar',
+                    'checkpoint_key': 'target_encoder',
+                    'clip_duration': None,
+                    'folder': '/mnt/slurm/lennart/jepaslt/models',
+                    'frames_per_clip': 16,
+                    'model_name': 'vit_huge',
+                    'patch_size': 16,
+                    'tight_silu': False,
+                    'tubelet_size': 2,
+                    'uniform_power': True,
+                    'use_sdpa': True,
+                    'use_silu': False,
+                    'write_tag': 'crema_d_0'},
+    'resume_checkpoint': False,
+    'tag': 'crema_d_0-16x8x3',
+    'tasks_per_node': 3}
+INFO:root:Initialized (rank/world-size) 2/3
+{   'data': {   'dataset_type': 'VideoDataset',
+                'dataset_val': [   '/mnt/datasets/RAVDESS/additional/splits/0_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/1_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/2_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/3_val.csv',
+                                   '/mnt/datasets/RAVDESS/additional/splits/4_val.csv'],
+                'frame_step': 4,
+                'frames_per_clip': 16,
+                'num_classes': 8,
+                'num_segments': 8,
+                'num_views_per_segment': 3},
+    'eval_name': 'pretrained_full_video_classification',
+    'nodes': 1,
+    'optimization': {   'attend_across_segments': True,
+                        'batch_size': 12,
+                        'final_lr': 0.0,
+                        'lr': 0.001,
+                        'num_epochs': 20,
+                        'resolution': 384,
+                        'start_lr': 0.001,
+                        'use_bfloat16': True,
+                        'warmup': 0.0,
+                        'weight_decay': 0.01},
+    'pretrain': {   'checkpoint': 'vith16-384.pth.tar',
+                    'checkpoint_key': 'target_encoder',
+                    'clip_duration': None,
+                    'folder': '/mnt/slurm/lennart/jepaslt/models',
+                    'frames_per_clip': 16,
+                    'model_name': 'vit_huge',
+                    'patch_size': 16,
+                    'tight_silu': False,
+                    'tubelet_size': 2,
+                    'uniform_power': True,
+                    'use_sdpa': True,
+                    'use_silu': False,
+                    'write_tag': 'crema_d_0'},
+    'resume_checkpoint': False,
+    'tag': 'crema_d_0-16x8x3',
+    'tasks_per_node': 3}
+INFO:root:Initialized (rank/world-size) 1/3
+INFO:root:Initialized (rank/world-size) 0/3
+INFO:root:Loading pretrained model from /mnt/slurm/lennart/jepaslt/models/vith16-384.pth.tar
+/mnt/slurm/lennart/jepaslt/evals/pretrained_full_video_classification/eval.py:295: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(pretrained, map_location='cpu')
+INFO:root:Loading pretrained model from /mnt/slurm/lennart/jepaslt/models/vith16-384.pth.tar
+/mnt/slurm/lennart/jepaslt/evals/pretrained_full_video_classification/eval.py:295: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(pretrained, map_location='cpu')
+INFO:root:Loading pretrained model from /mnt/slurm/lennart/jepaslt/models/vith16-384.pth.tar
+/mnt/slurm/lennart/jepaslt/evals/pretrained_full_video_classification/eval.py:295: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(pretrained, map_location='cpu')
+INFO:root:loaded pretrained model with msg: <All keys matched successfully>
+INFO:root:loaded pretrained model with msg: <All keys matched successfully>
+INFO:root:loaded pretrained encoder from epoch: 300
+ path: /mnt/slurm/lennart/jepaslt/models/vith16-384.pth.tar
+INFO:root:loaded pretrained encoder from epoch: 300
+ path: /mnt/slurm/lennart/jepaslt/models/vith16-384.pth.tar
+INFO:root:loaded pretrained model with msg: <All keys matched successfully>
+INFO:root:loaded pretrained encoder from epoch: 300
+ path: /mnt/slurm/lennart/jepaslt/models/vith16-384.pth.tar
+INFO:root:Indexed a total number of 2880 videos containing 135090 samples.
+INFO:root:Indexed a total number of 2880 videos containing 135090 samples.
+/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 12 worker processes in total. Our suggested max number of worker in current system is 10, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packaINFO:root:Indexed a total number of 2880 videos containing 135090 samples.
+reate 12 worker processes in total. Our suggested max number of worker in current system is 10, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+INFO:root:Dataloader created... iterations per epoch: 3753
+/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 12 worker processes in total. Our suggested max number of worker in current system is 10, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+INFO:root:Dataloader created... iterations per epoch: 3753
+/mnt/slurm/lennart/jepaslt/evals/pretrained_full_video_classification/eval.py:275: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(r_path, map_location=torch.device('cpu'))
+/mnt/slurm/lennart/jepaslt/evals/pretrained_full_video_classification/eval.py:275: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(r_path, map_location=torch.device('cpu'))
+/mnt/slurm/lennart/jepaslt/evals/pretrained_full_video_classification/eval.py:275: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(r_path, map_location=torch.device('cpu'))
+INFO:root:loaded pretrained classifier from epoch 20 with msg: <All keys matched successfully>
+INFO:root:loaded pretrained classifier from epoch 20 with msg: <All keys matched successfully>
+INFO:root:loaded pretrained classifier from epoch 20 with msg: <All keys matched successfully>
+/mnt/slurm/lennart/jepaslt/evals/pretrained_full_video_classification/eval.py:218: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(dtype=torch.float16, enabled=True):
+/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+INFO:root:rank 2/iteration 0: Current Top 1 Accuracy: 1.0, Current Top 1 PC Accuracy: tensor([nan, nan, 1., nan, nan, nan, nan, nan], device='cuda:0')
+/mnt/slurm/lennart/jepaslt/evals/pretrained_full_video_classification/eval.py:218: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(dtype=torch.float16, enabled=True):
+/mnt/slurm/lennart/jepaslt/evals/pretrained_full_video_classification/eval.py:218: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(dtype=torch.float16, enabled=True):
+/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+INFO:root:rank 0/iteration 0: Current Top 1 Accuracy: 1.0, Current Top 1 PC Accuracy: tensor([nan, nan, 1., nan, nan, nan, nan, nan], device='cuda:0')
+INFO:root:rank 1/iteration 0: Current Top 1 Accuracy: 1.0, Current Top 1 PC Accuracy: tensor([nan, nan, 1., nan, nan, nan, nan, nan], device='cuda:0')
+INFO:root:rank 2/iteration 20: Current Top 1 Accuracy: 0.2341269850730896, Current Top 1 PC Accuracy: tensor([0.0000, 0.5000, 0.6111, 1.0000, 0.0000, 0.0000,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 20: Current Top 1 Accuracy: 0.2420634925365448, Current Top 1 PC Accuracy: tensor([0.0000, 0.6667, 0.5895, 1.0000, 0.0000, 0.0000,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 20: Current Top 1 Accuracy: 0.25, Current Top 1 PC Accuracy: tensor([0.0000, 0.7143, 0.6154, 1.0000, 0.0000, 0.0000,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 40: Current Top 1 Accuracy: 0.23373983800411224, Current Top 1 PC Accuracy: tensor([0.0000, 0.0714, 0.5833, 0.3750, 0.0000, 0.0000,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 40: Current Top 1 Accuracy: 0.2398373931646347, Current Top 1 PC Accuracy: tensor([0.0000, 0.3333, 0.5722, 0.2857, 0.0000, 0.0000,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 40: Current Top 1 Accuracy: 0.23577235639095306, Current Top 1 PC Accuracy: tensor([0.0000, 0.1538, 0.5753, 0.3182, 0.0000, 0.0000,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 60: Current Top 1 Accuracy: 0.18306010961532593, Current Top 1 PC Accuracy: tensor([0.0902, 0.0222, 0.4449, 0.0909, 0.0000, 0.0567,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 60: Current Top 1 Accuracy: 0.19398906826972961, Current Top 1 PC Accuracy: tensor([0.0893, 0.1250, 0.4385, 0.0625, 0.0000, 0.0959,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 60: Current Top 1 Accuracy: 0.18579235672950745, Current Top 1 PC Accuracy: tensor([0.0855, 0.0488, 0.4440, 0.0714, 0.0000, 0.0690,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 80: Current Top 1 Accuracy: 0.15020576119422913, Current Top 1 PC Accuracy: tensor([0.1310, 0.0123, 0.3443, 0.0517, 0.0000, 0.0811,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 80: Current Top 1 Accuracy: 0.15432098507881165, Current Top 1 PC Accuracy: tensor([0.1631, 0.0260, 0.3452, 0.0400, 0.0000, 0.0733,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 80: Current Top 1 Accuracy: 0.15843620896339417, Current Top 1 PC Accuracy: tensor([0.1348, 0.0704, 0.3452, 0.0355, 0.0000, 0.1111,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 100: Current Top 1 Accuracy: 0.14108911156654358, Current Top 1 PC Accuracy: tensor([0.1591, 0.0202, 0.3031, 0.0328, 0.0000, 0.0994,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 100: Current Top 1 Accuracy: 0.1394389420747757, Current Top 1 PC Accuracy: tensor([0.1307, 0.0099, 0.3037, 0.0366, 0.0000, 0.1258,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 100: Current Top 1 Accuracy: 0.1435643583536148, Current Top 1 PC Accuracy: tensor([0.1279, 0.0562, 0.2992, 0.0254, 0.0000, 0.1455,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 120: Current Top 1 Accuracy: 0.15220385789871216, Current Top 1 PC Accuracy: tensor([0.1228, 0.0392, 0.3499, 0.0445, 0.0000, 0.0667,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 120: Current Top 1 Accuracy: 0.15082643926143646, Current Top 1 PC Accuracy: tensor([0.1013, 0.0377, 0.3493, 0.0482, 0.0000, 0.0840,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 120: Current Top 1 Accuracy: 0.1556473821401596, Current Top 1 PC Accuracy: tensor([0.0982, 0.0938, 0.3519, 0.0295, 0.0000, 0.0980,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 140: Current Top 1 Accuracy: 0.173758864402771, Current Top 1 PC Accuracy: tensor([0.1116, 0.0385, 0.3925, 0.1027, 0.0000, 0.0530,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 140: Current Top 1 Accuracy: 0.17257682979106903, Current Top 1 PC Accuracy: tensor([0.0873, 0.0918, 0.3862, 0.0726, 0.0000, 0.0782,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 140: Current Top 1 Accuracy: 0.16962175071239471, Current Top 1 PC Accuracy: tensor([0.0906, 0.0374, 0.3861, 0.0885, 0.0000, 0.0671,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 160: Current Top 1 Accuracy: 0.20082814991474152, Current Top 1 PC Accuracy: tensor([0.1022, 0.0381, 0.4236, 0.1690, 0.0000, 0.0443,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 160: Current Top 1 Accuracy: 0.2018633484840393, Current Top 1 PC Accuracy: tensor([0.0809, 0.0891, 0.4187, 0.1583, 0.0000, 0.0656,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 160: Current Top 1 Accuracy: 0.19772256910800934, Current Top 1 PC Accuracy: tensor([0.0836, 0.0370, 0.4176, 0.1597, 0.0000, 0.0560,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 180: Current Top 1 Accuracy: 0.21270717680454254, Current Top 1 PC Accuracy: tensor([0.0979, 0.0381, 0.4175, 0.2176, 0.0046, 0.0387,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 180: Current Top 1 Accuracy: 0.21362799406051636, Current Top 1 PC Accuracy: tensor([0.0772, 0.0891, 0.4156, 0.2092, 0.0045, 0.0570,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 180: Current Top 1 Accuracy: 0.20810313522815704, Current Top 1 PC Accuracy: tensor([0.0788, 0.0370, 0.4133, 0.2024, 0.0047, 0.0488,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 200: Current Top 1 Accuracy: 0.19320066273212433, Current Top 1 PC Accuracy: tensor([0.0976, 0.0296, 0.3892, 0.1637, 0.0042, 0.0466,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 200: Current Top 1 Accuracy: 0.18822553753852844, Current Top 1 PC Accuracy: tensor([0.0782, 0.0299, 0.3867, 0.1495, 0.0043, 0.0516,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 200: Current Top 1 Accuracy: 0.19402985274791718, Current Top 1 PC Accuracy: tensor([0.0767, 0.0698, 0.3890, 0.1538, 0.0041, 0.0641,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 220: Current Top 1 Accuracy: 0.17760181427001953, Current Top 1 PC Accuracy: tensor([0.0952, 0.0270, 0.3637, 0.1326, 0.0036, 0.0563,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 220: Current Top 1 Accuracy: 0.1719457060098648, Current Top 1 PC Accuracy: tensor([0.0754, 0.0276, 0.3613, 0.1208, 0.0037, 0.0548,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 220: Current Top 1 Accuracy: 0.17722474038600922, Current Top 1 PC Accuracy: tensor([0.0741, 0.0629, 0.3636, 0.1243, 0.0035, 0.0670,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 240: Current Top 1 Accuracy: 0.16286307573318481, Current Top 1 PC Accuracy: tensor([0.0949, 0.0238, 0.3417, 0.1093, 0.0033, 0.0542,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 240: Current Top 1 Accuracy: 0.1576763540506363, Current Top 1 PC Accuracy: tensor([0.0747, 0.0245, 0.3397, 0.0997, 0.0034, 0.0525,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 240: Current Top 1 Accuracy: 0.16320885717868805, Current Top 1 PC Accuracy: tensor([0.0731, 0.0570, 0.3400, 0.1030, 0.0033, 0.0685,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 260: Current Top 1 Accuracy: 0.16570881009101868, Current Top 1 PC Accuracy: tensor([0.0895, 0.0225, 0.3416, 0.1135, 0.0031, 0.0620,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 260: Current Top 1 Accuracy: 0.15996168553829193, Current Top 1 PC Accuracy: tensor([0.0699, 0.0235, 0.3395, 0.1051, 0.0032, 0.0526,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 260: Current Top 1 Accuracy: 0.16475096344947815, Current Top 1 PC Accuracy: tensor([0.0692, 0.0542, 0.3391, 0.1048, 0.0030, 0.0717,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 280: Current Top 1 Accuracy: 0.1743772178888321, Current Top 1 PC Accuracy: tensor([0.0843, 0.0223, 0.3452, 0.1386, 0.0031, 0.0544,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 280: Current Top 1 Accuracy: 0.1708185076713562, Current Top 1 PC Accuracy: tensor([0.0665, 0.0231, 0.3450, 0.1364, 0.0032, 0.0465,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 280: Current Top 1 Accuracy: 0.17408066987991333, Current Top 1 PC Accuracy: tensor([0.0655, 0.0539, 0.3426, 0.1339, 0.0030, 0.0632,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 300: Current Top 1 Accuracy: 0.18133997917175293, Current Top 1 PC Accuracy: tensor([0.0782, 0.0221, 0.3567, 0.1574, 0.0061, 0.0475,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 300: Current Top 1 Accuracy: 0.17912514507770538, Current Top 1 PC Accuracy: tensor([0.0623, 0.0231, 0.3581, 0.1561, 0.0092, 0.0402,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 300: Current Top 1 Accuracy: 0.18106311559677124, Current Top 1 PC Accuracy: tensor([0.0604, 0.0539, 0.3557, 0.1484, 0.0060, 0.0554,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 320: Current Top 1 Accuracy: 0.173416405916214, Current Top 1 PC Accuracy: tensor([0.0969, 0.0169, 0.3521, 0.1458, 0.0054, 0.0507,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 320: Current Top 1 Accuracy: 0.17133955657482147, Current Top 1 PC Accuracy: tensor([0.0812, 0.0171, 0.3532, 0.1457, 0.0082, 0.0439,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 320: Current Top 1 Accuracy: 0.1736760139465332, Current Top 1 PC Accuracy: tensor([0.0855, 0.0395, 0.3514, 0.1381, 0.0054, 0.0577,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 340: Current Top 1 Accuracy: 0.1688660830259323, Current Top 1 PC Accuracy: tensor([0.0976, 0.0146, 0.3554, 0.1368, 0.0051, 0.0472,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 340: Current Top 1 Accuracy: 0.1673998087644577, Current Top 1 PC Accuracy: tensor([0.0843, 0.0147, 0.3575, 0.1376, 0.0077, 0.0409,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 340: Current Top 1 Accuracy: 0.16959922015666962, Current Top 1 PC Accuracy: tensor([0.0872, 0.0336, 0.3549, 0.1298, 0.0051, 0.0539,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 360: Current Top 1 Accuracy: 0.17543859779834747, Current Top 1 PC Accuracy: tensor([0.0844, 0.0145, 0.3831, 0.1338, 0.0049, 0.0440,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 360: Current Top 1 Accuracy: 0.17405354976654053, Current Top 1 PC Accuracy: tensor([0.0735, 0.0147, 0.3866, 0.1349, 0.0072, 0.0380,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 360: Current Top 1 Accuracy: 0.17636196315288544, Current Top 1 PC Accuracy: tensor([0.0756, 0.0335, 0.3818, 0.1271, 0.0049, 0.0503,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 380: Current Top 1 Accuracy: 0.17738407850265503, Current Top 1 PC Accuracy: tensor([0.0763, 0.0142, 0.3930, 0.1286, 0.0271, 0.0415,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 380: Current Top 1 Accuracy: 0.17585301399230957, Current Top 1 PC Accuracy: tensor([0.0665, 0.0144, 0.3945, 0.1300, 0.0312, 0.0359,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 380: Current Top 1 Accuracy: 0.178696408867836, Current Top 1 PC Accuracy: tensor([0.0683, 0.0326, 0.3904, 0.1226, 0.0318, 0.0475,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 400: Current Top 1 Accuracy: 0.17747297883033752, Current Top 1 PC Accuracy: tensor([0.0678, 0.0142, 0.4051, 0.1251, 0.0265, 0.0380,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 400: Current Top 1 Accuracy: 0.17601828277111053, Current Top 1 PC Accuracy: tensor([0.0597, 0.0144, 0.4046, 0.1272, 0.0304, 0.0329,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 400: Current Top 1 Accuracy: 0.17851205170154572, Current Top 1 PC Accuracy: tensor([0.0613, 0.0326, 0.4014, 0.1191, 0.0330, 0.0434,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 420: Current Top 1 Accuracy: 0.18091845512390137, Current Top 1 PC Accuracy: tensor([0.0631, 0.0136, 0.4150, 0.1225, 0.0437, 0.0366,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 420: Current Top 1 Accuracy: 0.18012668192386627, Current Top 1 PC Accuracy: tensor([0.0547, 0.0137, 0.4174, 0.1235, 0.0526, 0.0317,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 420: Current Top 1 Accuracy: 0.18190816044807434, Current Top 1 PC Accuracy: tensor([0.0562, 0.0311, 0.4127, 0.1156, 0.0535, 0.0417,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 440: Current Top 1 Accuracy: 0.17384731769561768, Current Top 1 PC Accuracy: tensor([0.0679, 0.0119, 0.4143, 0.1148, 0.0411, 0.0351,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 440: Current Top 1 Accuracy: 0.17328041791915894, Current Top 1 PC Accuracy: tensor([0.0614, 0.0120, 0.4172, 0.1159, 0.0498, 0.0303,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 440: Current Top 1 Accuracy: 0.17479214072227478, Current Top 1 PC Accuracy: tensor([0.0621, 0.0274, 0.4122, 0.1081, 0.0504, 0.0391,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 460: Current Top 1 Accuracy: 0.16865509748458862, Current Top 1 PC Accuracy: tensor([0.0793, 0.0100, 0.4093, 0.1084, 0.0381, 0.0379,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 460: Current Top 1 Accuracy: 0.16811279952526093, Current Top 1 PC Accuracy: tensor([0.0728, 0.0102, 0.4117, 0.1093, 0.0463, 0.0332,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 460: Current Top 1 Accuracy: 0.16919739544391632, Current Top 1 PC Accuracy: tensor([0.0709, 0.0231, 0.4068, 0.1016, 0.0467, 0.0418,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 480: Current Top 1 Accuracy: 0.1621621549129486, Current Top 1 PC Accuracy: tensor([0.0830, 0.0083, 0.4093, 0.1011, 0.0364, 0.0364,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 480: Current Top 1 Accuracy: 0.16146916151046753, Current Top 1 PC Accuracy: tensor([0.0752, 0.0084, 0.4112, 0.1018, 0.0444, 0.0320,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 480: Current Top 1 Accuracy: 0.16250866651535034, Current Top 1 PC Accuracy: tensor([0.0736, 0.0188, 0.4068, 0.0947, 0.0446, 0.0404,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 500: Current Top 1 Accuracy: 0.16101130843162537, Current Top 1 PC Accuracy: tensor([0.0821, 0.0073, 0.4182, 0.0980, 0.0341, 0.0359,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 500: Current Top 1 Accuracy: 0.16034597158432007, Current Top 1 PC Accuracy: tensor([0.0732, 0.0074, 0.4194, 0.0992, 0.0419, 0.0318,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 500: Current Top 1 Accuracy: 0.16134397685527802, Current Top 1 PC Accuracy: tensor([0.0718, 0.0166, 0.4156, 0.0926, 0.0417, 0.0389,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 520: Current Top 1 Accuracy: 0.1621880978345871, Current Top 1 PC Accuracy: tensor([0.0762, 0.0073, 0.4334, 0.0972, 0.0317, 0.0336,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 520: Current Top 1 Accuracy: 0.16154830157756805, Current Top 1 PC Accuracy: tensor([0.0682, 0.0074, 0.4346, 0.0981, 0.0393, 0.0296,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 520: Current Top 1 Accuracy: 0.1621880978345871, Current Top 1 PC Accuracy: tensor([0.0669, 0.0165, 0.4300, 0.0918, 0.0388, 0.0362,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 540: Current Top 1 Accuracy: 0.16327787935733795, Current Top 1 PC Accuracy: tensor([0.0722, 0.0071, 0.4463, 0.0966, 0.0314, 0.0314,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 540: Current Top 1 Accuracy: 0.16312384605407715, Current Top 1 PC Accuracy: tensor([0.0646, 0.0072, 0.4486, 0.0982, 0.0384, 0.0278,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 540: Current Top 1 Accuracy: 0.16343191266059875, Current Top 1 PC Accuracy: tensor([0.0632, 0.0161, 0.4433, 0.0913, 0.0382, 0.0340,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 560: Current Top 1 Accuracy: 0.16651812195777893, Current Top 1 PC Accuracy: tensor([0.0674, 0.0071, 0.4629, 0.0968, 0.0300, 0.0297,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 560: Current Top 1 Accuracy: 0.1662210375070572, Current Top 1 PC Accuracy: tensor([0.0601, 0.0071, 0.4651, 0.0977, 0.0368, 0.0263,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 560: Current Top 1 Accuracy: 0.16681520640850067, Current Top 1 PC Accuracy: tensor([0.0584, 0.0160, 0.4602, 0.0910, 0.0368, 0.0321,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 580: Current Top 1 Accuracy: 0.1696787178516388, Current Top 1 PC Accuracy: tensor([0.0635, 0.0069, 0.4786, 0.0978, 0.0282, 0.0285,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 580: Current Top 1 Accuracy: 0.1696787178516388, Current Top 1 PC Accuracy: tensor([0.0571, 0.0069, 0.4813, 0.0977, 0.0358, 0.0253,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 580: Current Top 1 Accuracy: 0.16996558010578156, Current Top 1 PC Accuracy: tensor([0.0554, 0.0156, 0.4762, 0.0910, 0.0360, 0.0307,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 600: Current Top 1 Accuracy: 0.16472545266151428, Current Top 1 PC Accuracy: tensor([0.0684, 0.0062, 0.4783, 0.0925, 0.0272, 0.0275,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 600: Current Top 1 Accuracy: 0.16500277817249298, Current Top 1 PC Accuracy: tensor([0.0631, 0.0062, 0.4813, 0.0925, 0.0356, 0.0243,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 600: Current Top 1 Accuracy: 0.16500277817249298, Current Top 1 PC Accuracy: tensor([0.0604, 0.0140, 0.4760, 0.0862, 0.0344, 0.0296,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 620: Current Top 1 Accuracy: 0.15955448150634766, Current Top 1 PC Accuracy: tensor([0.0689, 0.0054, 0.4783, 0.0880, 0.0260, 0.0269,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 620: Current Top 1 Accuracy: 0.16022543609142303, Current Top 1 PC Accuracy: tensor([0.0634, 0.0054, 0.4813, 0.0883, 0.0344, 0.0258,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 620: Current Top 1 Accuracy: 0.15982286632061005, Current Top 1 PC Accuracy: tensor([0.0609, 0.0121, 0.4760, 0.0821, 0.0330, 0.0290,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 640: Current Top 1 Accuracy: 0.16263650357723236, Current Top 1 PC Accuracy: tensor([0.0635, 0.0067, 0.4937, 0.0873, 0.0255, 0.0259,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 640: Current Top 1 Accuracy: 0.16328653693199158, Current Top 1 PC Accuracy: tensor([0.0583, 0.0054, 0.4967, 0.0880, 0.0336, 0.0248,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 640: Current Top 1 Accuracy: 0.16276651620864868, Current Top 1 PC Accuracy: tensor([0.0557, 0.0135, 0.4916, 0.0812, 0.0323, 0.0279,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 660: Current Top 1 Accuracy: 0.16414523124694824, Current Top 1 PC Accuracy: tensor([0.0589, 0.0067, 0.5051, 0.0870, 0.0264, 0.0248,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 660: Current Top 1 Accuracy: 0.16439737379550934, Current Top 1 PC Accuracy: tensor([0.0537, 0.0054, 0.5081, 0.0873, 0.0335, 0.0236,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 660: Current Top 1 Accuracy: 0.16439737379550934, Current Top 1 PC Accuracy: tensor([0.0513, 0.0134, 0.5036, 0.0812, 0.0322, 0.0267,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 680: Current Top 1 Accuracy: 0.16226138174533844, Current Top 1 PC Accuracy: tensor([0.0641, 0.0066, 0.5068, 0.0824, 0.0260, 0.0247,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 680: Current Top 1 Accuracy: 0.16201664507389069, Current Top 1 PC Accuracy: tensor([0.0584, 0.0052, 0.5090, 0.0822, 0.0330, 0.0231,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 680: Current Top 1 Accuracy: 0.16201664507389069, Current Top 1 PC Accuracy: tensor([0.0552, 0.0130, 0.5041, 0.0768, 0.0317, 0.0261,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 700: Current Top 1 Accuracy: 0.15917736291885376, Current Top 1 PC Accuracy: tensor([0.0722, 0.0062, 0.5068, 0.0787, 0.0257, 0.0239,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 700: Current Top 1 Accuracy: 0.15905848145484924, Current Top 1 PC Accuracy: tensor([0.0666, 0.0049, 0.5090, 0.0787, 0.0325, 0.0229,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 700: Current Top 1 Accuracy: 0.15905848145484924, Current Top 1 PC Accuracy: tensor([0.0644, 0.0122, 0.5041, 0.0735, 0.0311, 0.0252,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 720: Current Top 1 Accuracy: 0.15603329241275787, Current Top 1 PC Accuracy: tensor([0.0789, 0.0060, 0.5046, 0.0739, 0.0253, 0.0238,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 720: Current Top 1 Accuracy: 0.15580213069915771, Current Top 1 PC Accuracy: tensor([0.0732, 0.0048, 0.5073, 0.0740, 0.0322, 0.0222,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 720: Current Top 1 Accuracy: 0.1559177041053772, Current Top 1 PC Accuracy: tensor([0.0714, 0.0119, 0.5017, 0.0690, 0.0307, 0.0246,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 740: Current Top 1 Accuracy: 0.1555330604314804, Current Top 1 PC Accuracy: tensor([0.0784, 0.0058, 0.5112, 0.0718, 0.0250, 0.0230,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 740: Current Top 1 Accuracy: 0.1555330604314804, Current Top 1 PC Accuracy: tensor([0.0731, 0.0046, 0.5143, 0.0723, 0.0318, 0.0215,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 740: Current Top 1 Accuracy: 0.15530814230442047, Current Top 1 PC Accuracy: tensor([0.0708, 0.0114, 0.5082, 0.0670, 0.0304, 0.0237,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 760: Current Top 1 Accuracy: 0.15867279469966888, Current Top 1 PC Accuracy: tensor([0.0732, 0.0070, 0.5249, 0.0727, 0.0248, 0.0223,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 760: Current Top 1 Accuracy: 0.15867279469966888, Current Top 1 PC Accuracy: tensor([0.0681, 0.0046, 0.5287, 0.0723, 0.0325, 0.0208,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 760: Current Top 1 Accuracy: 0.15867279469966888, Current Top 1 PC Accuracy: tensor([0.0662, 0.0114, 0.5225, 0.0678, 0.0311, 0.0230,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 780: Current Top 1 Accuracy: 0.15834400057792664, Current Top 1 PC Accuracy: tensor([0.0724, 0.0069, 0.5290, 0.0711, 0.0245, 0.0227,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 780: Current Top 1 Accuracy: 0.1580238938331604, Current Top 1 PC Accuracy: tensor([0.0650, 0.0112, 0.5267, 0.0659, 0.0307, 0.0235,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 780: Current Top 1 Accuracy: 0.1580238938331604, Current Top 1 PC Accuracy: tensor([0.0670, 0.0045, 0.5323, 0.0703, 0.0320, 0.0212,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 800: Current Top 1 Accuracy: 0.15532667934894562, Current Top 1 PC Accuracy: tensor([0.0717, 0.0063, 0.5278, 0.0673, 0.0239, 0.0272,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 800: Current Top 1 Accuracy: 0.15501455962657928, Current Top 1 PC Accuracy: tensor([0.0644, 0.0105, 0.5257, 0.0620, 0.0299, 0.0280,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 800: Current Top 1 Accuracy: 0.15501455962657928, Current Top 1 PC Accuracy: tensor([0.0665, 0.0042, 0.5316, 0.0662, 0.0312, 0.0258,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 820: Current Top 1 Accuracy: 0.15682095289230347, Current Top 1 PC Accuracy: tensor([0.0706, 0.0062, 0.5343, 0.0710, 0.0231, 0.0295,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 820: Current Top 1 Accuracy: 0.1563134342432022, Current Top 1 PC Accuracy: tensor([0.0635, 0.0102, 0.5322, 0.0668, 0.0289, 0.0288,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 820: Current Top 1 Accuracy: 0.15671944618225098, Current Top 1 PC Accuracy: tensor([0.0656, 0.0041, 0.5385, 0.0712, 0.0299, 0.0272,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 840: Current Top 1 Accuracy: 0.16022592782974243, Current Top 1 PC Accuracy: tensor([0.0695, 0.0061, 0.5401, 0.0864, 0.0230, 0.0285,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 840: Current Top 1 Accuracy: 0.15943321585655212, Current Top 1 PC Accuracy: tensor([0.0624, 0.0102, 0.5380, 0.0819, 0.0276, 0.0278,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 840: Current Top 1 Accuracy: 0.1597304791212082, Current Top 1 PC Accuracy: tensor([0.0646, 0.0041, 0.5440, 0.0852, 0.0286, 0.0263,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 860: Current Top 1 Accuracy: 0.16202090680599213, Current Top 1 PC Accuracy: tensor([0.0680, 0.0061, 0.5466, 0.0914, 0.0228, 0.0277,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 860: Current Top 1 Accuracy: 0.1614401787519455, Current Top 1 PC Accuracy: tensor([0.0609, 0.0102, 0.5455, 0.0872, 0.0263, 0.0271,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 860: Current Top 1 Accuracy: 0.1617305427789688, Current Top 1 PC Accuracy: tensor([0.0633, 0.0041, 0.5510, 0.0899, 0.0273, 0.0256,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 880: Current Top 1 Accuracy: 0.16600453853607178, Current Top 1 PC Accuracy: tensor([0.0664, 0.0061, 0.5558, 0.1025, 0.0219, 0.0271,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 880: Current Top 1 Accuracy: 0.16572077572345734, Current Top 1 PC Accuracy: tensor([0.0596, 0.0101, 0.5547, 0.0995, 0.0253, 0.0265,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 880: Current Top 1 Accuracy: 0.16590994596481323, Current Top 1 PC Accuracy: tensor([0.0620, 0.0041, 0.5602, 0.1022, 0.0262, 0.0249,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 900: Current Top 1 Accuracy: 0.16934886574745178, Current Top 1 PC Accuracy: tensor([0.0649, 0.0061, 0.5610, 0.1144, 0.0213, 0.0264,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 900: Current Top 1 Accuracy: 0.16925638914108276, Current Top 1 PC Accuracy: tensor([0.0583, 0.0101, 0.5599, 0.1129, 0.0245, 0.0258,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 900: Current Top 1 Accuracy: 0.16907140612602234, Current Top 1 PC Accuracy: tensor([0.0606, 0.0041, 0.5654, 0.1139, 0.0256, 0.0242,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 920: Current Top 1 Accuracy: 0.1685667783021927, Current Top 1 PC Accuracy: tensor([0.0679, 0.0058, 0.5617, 0.1095, 0.0209, 0.0313,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 920: Current Top 1 Accuracy: 0.16802388429641724, Current Top 1 PC Accuracy: tensor([0.0591, 0.0096, 0.5606, 0.1081, 0.0240, 0.0304,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 920: Current Top 1 Accuracy: 0.16820484399795532, Current Top 1 PC Accuracy: tensor([0.0620, 0.0039, 0.5663, 0.1091, 0.0259, 0.0300,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 940: Current Top 1 Accuracy: 0.16524973511695862, Current Top 1 PC Accuracy: tensor([0.0674, 0.0055, 0.5607, 0.1047, 0.0203, 0.0323,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 940: Current Top 1 Accuracy: 0.16480694711208344, Current Top 1 PC Accuracy: tensor([0.0592, 0.0091, 0.5592, 0.1033, 0.0233, 0.0315,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 940: Current Top 1 Accuracy: 0.16524973511695862, Current Top 1 PC Accuracy: tensor([0.0620, 0.0037, 0.5651, 0.1046, 0.0253, 0.0323,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 960: Current Top 1 Accuracy: 0.1697884202003479, Current Top 1 PC Accuracy: tensor([0.0660, 0.0055, 0.5605, 0.1151, 0.0202, 0.0317,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 960: Current Top 1 Accuracy: 0.1697884202003479, Current Top 1 PC Accuracy: tensor([0.0580, 0.0091, 0.5603, 0.1155, 0.0232, 0.0309,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 960: Current Top 1 Accuracy: 0.1702219843864441, Current Top 1 PC Accuracy: tensor([0.0609, 0.0037, 0.5651, 0.1167, 0.0251, 0.0316,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 980: Current Top 1 Accuracy: 0.1738022416830063, Current Top 1 PC Accuracy: tensor([0.0648, 0.0055, 0.5626, 0.1242, 0.0201, 0.0307,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 980: Current Top 1 Accuracy: 0.17397214472293854, Current Top 1 PC Accuracy: tensor([0.0569, 0.0091, 0.5613, 0.1262, 0.0231, 0.0300,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 980: Current Top 1 Accuracy: 0.17439687252044678, Current Top 1 PC Accuracy: tensor([0.0599, 0.0037, 0.5661, 0.1270, 0.0249, 0.0307,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1000: Current Top 1 Accuracy: 0.17207792401313782, Current Top 1 PC Accuracy: tensor([0.0664, 0.0054, 0.5609, 0.1186, 0.0197, 0.0374,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1000: Current Top 1 Accuracy: 0.1717449277639389, Current Top 1 PC Accuracy: tensor([0.0569, 0.0089, 0.5596, 0.1202, 0.0226, 0.0356,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1000: Current Top 1 Accuracy: 0.1726606786251068, Current Top 1 PC Accuracy: tensor([0.0610, 0.0036, 0.5646, 0.1210, 0.0245, 0.0378,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1020: Current Top 1 Accuracy: 0.16919685900211334, Current Top 1 PC Accuracy: tensor([0.0664, 0.0053, 0.5572, 0.1124, 0.0194, 0.0393,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1020: Current Top 1 Accuracy: 0.16919685900211334, Current Top 1 PC Accuracy: tensor([0.0575, 0.0088, 0.5561, 0.1141, 0.0221, 0.0388,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1020: Current Top 1 Accuracy: 0.17001305520534515, Current Top 1 PC Accuracy: tensor([0.0615, 0.0035, 0.5610, 0.1150, 0.0240, 0.0405,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1040: Current Top 1 Accuracy: 0.16706691682338715, Current Top 1 PC Accuracy: tensor([0.0670, 0.0052, 0.5551, 0.1077, 0.0188, 0.0439,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1040: Current Top 1 Accuracy: 0.1676272749900818, Current Top 1 PC Accuracy: tensor([0.0586, 0.0087, 0.5541, 0.1093, 0.0215, 0.0458,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1040: Current Top 1 Accuracy: 0.16818763315677643, Current Top 1 PC Accuracy: tensor([0.0632, 0.0034, 0.5594, 0.1102, 0.0234, 0.0458,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1060: Current Top 1 Accuracy: 0.16462457180023193, Current Top 1 PC Accuracy: tensor([0.0669, 0.0051, 0.5488, 0.1028, 0.0187, 0.0468,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1060: Current Top 1 Accuracy: 0.16533145308494568, Current Top 1 PC Accuracy: tensor([0.0591, 0.0085, 0.5484, 0.1044, 0.0213, 0.0491,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1060: Current Top 1 Accuracy: 0.1658027023077011, Current Top 1 PC Accuracy: tensor([0.0632, 0.0034, 0.5538, 0.1053, 0.0231, 0.0491,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1080: Current Top 1 Accuracy: 0.1691335141658783, Current Top 1 PC Accuracy: tensor([0.0655, 0.0051, 0.5531, 0.1098, 0.0186, 0.0458,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1080: Current Top 1 Accuracy: 0.1699044108390808, Current Top 1 PC Accuracy: tensor([0.0580, 0.0085, 0.5526, 0.1109, 0.0212, 0.0480,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1080: Current Top 1 Accuracy: 0.17044402658939362, Current Top 1 PC Accuracy: tensor([0.0619, 0.0034, 0.5582, 0.1120, 0.0230, 0.0481,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1100: Current Top 1 Accuracy: 0.1722676306962967, Current Top 1 PC Accuracy: tensor([0.0644, 0.0051, 0.5521, 0.1191, 0.0185, 0.0446,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1100: Current Top 1 Accuracy: 0.1731759011745453, Current Top 1 PC Accuracy: tensor([0.0570, 0.0085, 0.5526, 0.1208, 0.0211, 0.0467,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1100: Current Top 1 Accuracy: 0.17355434596538544, Current Top 1 PC Accuracy: tensor([0.0608, 0.0034, 0.5574, 0.1210, 0.0229, 0.0467,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1120: Current Top 1 Accuracy: 0.17395183444023132, Current Top 1 PC Accuracy: tensor([0.0638, 0.0051, 0.5597, 0.1192, 0.0202, 0.0435,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1120: Current Top 1 Accuracy: 0.1747695505619049, Current Top 1 PC Accuracy: tensor([0.0564, 0.0085, 0.5598, 0.1206, 0.0240, 0.0456,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1120: Current Top 1 Accuracy: 0.17514124512672424, Current Top 1 PC Accuracy: tensor([0.0602, 0.0034, 0.5649, 0.1215, 0.0237, 0.0455,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1140: Current Top 1 Accuracy: 0.17367805540561676, Current Top 1 PC Accuracy: tensor([0.0634, 0.0051, 0.5618, 0.1189, 0.0197, 0.0446,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1140: Current Top 1 Accuracy: 0.1745544821023941, Current Top 1 PC Accuracy: tensor([0.0560, 0.0085, 0.5617, 0.1204, 0.0227, 0.0464,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1140: Current Top 1 Accuracy: 0.1745544821023941, Current Top 1 PC Accuracy: tensor([0.0598, 0.0034, 0.5666, 0.1210, 0.0229, 0.0460,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1160: Current Top 1 Accuracy: 0.17269594967365265, Current Top 1 PC Accuracy: tensor([0.0633, 0.0050, 0.5582, 0.1164, 0.0189, 0.0533,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1160: Current Top 1 Accuracy: 0.17427505552768707, Current Top 1 PC Accuracy: tensor([0.0567, 0.0084, 0.5585, 0.1179, 0.0219, 0.0578,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1160: Current Top 1 Accuracy: 0.1742032766342163, Current Top 1 PC Accuracy: tensor([0.0616, 0.0033, 0.5628, 0.1186, 0.0221, 0.0562,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1180: Current Top 1 Accuracy: 0.17188823223114014, Current Top 1 PC Accuracy: tensor([0.0633, 0.0049, 0.5567, 0.1141, 0.0182, 0.0618,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1180: Current Top 1 Accuracy: 0.1736522763967514, Current Top 1 PC Accuracy: tensor([0.0565, 0.0083, 0.5566, 0.1154, 0.0212, 0.0676,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1180: Current Top 1 Accuracy: 0.17351114749908447, Current Top 1 PC Accuracy: tensor([0.0611, 0.0033, 0.5615, 0.1163, 0.0213, 0.0656,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1200: Current Top 1 Accuracy: 0.17270329594612122, Current Top 1 PC Accuracy: tensor([0.0628, 0.0049, 0.5581, 0.1135, 0.0175, 0.0626,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1200: Current Top 1 Accuracy: 0.17492367327213287, Current Top 1 PC Accuracy: tensor([0.0566, 0.0083, 0.5600, 0.1150, 0.0209, 0.0689,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1200: Current Top 1 Accuracy: 0.17422981560230255, Current Top 1 PC Accuracy: tensor([0.0606, 0.0033, 0.5632, 0.1157, 0.0204, 0.0664,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1220: Current Top 1 Accuracy: 0.17335517704486847, Current Top 1 PC Accuracy: tensor([0.0626, 0.0049, 0.5630, 0.1142, 0.0199, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1220: Current Top 1 Accuracy: 0.17547091841697693, Current Top 1 PC Accuracy: tensor([0.0564, 0.0082, 0.5654, 0.1152, 0.0231, 0.0672,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1220: Current Top 1 Accuracy: 0.1747201681137085, Current Top 1 PC Accuracy: tensor([0.0604, 0.0032, 0.5679, 0.1164, 0.0216, 0.0648,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1240: Current Top 1 Accuracy: 0.17096427083015442, Current Top 1 PC Accuracy: tensor([0.0618, 0.0046, 0.5630, 0.1121, 0.0195, 0.0624,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1240: Current Top 1 Accuracy: 0.17304593324661255, Current Top 1 PC Accuracy: tensor([0.0562, 0.0077, 0.5654, 0.1130, 0.0227, 0.0681,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1240: Current Top 1 Accuracy: 0.17224012315273285, Current Top 1 PC Accuracy: tensor([0.0601, 0.0030, 0.5679, 0.1144, 0.0212, 0.0654,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1260: Current Top 1 Accuracy: 0.1706317663192749, Current Top 1 PC Accuracy: tensor([0.0643, 0.0044, 0.5640, 0.1129, 0.0191, 0.0634,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1260: Current Top 1 Accuracy: 0.17268040776252747, Current Top 1 PC Accuracy: tensor([0.0584, 0.0073, 0.5663, 0.1137, 0.0227, 0.0694,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1260: Current Top 1 Accuracy: 0.17175522446632385, Current Top 1 PC Accuracy: tensor([0.0608, 0.0029, 0.5691, 0.1153, 0.0212, 0.0666,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1280: Current Top 1 Accuracy: 0.17193599045276642, Current Top 1 PC Accuracy: tensor([0.0620, 0.0058, 0.5692, 0.1153, 0.0189, 0.0619,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1280: Current Top 1 Accuracy: 0.17375747859477997, Current Top 1 PC Accuracy: tensor([0.0563, 0.0088, 0.5713, 0.1157, 0.0224, 0.0677,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1280: Current Top 1 Accuracy: 0.17297683656215668, Current Top 1 PC Accuracy: tensor([0.0584, 0.0058, 0.5743, 0.1167, 0.0215, 0.0652,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1300: Current Top 1 Accuracy: 0.17492954432964325, Current Top 1 PC Accuracy: tensor([0.0605, 0.0058, 0.5775, 0.1192, 0.0186, 0.0607,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1300: Current Top 1 Accuracy: 0.17685113847255707, Current Top 1 PC Accuracy: tensor([0.0548, 0.0088, 0.5796, 0.1198, 0.0221, 0.0665,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1300: Current Top 1 Accuracy: 0.17608250677585602, Current Top 1 PC Accuracy: tensor([0.0568, 0.0058, 0.5821, 0.1208, 0.0213, 0.0639,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1320: Current Top 1 Accuracy: 0.1770123690366745, Current Top 1 PC Accuracy: tensor([0.0592, 0.0073, 0.5829, 0.1235, 0.0183, 0.0593,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1320: Current Top 1 Accuracy: 0.17890487611293793, Current Top 1 PC Accuracy: tensor([0.0536, 0.0109, 0.5853, 0.1236, 0.0227, 0.0650,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1320: Current Top 1 Accuracy: 0.17814786732196808, Current Top 1 PC Accuracy: tensor([0.0556, 0.0079, 0.5877, 0.1254, 0.0209, 0.0624,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1340: Current Top 1 Accuracy: 0.17797663807868958, Current Top 1 PC Accuracy: tensor([0.0571, 0.0073, 0.5875, 0.1251, 0.0181, 0.0580,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1340: Current Top 1 Accuracy: 0.17984090745449066, Current Top 1 PC Accuracy: tensor([0.0517, 0.0109, 0.5903, 0.1250, 0.0225, 0.0635,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1340: Current Top 1 Accuracy: 0.17897091805934906, Current Top 1 PC Accuracy: tensor([0.0535, 0.0079, 0.5924, 0.1266, 0.0212, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1360: Current Top 1 Accuracy: 0.1771981418132782, Current Top 1 PC Accuracy: tensor([0.0572, 0.0069, 0.5885, 0.1264, 0.0177, 0.0580,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1360: Current Top 1 Accuracy: 0.17891256511211395, Current Top 1 PC Accuracy: tensor([0.0513, 0.0104, 0.5911, 0.1261, 0.0220, 0.0635,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1360: Current Top 1 Accuracy: 0.17817780375480652, Current Top 1 PC Accuracy: tensor([0.0540, 0.0075, 0.5932, 0.1279, 0.0208, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1380: Current Top 1 Accuracy: 0.17541636526584625, Current Top 1 PC Accuracy: tensor([0.0577, 0.0065, 0.5885, 0.1244, 0.0174, 0.0603,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1380: Current Top 1 Accuracy: 0.17740768194198608, Current Top 1 PC Accuracy: tensor([0.0536, 0.0099, 0.5911, 0.1240, 0.0216, 0.0660,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1380: Current Top 1 Accuracy: 0.17638185620307922, Current Top 1 PC Accuracy: tensor([0.0554, 0.0071, 0.5931, 0.1259, 0.0204, 0.0629,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1400: Current Top 1 Accuracy: 0.17332857847213745, Current Top 1 PC Accuracy: tensor([0.0604, 0.0065, 0.5855, 0.1199, 0.0171, 0.0603,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1400: Current Top 1 Accuracy: 0.17529146373271942, Current Top 1 PC Accuracy: tensor([0.0564, 0.0097, 0.5879, 0.1196, 0.0213, 0.0659,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1400: Current Top 1 Accuracy: 0.17422080039978027, Current Top 1 PC Accuracy: tensor([0.0578, 0.0070, 0.5896, 0.1212, 0.0201, 0.0628,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1420: Current Top 1 Accuracy: 0.17194463312625885, Current Top 1 PC Accuracy: tensor([0.0604, 0.0063, 0.5859, 0.1163, 0.0188, 0.0602,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1420: Current Top 1 Accuracy: 0.1739971786737442, Current Top 1 PC Accuracy: tensor([0.0562, 0.0095, 0.5876, 0.1158, 0.0238, 0.0658,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1420: Current Top 1 Accuracy: 0.17300023138523102, Current Top 1 PC Accuracy: tensor([0.0576, 0.0068, 0.5896, 0.1176, 0.0227, 0.0627,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1440: Current Top 1 Accuracy: 0.17528337240219116, Current Top 1 PC Accuracy: tensor([0.0596, 0.0063, 0.5891, 0.1245, 0.0213, 0.0597,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1440: Current Top 1 Accuracy: 0.17719176411628723, Current Top 1 PC Accuracy: tensor([0.0555, 0.0095, 0.5906, 0.1237, 0.0262, 0.0654,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1440: Current Top 1 Accuracy: 0.17597733438014984, Current Top 1 PC Accuracy: tensor([0.0568, 0.0068, 0.5920, 0.1248, 0.0247, 0.0623,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1460: Current Top 1 Accuracy: 0.17659138143062592, Current Top 1 PC Accuracy: tensor([0.0581, 0.0063, 0.5937, 0.1266, 0.0220, 0.0590,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1460: Current Top 1 Accuracy: 0.17864476144313812, Current Top 1 PC Accuracy: tensor([0.0540, 0.0095, 0.5952, 0.1258, 0.0274, 0.0646,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1460: Current Top 1 Accuracy: 0.17756102979183197, Current Top 1 PC Accuracy: tensor([0.0554, 0.0068, 0.5967, 0.1275, 0.0254, 0.0615,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1480: Current Top 1 Accuracy: 0.177976593375206, Current Top 1 PC Accuracy: tensor([0.0567, 0.0063, 0.5961, 0.1289, 0.0260, 0.0586,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1480: Current Top 1 Accuracy: 0.1800585240125656, Current Top 1 PC Accuracy: tensor([0.0528, 0.0095, 0.5967, 0.1282, 0.0318, 0.0641,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1480: Current Top 1 Accuracy: 0.17932702600955963, Current Top 1 PC Accuracy: tensor([0.0540, 0.0068, 0.5990, 0.1304, 0.0312, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1500: Current Top 1 Accuracy: 0.17954696714878082, Current Top 1 PC Accuracy: tensor([0.0559, 0.0063, 0.5995, 0.1322, 0.0258, 0.0580,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1500: Current Top 1 Accuracy: 0.18165667355060577, Current Top 1 PC Accuracy: tensor([0.0520, 0.0095, 0.6004, 0.1313, 0.0315, 0.0635,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1500: Current Top 1 Accuracy: 0.18099045753479004, Current Top 1 PC Accuracy: tensor([0.0532, 0.0068, 0.6029, 0.1336, 0.0310, 0.0604,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1520: Current Top 1 Accuracy: 0.1797611266374588, Current Top 1 PC Accuracy: tensor([0.0571, 0.0062, 0.6011, 0.1322, 0.0265, 0.0578,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1520: Current Top 1 Accuracy: 0.18189787864685059, Current Top 1 PC Accuracy: tensor([0.0528, 0.0094, 0.6025, 0.1312, 0.0320, 0.0633,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1520: Current Top 1 Accuracy: 0.1810760498046875, Current Top 1 PC Accuracy: tensor([0.0539, 0.0068, 0.6051, 0.1333, 0.0312, 0.0602,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1540: Current Top 1 Accuracy: 0.17759031057357788, Current Top 1 PC Accuracy: tensor([0.0580, 0.0061, 0.5981, 0.1284, 0.0260, 0.0578,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1540: Current Top 1 Accuracy: 0.17959117889404297, Current Top 1 PC Accuracy: tensor([0.0530, 0.0092, 0.5990, 0.1276, 0.0315, 0.0633,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1540: Current Top 1 Accuracy: 0.1789422482252121, Current Top 1 PC Accuracy: tensor([0.0553, 0.0066, 0.6014, 0.1296, 0.0307, 0.0602,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1560: Current Top 1 Accuracy: 0.17889173328876495, Current Top 1 PC Accuracy: tensor([0.0568, 0.0061, 0.6016, 0.1306, 0.0259, 0.0568,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1560: Current Top 1 Accuracy: 0.1804932802915573, Current Top 1 PC Accuracy: tensor([0.0518, 0.0091, 0.6022, 0.1293, 0.0314, 0.0622,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1560: Current Top 1 Accuracy: 0.1800128072500229, Current Top 1 PC Accuracy: tensor([0.0542, 0.0066, 0.6040, 0.1313, 0.0306, 0.0591,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1580: Current Top 1 Accuracy: 0.1806873232126236, Current Top 1 PC Accuracy: tensor([0.0560, 0.0060, 0.6056, 0.1321, 0.0258, 0.0557,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1580: Current Top 1 Accuracy: 0.18263757228851318, Current Top 1 PC Accuracy: tensor([0.0510, 0.0091, 0.6067, 0.1316, 0.0313, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1580: Current Top 1 Accuracy: 0.1821104735136032, Current Top 1 PC Accuracy: tensor([0.0535, 0.0065, 0.6083, 0.1334, 0.0305, 0.0580,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1600: Current Top 1 Accuracy: 0.1810847371816635, Current Top 1 PC Accuracy: tensor([0.0592, 0.0059, 0.6041, 0.1316, 0.0258, 0.0591,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1600: Current Top 1 Accuracy: 0.18275035917758942, Current Top 1 PC Accuracy: tensor([0.0525, 0.0089, 0.6042, 0.1316, 0.0311, 0.0640,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1600: Current Top 1 Accuracy: 0.18243806064128876, Current Top 1 PC Accuracy: tensor([0.0562, 0.0064, 0.6059, 0.1334, 0.0303, 0.0612,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1620: Current Top 1 Accuracy: 0.18028993904590607, Current Top 1 PC Accuracy: tensor([0.0657, 0.0057, 0.6016, 0.1292, 0.0257, 0.0610,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1620: Current Top 1 Accuracy: 0.1818322092294693, Current Top 1 PC Accuracy: tensor([0.0586, 0.0086, 0.6016, 0.1292, 0.0310, 0.0657,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1620: Current Top 1 Accuracy: 0.1816265732049942, Current Top 1 PC Accuracy: tensor([0.0624, 0.0062, 0.6036, 0.1308, 0.0302, 0.0633,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1640: Current Top 1 Accuracy: 0.18042859435081482, Current Top 1 PC Accuracy: tensor([0.0742, 0.0056, 0.6004, 0.1272, 0.0255, 0.0655,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1640: Current Top 1 Accuracy: 0.18195205926895142, Current Top 1 PC Accuracy: tensor([0.0672, 0.0084, 0.5997, 0.1270, 0.0308, 0.0703,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1640: Current Top 1 Accuracy: 0.18169815838336945, Current Top 1 PC Accuracy: tensor([0.0698, 0.0061, 0.6027, 0.1285, 0.0299, 0.0684,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1660: Current Top 1 Accuracy: 0.17996187508106232, Current Top 1 PC Accuracy: tensor([0.0818, 0.0054, 0.5977, 0.1256, 0.0254, 0.0670,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1660: Current Top 1 Accuracy: 0.18126630783081055, Current Top 1 PC Accuracy: tensor([0.0748, 0.0081, 0.5974, 0.1255, 0.0307, 0.0707,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1680: Current Top 1 Accuracy: 0.18168748915195465, Current Top 1 PC Accuracy: tensor([0.0803, 0.0054, 0.6000, 0.1276, 0.0253, 0.0660,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1660: Current Top 1 Accuracy: 0.18121613562107086, Current Top 1 PC Accuracy: tensor([0.0776, 0.0058, 0.6006, 0.1270, 0.0299, 0.0698,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1680: Current Top 1 Accuracy: 0.1828276813030243, Current Top 1 PC Accuracy: tensor([0.0732, 0.0081, 0.5999, 0.1270, 0.0306, 0.0698,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1680: Current Top 1 Accuracy: 0.18287725746631622, Current Top 1 PC Accuracy: tensor([0.0760, 0.0058, 0.6033, 0.1284, 0.0298, 0.0688,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1700: Current Top 1 Accuracy: 0.18283362686634064, Current Top 1 PC Accuracy: tensor([0.0791, 0.0054, 0.6017, 0.1303, 0.0252, 0.0647,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1700: Current Top 1 Accuracy: 0.18410739302635193, Current Top 1 PC Accuracy: tensor([0.0720, 0.0080, 0.6022, 0.1301, 0.0305, 0.0684,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1720: Current Top 1 Accuracy: 0.1838078647851944, Current Top 1 PC Accuracy: tensor([0.0770, 0.0058, 0.6044, 0.1305, 0.0251, 0.0642,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1700: Current Top 1 Accuracy: 0.1840094029903412, Current Top 1 PC Accuracy: tensor([0.0749, 0.0058, 0.6053, 0.1311, 0.0296, 0.0674,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1720: Current Top 1 Accuracy: 0.18521209061145782, Current Top 1 PC Accuracy: tensor([0.0700, 0.0085, 0.6054, 0.1305, 0.0303, 0.0679,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1740: Current Top 1 Accuracy: 0.1849033087491989, Current Top 1 PC Accuracy: tensor([0.0755, 0.0058, 0.6010, 0.1312, 0.0251, 0.0636,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1720: Current Top 1 Accuracy: 0.1849699765443802, Current Top 1 PC Accuracy: tensor([0.0729, 0.0057, 0.6082, 0.1315, 0.0295, 0.0668,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1740: Current Top 1 Accuracy: 0.1862913966178894, Current Top 1 PC Accuracy: tensor([0.0688, 0.0085, 0.6022, 0.1313, 0.0303, 0.0673,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1760: Current Top 1 Accuracy: 0.18412832915782928, Current Top 1 PC Accuracy: tensor([0.0769, 0.0078, 0.5957, 0.1295, 0.0248, 0.0638,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1740: Current Top 1 Accuracy: 0.18609994649887085, Current Top 1 PC Accuracy: tensor([0.0715, 0.0057, 0.6051, 0.1321, 0.0294, 0.0662,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1760: Current Top 1 Accuracy: 0.18531137704849243, Current Top 1 PC Accuracy: tensor([0.0690, 0.0109, 0.5973, 0.1295, 0.0299, 0.0674,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1780: Current Top 1 Accuracy: 0.18248175084590912, Current Top 1 PC Accuracy: tensor([0.0781, 0.0076, 0.5875, 0.1279, 0.0244, 0.0645,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1760: Current Top 1 Accuracy: 0.18507476150989532, Current Top 1 PC Accuracy: tensor([0.0719, 0.0072, 0.6004, 0.1304, 0.0291, 0.0661,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1780: Current Top 1 Accuracy: 0.18365150690078735, Current Top 1 PC Accuracy: tensor([0.0710, 0.0107, 0.5894, 0.1279, 0.0295, 0.0677,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1800: Current Top 1 Accuracy: 0.18087173998355865, Current Top 1 PC Accuracy: tensor([0.0807, 0.0074, 0.5803, 0.1257, 0.0242, 0.0644,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1780: Current Top 1 Accuracy: 0.1832771897315979, Current Top 1 PC Accuracy: tensor([0.0731, 0.0070, 0.5919, 0.1288, 0.0286, 0.0662,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1800: Current Top 1 Accuracy: 0.18202850222587585, Current Top 1 PC Accuracy: tensor([0.0736, 0.0104, 0.5819, 0.1257, 0.0292, 0.0676,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1820: Current Top 1 Accuracy: 0.17902252078056335, Current Top 1 PC Accuracy: tensor([0.0801, 0.0073, 0.5733, 0.1242, 0.0238, 0.0649,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1800: Current Top 1 Accuracy: 0.18170461058616638, Current Top 1 PC Accuracy: tensor([0.0761, 0.0068, 0.5844, 0.1266, 0.0283, 0.0661,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1820: Current Top 1 Accuracy: 0.18030385673046112, Current Top 1 PC Accuracy: tensor([0.0738, 0.0102, 0.5749, 0.1241, 0.0288, 0.0683,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1840: Current Top 1 Accuracy: 0.17947673797607422, Current Top 1 PC Accuracy: tensor([0.0781, 0.0072, 0.5733, 0.1251, 0.0236, 0.0645,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1820: Current Top 1 Accuracy: 0.17993776500225067, Current Top 1 PC Accuracy: tensor([0.0766, 0.0067, 0.5776, 0.1250, 0.0279, 0.0665,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1840: Current Top 1 Accuracy: 0.18078942596912384, Current Top 1 PC Accuracy: tensor([0.0722, 0.0111, 0.5741, 0.1248, 0.0286, 0.0679,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1860: Current Top 1 Accuracy: 0.1810406595468521, Current Top 1 PC Accuracy: tensor([0.0764, 0.0091, 0.5729, 0.1249, 0.0236, 0.0642,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1840: Current Top 1 Accuracy: 0.18042729794979095, Current Top 1 PC Accuracy: tensor([0.0745, 0.0071, 0.5783, 0.1254, 0.0277, 0.0662,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1860: Current Top 1 Accuracy: 0.18238402903079987, Current Top 1 PC Accuracy: tensor([0.0706, 0.0125, 0.5735, 0.1247, 0.0285, 0.0677,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1880: Current Top 1 Accuracy: 0.18159666657447815, Current Top 1 PC Accuracy: tensor([0.0756, 0.0091, 0.5762, 0.1263, 0.0267, 0.0631,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1860: Current Top 1 Accuracy: 0.18202579021453857, Current Top 1 PC Accuracy: tensor([0.0729, 0.0085, 0.5774, 0.1255, 0.0277, 0.0658,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1880: Current Top 1 Accuracy: 0.18310296535491943, Current Top 1 PC Accuracy: tensor([0.0698, 0.0125, 0.5765, 0.1269, 0.0315, 0.0665,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1900: Current Top 1 Accuracy: 0.18310537934303284, Current Top 1 PC Accuracy: tensor([0.0753, 0.0091, 0.5803, 0.1280, 0.0270, 0.0622,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1880: Current Top 1 Accuracy: 0.18252702057361603, Current Top 1 PC Accuracy: tensor([0.0721, 0.0085, 0.5806, 0.1271, 0.0299, 0.0647,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1900: Current Top 1 Accuracy: 0.18455198407173157, Current Top 1 PC Accuracy: tensor([0.0695, 0.0125, 0.5806, 0.1282, 0.0328, 0.0656,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1920: Current Top 1 Accuracy: 0.1817195862531662, Current Top 1 PC Accuracy: tensor([0.0751, 0.0090, 0.5780, 0.1257, 0.0265, 0.0645,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1900: Current Top 1 Accuracy: 0.18380676209926605, Current Top 1 PC Accuracy: tensor([0.0718, 0.0085, 0.5843, 0.1280, 0.0312, 0.0637,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1920: Current Top 1 Accuracy: 0.18323789536952972, Current Top 1 PC Accuracy: tensor([0.0695, 0.0123, 0.5785, 0.1258, 0.0322, 0.0682,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1940: Current Top 1 Accuracy: 0.18044821918010712, Current Top 1 PC Accuracy: tensor([0.0749, 0.0088, 0.5762, 0.1234, 0.0260, 0.0673,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1920: Current Top 1 Accuracy: 0.1825438141822815, Current Top 1 PC Accuracy: tensor([0.0717, 0.0084, 0.5818, 0.1257, 0.0306, 0.0667,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1940: Current Top 1 Accuracy: 0.18199381232261658, Current Top 1 PC Accuracy: tensor([0.0696, 0.0121, 0.5759, 0.1236, 0.0316, 0.0711,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1960: Current Top 1 Accuracy: 0.17928777635097504, Current Top 1 PC Accuracy: tensor([0.0746, 0.0087, 0.5752, 0.1226, 0.0254, 0.0670,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1940: Current Top 1 Accuracy: 0.18126395344734192, Current Top 1 PC Accuracy: tensor([0.0714, 0.0082, 0.5798, 0.1235, 0.0300, 0.0696,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1960: Current Top 1 Accuracy: 0.1809026002883911, Current Top 1 PC Accuracy: tensor([0.0694, 0.0119, 0.5749, 0.1232, 0.0309, 0.0711,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 1980: Current Top 1 Accuracy: 0.18063268065452576, Current Top 1 PC Accuracy: tensor([0.0740, 0.0087, 0.5791, 0.1235, 0.0295, 0.0661,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1960: Current Top 1 Accuracy: 0.18013767898082733, Current Top 1 PC Accuracy: tensor([0.0712, 0.0082, 0.5790, 0.1229, 0.0293, 0.0696,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 1980: Current Top 1 Accuracy: 0.18218913674354553, Current Top 1 PC Accuracy: tensor([0.0688, 0.0119, 0.5789, 0.1238, 0.0345, 0.0701,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2000: Current Top 1 Accuracy: 0.18082624673843384, Current Top 1 PC Accuracy: tensor([0.0736, 0.0087, 0.5799, 0.1240, 0.0294, 0.0656,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 1980: Current Top 1 Accuracy: 0.18138986825942993, Current Top 1 PC Accuracy: tensor([0.0706, 0.0082, 0.5831, 0.1232, 0.0333, 0.0686,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2000: Current Top 1 Accuracy: 0.18236714601516724, Current Top 1 PC Accuracy: tensor([0.0684, 0.0119, 0.5794, 0.1246, 0.0343, 0.0696,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2020: Current Top 1 Accuracy: 0.17903678119182587, Current Top 1 PC Accuracy: tensor([0.0731, 0.0087, 0.5769, 0.1208, 0.0291, 0.0656,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2000: Current Top 1 Accuracy: 0.1814092993736267, Current Top 1 PC Accuracy: tensor([0.0702, 0.0082, 0.5833, 0.1239, 0.0325, 0.0681,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2020: Current Top 1 Accuracy: 0.18056242167949677, Current Top 1 PC Accuracy: tensor([0.0678, 0.0119, 0.5762, 0.1214, 0.0340, 0.0695,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2040: Current Top 1 Accuracy: 0.17809897661209106, Current Top 1 PC Accuracy: tensor([0.0723, 0.0087, 0.5758, 0.1188, 0.0286, 0.0664,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2020: Current Top 1 Accuracy: 0.17961405217647552, Current Top 1 PC Accuracy: tensor([0.0697, 0.0082, 0.5804, 0.1205, 0.0321, 0.0680,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2040: Current Top 1 Accuracy: 0.1795688420534134, Current Top 1 PC Accuracy: tensor([0.0677, 0.0119, 0.5750, 0.1194, 0.0335, 0.0697,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2060: Current Top 1 Accuracy: 0.18045447766780853, Current Top 1 PC Accuracy: tensor([0.0716, 0.0087, 0.5765, 0.1262, 0.0285, 0.0659,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2040: Current Top 1 Accuracy: 0.17862975597381592, Current Top 1 PC Accuracy: tensor([0.0695, 0.0081, 0.5794, 0.1186, 0.0317, 0.0682,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2060: Current Top 1 Accuracy: 0.18199093639850616, Current Top 1 PC Accuracy: tensor([0.0671, 0.0119, 0.5757, 0.1269, 0.0333, 0.0692,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2080: Current Top 1 Accuracy: 0.18104276061058044, Current Top 1 PC Accuracy: tensor([0.0711, 0.0087, 0.5746, 0.1277, 0.0286, 0.0651,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2060: Current Top 1 Accuracy: 0.18118228018283844, Current Top 1 PC Accuracy: tensor([0.0690, 0.0081, 0.5804, 0.1263, 0.0315, 0.0678,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2080: Current Top 1 Accuracy: 0.1825244277715683, Current Top 1 PC Accuracy: tensor([0.0667, 0.0119, 0.5738, 0.1283, 0.0331, 0.0683,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2100: Current Top 1 Accuracy: 0.1824924647808075, Current Top 1 PC Accuracy: tensor([0.0706, 0.0087, 0.5749, 0.1312, 0.0283, 0.0646,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2080: Current Top 1 Accuracy: 0.18160340189933777, Current Top 1 PC Accuracy: tensor([0.0685, 0.0081, 0.5784, 0.1278, 0.0312, 0.0670,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2100: Current Top 1 Accuracy: 0.18388068675994873, Current Top 1 PC Accuracy: tensor([0.0662, 0.0119, 0.5740, 0.1320, 0.0328, 0.0677,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2120: Current Top 1 Accuracy: 0.18446487188339233, Current Top 1 PC Accuracy: tensor([0.0702, 0.0087, 0.5748, 0.1362, 0.0282, 0.0640,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2100: Current Top 1 Accuracy: 0.1830080896615982, Current Top 1 PC Accuracy: tensor([0.0680, 0.0081, 0.5782, 0.1316, 0.0310, 0.0664,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2120: Current Top 1 Accuracy: 0.1857614368200302, Current Top 1 PC Accuracy: tensor([0.0657, 0.0119, 0.5740, 0.1369, 0.0326, 0.0671,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2140: Current Top 1 Accuracy: 0.18278063833713531, Current Top 1 PC Accuracy: tensor([0.0694, 0.0087, 0.5720, 0.1335, 0.0280, 0.0639,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2120: Current Top 1 Accuracy: 0.1848970651626587, Current Top 1 PC Accuracy: tensor([0.0676, 0.0081, 0.5782, 0.1365, 0.0308, 0.0658,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2140: Current Top 1 Accuracy: 0.1840650737285614, Current Top 1 PC Accuracy: tensor([0.0649, 0.0119, 0.5714, 0.1342, 0.0323, 0.0669,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2160: Current Top 1 Accuracy: 0.18112756311893463, Current Top 1 PC Accuracy: tensor([0.0690, 0.0087, 0.5692, 0.1307, 0.0276, 0.0640,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2140: Current Top 1 Accuracy: 0.18316985666751862, Current Top 1 PC Accuracy: tensor([0.0668, 0.0081, 0.5757, 0.1335, 0.0306, 0.0657,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2160: Current Top 1 Accuracy: 0.18247725069522858, Current Top 1 PC Accuracy: tensor([0.0650, 0.0119, 0.5681, 0.1315, 0.0320, 0.0671,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2180: Current Top 1 Accuracy: 0.1814916729927063, Current Top 1 PC Accuracy: tensor([0.0673, 0.0087, 0.5700, 0.1308, 0.0286, 0.0642,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2160: Current Top 1 Accuracy: 0.1815517544746399, Current Top 1 PC Accuracy: tensor([0.0669, 0.0081, 0.5729, 0.1308, 0.0302, 0.0656,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2180: Current Top 1 Accuracy: 0.1827525645494461, Current Top 1 PC Accuracy: tensor([0.0634, 0.0119, 0.5686, 0.1312, 0.0333, 0.0676,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2200: Current Top 1 Accuracy: 0.1818491667509079, Current Top 1 PC Accuracy: tensor([0.0660, 0.0087, 0.5713, 0.1318, 0.0288, 0.0633,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2180: Current Top 1 Accuracy: 0.18175913393497467, Current Top 1 PC Accuracy: tensor([0.0654, 0.0081, 0.5734, 0.1305, 0.0309, 0.0658,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2200: Current Top 1 Accuracy: 0.18294714391231537, Current Top 1 PC Accuracy: tensor([0.0621, 0.0119, 0.5697, 0.1316, 0.0332, 0.0666,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2220: Current Top 1 Accuracy: 0.18178747594356537, Current Top 1 PC Accuracy: tensor([0.0650, 0.0087, 0.5721, 0.1317, 0.0303, 0.0633,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2200: Current Top 1 Accuracy: 0.1819627434015274, Current Top 1 PC Accuracy: tensor([0.0641, 0.0081, 0.5745, 0.1310, 0.0308, 0.0649,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2220: Current Top 1 Accuracy: 0.1827630251646042, Current Top 1 PC Accuracy: tensor([0.0611, 0.0118, 0.5704, 0.1312, 0.0346, 0.0666,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2240: Current Top 1 Accuracy: 0.18061132729053497, Current Top 1 PC Accuracy: tensor([0.0670, 0.0085, 0.5711, 0.1299, 0.0300, 0.0634,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2220: Current Top 1 Accuracy: 0.18178747594356537, Current Top 1 PC Accuracy: tensor([0.0630, 0.0081, 0.5749, 0.1306, 0.0323, 0.0649,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2240: Current Top 1 Accuracy: 0.18161535263061523, Current Top 1 PC Accuracy: tensor([0.0632, 0.0116, 0.5695, 0.1294, 0.0343, 0.0668,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2260: Current Top 1 Accuracy: 0.17945599555969238, Current Top 1 PC Accuracy: tensor([0.0688, 0.0085, 0.5708, 0.1280, 0.0297, 0.0634,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2240: Current Top 1 Accuracy: 0.1807228922843933, Current Top 1 PC Accuracy: tensor([0.0658, 0.0080, 0.5740, 0.1288, 0.0320, 0.0650,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2260: Current Top 1 Accuracy: 0.18037740886211395, Current Top 1 PC Accuracy: tensor([0.0646, 0.0116, 0.5691, 0.1275, 0.0339, 0.0668,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2280: Current Top 1 Accuracy: 0.17835745215415955, Current Top 1 PC Accuracy: tensor([0.0694, 0.0083, 0.5698, 0.1264, 0.0295, 0.0643,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2260: Current Top 1 Accuracy: 0.17956656217575073, Current Top 1 PC Accuracy: tensor([0.0675, 0.0079, 0.5736, 0.1270, 0.0317, 0.0650,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2280: Current Top 1 Accuracy: 0.17930732667446136, Current Top 1 PC Accuracy: tensor([0.0655, 0.0114, 0.5681, 0.1259, 0.0337, 0.0677,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2300: Current Top 1 Accuracy: 0.178943932056427, Current Top 1 PC Accuracy: tensor([0.0693, 0.0083, 0.5702, 0.1274, 0.0310, 0.0638,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2280: Current Top 1 Accuracy: 0.17839397490024567, Current Top 1 PC Accuracy: tensor([0.0681, 0.0078, 0.5724, 0.1255, 0.0314, 0.0655,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2300: Current Top 1 Accuracy: 0.17988555133342743, Current Top 1 PC Accuracy: tensor([0.0654, 0.0114, 0.5691, 0.1271, 0.0344, 0.0670,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2320: Current Top 1 Accuracy: 0.17923308908939362, Current Top 1 PC Accuracy: tensor([0.0678, 0.0083, 0.5724, 0.1271, 0.0322, 0.0631,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2300: Current Top 1 Accuracy: 0.1788715124130249, Current Top 1 PC Accuracy: tensor([0.0680, 0.0078, 0.5733, 0.1263, 0.0324, 0.0649,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2320: Current Top 1 Accuracy: 0.18027430772781372, Current Top 1 PC Accuracy: tensor([0.0640, 0.0114, 0.5713, 0.1272, 0.0359, 0.0663,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2340: Current Top 1 Accuracy: 0.18062081933021545, Current Top 1 PC Accuracy: tensor([0.0671, 0.0083, 0.5734, 0.1292, 0.0324, 0.0624,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2320: Current Top 1 Accuracy: 0.1792689859867096, Current Top 1 PC Accuracy: tensor([0.0663, 0.0078, 0.5758, 0.1261, 0.0340, 0.0643,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2340: Current Top 1 Accuracy: 0.18151074647903442, Current Top 1 PC Accuracy: tensor([0.0633, 0.0114, 0.5727, 0.1288, 0.0357, 0.0656,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2360: Current Top 1 Accuracy: 0.18138501048088074, Current Top 1 PC Accuracy: tensor([0.0664, 0.0087, 0.5729, 0.1309, 0.0335, 0.0617,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2340: Current Top 1 Accuracy: 0.18058522045612335, Current Top 1 PC Accuracy: tensor([0.0657, 0.0078, 0.5770, 0.1278, 0.0338, 0.0636,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2360: Current Top 1 Accuracy: 0.18219681084156036, Current Top 1 PC Accuracy: tensor([0.0628, 0.0118, 0.5724, 0.1305, 0.0362, 0.0647,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2380: Current Top 1 Accuracy: 0.18266133964061737, Current Top 1 PC Accuracy: tensor([0.0660, 0.0087, 0.5724, 0.1344, 0.0337, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2360: Current Top 1 Accuracy: 0.18124382197856903, Current Top 1 PC Accuracy: tensor([0.0651, 0.0077, 0.5767, 0.1294, 0.0346, 0.0628,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2380: Current Top 1 Accuracy: 0.18350133299827576, Current Top 1 PC Accuracy: tensor([0.0624, 0.0118, 0.5719, 0.1339, 0.0364, 0.0641,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2400: Current Top 1 Accuracy: 0.18141746520996094, Current Top 1 PC Accuracy: tensor([0.0657, 0.0084, 0.5700, 0.1331, 0.0335, 0.0623,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2380: Current Top 1 Accuracy: 0.18262635171413422, Current Top 1 PC Accuracy: tensor([0.0647, 0.0077, 0.5766, 0.1330, 0.0351, 0.0622,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2400: Current Top 1 Accuracy: 0.1822851598262787, Current Top 1 PC Accuracy: tensor([0.0621, 0.0114, 0.5696, 0.1326, 0.0362, 0.0655,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2420: Current Top 1 Accuracy: 0.1799531877040863, Current Top 1 PC Accuracy: tensor([0.0656, 0.0082, 0.5674, 0.1315, 0.0333, 0.0620,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2400: Current Top 1 Accuracy: 0.18134805560112, Current Top 1 PC Accuracy: tensor([0.0644, 0.0075, 0.5738, 0.1317, 0.0348, 0.0633,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2420: Current Top 1 Accuracy: 0.18077929317951202, Current Top 1 PC Accuracy: tensor([0.0619, 0.0111, 0.5671, 0.1309, 0.0360, 0.0651,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2440: Current Top 1 Accuracy: 0.17864945530891418, Current Top 1 PC Accuracy: tensor([0.0654, 0.0080, 0.5656, 0.1303, 0.0330, 0.0625,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2420: Current Top 1 Accuracy: 0.17988434433937073, Current Top 1 PC Accuracy: tensor([0.0644, 0.0073, 0.5714, 0.1300, 0.0347, 0.0629,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2440: Current Top 1 Accuracy: 0.1795712113380432, Current Top 1 PC Accuracy: tensor([0.0617, 0.0108, 0.5655, 0.1296, 0.0357, 0.0661,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2460: Current Top 1 Accuracy: 0.1771976202726364, Current Top 1 PC Accuracy: tensor([0.0651, 0.0078, 0.5635, 0.1287, 0.0328, 0.0622,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2440: Current Top 1 Accuracy: 0.17864945530891418, Current Top 1 PC Accuracy: tensor([0.0644, 0.0071, 0.5700, 0.1288, 0.0344, 0.0636,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2460: Current Top 1 Accuracy: 0.17811188101768494, Current Top 1 PC Accuracy: tensor([0.0614, 0.0106, 0.5636, 0.1281, 0.0355, 0.0657,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2480: Current Top 1 Accuracy: 0.17771731317043304, Current Top 1 PC Accuracy: tensor([0.0645, 0.0082, 0.5649, 0.1296, 0.0326, 0.0612,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2460: Current Top 1 Accuracy: 0.1771976202726364, Current Top 1 PC Accuracy: tensor([0.0642, 0.0069, 0.5677, 0.1272, 0.0343, 0.0632,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2480: Current Top 1 Accuracy: 0.17865779995918274, Current Top 1 PC Accuracy: tensor([0.0608, 0.0106, 0.5649, 0.1290, 0.0353, 0.0646,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2500: Current Top 1 Accuracy: 0.17909502983093262, Current Top 1 PC Accuracy: tensor([0.0639, 0.0081, 0.5633, 0.1330, 0.0338, 0.0609,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2480: Current Top 1 Accuracy: 0.17775090038776398, Current Top 1 PC Accuracy: tensor([0.0636, 0.0069, 0.5693, 0.1281, 0.0343, 0.0622,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2500: Current Top 1 Accuracy: 0.17999467253684998, Current Top 1 PC Accuracy: tensor([0.0603, 0.0105, 0.5638, 0.1321, 0.0365, 0.0642,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2520: Current Top 1 Accuracy: 0.1803847700357437, Current Top 1 PC Accuracy: tensor([0.0631, 0.0081, 0.5658, 0.1351, 0.0340, 0.0601,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2500: Current Top 1 Accuracy: 0.1791616678237915, Current Top 1 PC Accuracy: tensor([0.0630, 0.0069, 0.5678, 0.1316, 0.0355, 0.0618,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2520: Current Top 1 Accuracy: 0.18134337663650513, Current Top 1 PC Accuracy: tensor([0.0596, 0.0105, 0.5664, 0.1340, 0.0370, 0.0635,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2540: Current Top 1 Accuracy: 0.18145743012428284, Current Top 1 PC Accuracy: tensor([0.0620, 0.0081, 0.5675, 0.1365, 0.0347, 0.0598,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2540: Current Top 1 Accuracy: 0.18244129419326782, Current Top 1 PC Accuracy: tensor([0.0586, 0.0104, 0.5681, 0.1356, 0.0379, 0.0631,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2520: Current Top 1 Accuracy: 0.18048393726348877, Current Top 1 PC Accuracy: tensor([0.0622, 0.0069, 0.5703, 0.1337, 0.0357, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2560: Current Top 1 Accuracy: 0.1811792254447937, Current Top 1 PC Accuracy: tensor([0.0618, 0.0080, 0.5685, 0.1353, 0.0348, 0.0595,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2560: Current Top 1 Accuracy: 0.1821228712797165, Current Top 1 PC Accuracy: tensor([0.0584, 0.0104, 0.5691, 0.1345, 0.0377, 0.0628,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2540: Current Top 1 Accuracy: 0.1815558224916458, Current Top 1 PC Accuracy: tensor([0.0612, 0.0068, 0.5720, 0.1349, 0.0369, 0.0607,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2580: Current Top 1 Accuracy: 0.1799367219209671, Current Top 1 PC Accuracy: tensor([0.0619, 0.0080, 0.5681, 0.1332, 0.0345, 0.0595,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2580: Current Top 1 Accuracy: 0.18096990883350372, Current Top 1 PC Accuracy: tensor([0.0590, 0.0103, 0.5688, 0.1324, 0.0375, 0.0630,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2560: Current Top 1 Accuracy: 0.18130938708782196, Current Top 1 PC Accuracy: tensor([0.0609, 0.0068, 0.5732, 0.1338, 0.0367, 0.0606,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2600: Current Top 1 Accuracy: 0.1786171942949295, Current Top 1 PC Accuracy: tensor([0.0617, 0.0078, 0.5679, 0.1314, 0.0343, 0.0595,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2600: Current Top 1 Accuracy: 0.1796424388885498, Current Top 1 PC Accuracy: tensor([0.0588, 0.0101, 0.5686, 0.1305, 0.0372, 0.0629,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2580: Current Top 1 Accuracy: 0.18029187619686127, Current Top 1 PC Accuracy: tensor([0.0615, 0.0067, 0.5730, 0.1318, 0.0364, 0.0615,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2620: Current Top 1 Accuracy: 0.17750857770442963, Current Top 1 PC Accuracy: tensor([0.0622, 0.0078, 0.5676, 0.1294, 0.0339, 0.0598,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2620: Current Top 1 Accuracy: 0.17852601408958435, Current Top 1 PC Accuracy: tensor([0.0598, 0.0101, 0.5683, 0.1285, 0.0368, 0.0630,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2600: Current Top 1 Accuracy: 0.17900165915489197, Current Top 1 PC Accuracy: tensor([0.0615, 0.0067, 0.5726, 0.1298, 0.0361, 0.0615,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2640: Current Top 1 Accuracy: 0.17764735221862793, Current Top 1 PC Accuracy: tensor([0.0613, 0.0077, 0.5695, 0.1288, 0.0339, 0.0597,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2640: Current Top 1 Accuracy: 0.17875173687934875, Current Top 1 PC Accuracy: tensor([0.0588, 0.0100, 0.5703, 0.1281, 0.0373, 0.0629,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2620: Current Top 1 Accuracy: 0.17792190611362457, Current Top 1 PC Accuracy: tensor([0.0628, 0.0066, 0.5722, 0.1279, 0.0358, 0.0613,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2660: Current Top 1 Accuracy: 0.17878617346286774, Current Top 1 PC Accuracy: tensor([0.0603, 0.0077, 0.5713, 0.1303, 0.0350, 0.0593,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2660: Current Top 1 Accuracy: 0.17963171005249023, Current Top 1 PC Accuracy: tensor([0.0578, 0.0100, 0.5724, 0.1289, 0.0379, 0.0625,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2640: Current Top 1 Accuracy: 0.1781206578016281, Current Top 1 PC Accuracy: tensor([0.0619, 0.0066, 0.5739, 0.1276, 0.0360, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2680: Current Top 1 Accuracy: 0.17841601371765137, Current Top 1 PC Accuracy: tensor([0.0592, 0.0077, 0.5722, 0.1303, 0.0348, 0.0589,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2680: Current Top 1 Accuracy: 0.17947283387184143, Current Top 1 PC Accuracy: tensor([0.0568, 0.0103, 0.5732, 0.1293, 0.0380, 0.0620,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2660: Current Top 1 Accuracy: 0.17909933626651764, Current Top 1 PC Accuracy: tensor([0.0608, 0.0065, 0.5758, 0.1287, 0.0367, 0.0607,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2700: Current Top 1 Accuracy: 0.17860668897628784, Current Top 1 PC Accuracy: tensor([0.0581, 0.0080, 0.5737, 0.1327, 0.0345, 0.0586,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2700: Current Top 1 Accuracy: 0.17962482571601868, Current Top 1 PC Accuracy: tensor([0.0558, 0.0102, 0.5749, 0.1313, 0.0375, 0.0617,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2680: Current Top 1 Accuracy: 0.17882008850574493, Current Top 1 PC Accuracy: tensor([0.0598, 0.0065, 0.5766, 0.1289, 0.0367, 0.0603,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2720: Current Top 1 Accuracy: 0.17821267247200012, Current Top 1 PC Accuracy: tensor([0.0577, 0.0078, 0.5744, 0.1335, 0.0342, 0.0584,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2720: Current Top 1 Accuracy: 0.17928457260131836, Current Top 1 PC Accuracy: tensor([0.0557, 0.0100, 0.5757, 0.1320, 0.0373, 0.0615,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2700: Current Top 1 Accuracy: 0.1786375343799591, Current Top 1 PC Accuracy: tensor([0.0586, 0.0068, 0.5778, 0.1304, 0.0364, 0.0600,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2740: Current Top 1 Accuracy: 0.177033931016922, Current Top 1 PC Accuracy: tensor([0.0584, 0.0076, 0.5739, 0.1318, 0.0339, 0.0583,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2740: Current Top 1 Accuracy: 0.17821963131427765, Current Top 1 PC Accuracy: tensor([0.0572, 0.0097, 0.5752, 0.1303, 0.0369, 0.0615,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2720: Current Top 1 Accuracy: 0.17827391624450684, Current Top 1 PC Accuracy: tensor([0.0586, 0.0067, 0.5783, 0.1313, 0.0361, 0.0598,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2760: Current Top 1 Accuracy: 0.17584209144115448, Current Top 1 PC Accuracy: tensor([0.0589, 0.0074, 0.5732, 0.1301, 0.0336, 0.0583,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2760: Current Top 1 Accuracy: 0.176958829164505, Current Top 1 PC Accuracy: tensor([0.0573, 0.0094, 0.5746, 0.1288, 0.0366, 0.0615,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2740: Current Top 1 Accuracy: 0.17718593776226044, Current Top 1 PC Accuracy: tensor([0.0598, 0.0065, 0.5779, 0.1297, 0.0357, 0.0598,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2780: Current Top 1 Accuracy: 0.17475728690624237, Current Top 1 PC Accuracy: tensor([0.0597, 0.0073, 0.5730, 0.1288, 0.0333, 0.0582,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2780: Current Top 1 Accuracy: 0.1758659929037094, Current Top 1 PC Accuracy: tensor([0.0581, 0.0093, 0.5743, 0.1275, 0.0363, 0.0613,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2760: Current Top 1 Accuracy: 0.1759326308965683, Current Top 1 PC Accuracy: tensor([0.0599, 0.0063, 0.5774, 0.1281, 0.0355, 0.0597,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2800: Current Top 1 Accuracy: 0.17499703168869019, Current Top 1 PC Accuracy: tensor([0.0586, 0.0072, 0.5746, 0.1310, 0.0330, 0.0578,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2800: Current Top 1 Accuracy: 0.17606806755065918, Current Top 1 PC Accuracy: tensor([0.0570, 0.0095, 0.5759, 0.1296, 0.0360, 0.0609,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2780: Current Top 1 Accuracy: 0.17490710318088531, Current Top 1 PC Accuracy: tensor([0.0609, 0.0065, 0.5771, 0.1268, 0.0352, 0.0595,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2820: Current Top 1 Accuracy: 0.17493796348571777, Current Top 1 PC Accuracy: tensor([0.0588, 0.0072, 0.5743, 0.1324, 0.0327, 0.0576,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2820: Current Top 1 Accuracy: 0.1760900318622589, Current Top 1 PC Accuracy: tensor([0.0575, 0.0095, 0.5755, 0.1311, 0.0357, 0.0607,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2800: Current Top 1 Accuracy: 0.17511603236198425, Current Top 1 PC Accuracy: tensor([0.0598, 0.0065, 0.5786, 0.1291, 0.0349, 0.0592,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2840: Current Top 1 Accuracy: 0.17458641529083252, Current Top 1 PC Accuracy: tensor([0.0602, 0.0071, 0.5708, 0.1311, 0.0326, 0.0608,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2840: Current Top 1 Accuracy: 0.17590637505054474, Current Top 1 PC Accuracy: tensor([0.0590, 0.0094, 0.5725, 0.1297, 0.0356, 0.0647,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2820: Current Top 1 Accuracy: 0.1751447468996048, Current Top 1 PC Accuracy: tensor([0.0601, 0.0064, 0.5784, 0.1304, 0.0346, 0.0589,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2860: Current Top 1 Accuracy: 0.1746184378862381, Current Top 1 PC Accuracy: tensor([0.0622, 0.0071, 0.5684, 0.1312, 0.0325, 0.0608,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2860: Current Top 1 Accuracy: 0.17610391974449158, Current Top 1 PC Accuracy: tensor([0.0621, 0.0093, 0.5702, 0.1298, 0.0355, 0.0647,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2840: Current Top 1 Accuracy: 0.1749090701341629, Current Top 1 PC Accuracy: tensor([0.0620, 0.0063, 0.5752, 0.1292, 0.0346, 0.0622,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2880: Current Top 1 Accuracy: 0.1755756139755249, Current Top 1 PC Accuracy: tensor([0.0614, 0.0070, 0.5686, 0.1330, 0.0325, 0.0605,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2880: Current Top 1 Accuracy: 0.17705079913139343, Current Top 1 PC Accuracy: tensor([0.0613, 0.0093, 0.5705, 0.1317, 0.0355, 0.0644,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2860: Current Top 1 Accuracy: 0.17490971088409424, Current Top 1 PC Accuracy: tensor([0.0641, 0.0063, 0.5727, 0.1292, 0.0344, 0.0623,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2900: Current Top 1 Accuracy: 0.17651958763599396, Current Top 1 PC Accuracy: tensor([0.0608, 0.0070, 0.5668, 0.1355, 0.0324, 0.0602,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2900: Current Top 1 Accuracy: 0.17795588076114655, Current Top 1 PC Accuracy: tensor([0.0607, 0.0093, 0.5691, 0.1340, 0.0354, 0.0640,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2880: Current Top 1 Accuracy: 0.1757780909538269, Current Top 1 PC Accuracy: tensor([0.0633, 0.0063, 0.5727, 0.1309, 0.0344, 0.0619,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2920: Current Top 1 Accuracy: 0.17719388008117676, Current Top 1 PC Accuracy: tensor([0.0601, 0.0070, 0.5672, 0.1370, 0.0326, 0.0598,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2920: Current Top 1 Accuracy: 0.17867739498615265, Current Top 1 PC Accuracy: tensor([0.0600, 0.0093, 0.5695, 0.1355, 0.0353, 0.0636,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2900: Current Top 1 Accuracy: 0.17674939334392548, Current Top 1 PC Accuracy: tensor([0.0626, 0.0063, 0.5713, 0.1336, 0.0343, 0.0616,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2940: Current Top 1 Accuracy: 0.17868071794509888, Current Top 1 PC Accuracy: tensor([0.0595, 0.0070, 0.5678, 0.1394, 0.0325, 0.0596,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2940: Current Top 1 Accuracy: 0.18026748299598694, Current Top 1 PC Accuracy: tensor([0.0594, 0.0093, 0.5698, 0.1384, 0.0352, 0.0634,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2920: Current Top 1 Accuracy: 0.17747917771339417, Current Top 1 PC Accuracy: tensor([0.0619, 0.0063, 0.5717, 0.1352, 0.0343, 0.0612,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2960: Current Top 1 Accuracy: 0.1789935827255249, Current Top 1 PC Accuracy: tensor([0.0589, 0.0070, 0.5664, 0.1407, 0.0325, 0.0598,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2960: Current Top 1 Accuracy: 0.18079477548599243, Current Top 1 PC Accuracy: tensor([0.0588, 0.0093, 0.5684, 0.1403, 0.0354, 0.0638,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2940: Current Top 1 Accuracy: 0.179105743765831, Current Top 1 PC Accuracy: tensor([0.0613, 0.0063, 0.5719, 0.1382, 0.0342, 0.0610,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 2980: Current Top 1 Accuracy: 0.17882701754570007, Current Top 1 PC Accuracy: tensor([0.0623, 0.0069, 0.5635, 0.1394, 0.0324, 0.0621,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 2980: Current Top 1 Accuracy: 0.18064408004283905, Current Top 1 PC Accuracy: tensor([0.0627, 0.0092, 0.5654, 0.1390, 0.0353, 0.0658,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2960: Current Top 1 Accuracy: 0.1795564591884613, Current Top 1 PC Accuracy: tensor([0.0607, 0.0063, 0.5706, 0.1399, 0.0344, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3000: Current Top 1 Accuracy: 0.17805175483226776, Current Top 1 PC Accuracy: tensor([0.0633, 0.0068, 0.5606, 0.1380, 0.0321, 0.0633,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3000: Current Top 1 Accuracy: 0.179828941822052, Current Top 1 PC Accuracy: tensor([0.0635, 0.0091, 0.5626, 0.1377, 0.0350, 0.0670,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 2980: Current Top 1 Accuracy: 0.17933019995689392, Current Top 1 PC Accuracy: tensor([0.0641, 0.0062, 0.5676, 0.1385, 0.0343, 0.0630,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3020: Current Top 1 Accuracy: 0.17690058052539825, Current Top 1 PC Accuracy: tensor([0.0634, 0.0066, 0.5606, 0.1368, 0.0318, 0.0631,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3020: Current Top 1 Accuracy: 0.17869359254837036, Current Top 1 PC Accuracy: tensor([0.0638, 0.0088, 0.5626, 0.1364, 0.0346, 0.0668,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3000: Current Top 1 Accuracy: 0.1786348968744278, Current Top 1 PC Accuracy: tensor([0.0652, 0.0061, 0.5649, 0.1372, 0.0340, 0.0645,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3040: Current Top 1 Accuracy: 0.17666885256767273, Current Top 1 PC Accuracy: tensor([0.0633, 0.0068, 0.5617, 0.1362, 0.0343, 0.0630,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3040: Current Top 1 Accuracy: 0.17831306159496307, Current Top 1 PC Accuracy: tensor([0.0637, 0.0089, 0.5635, 0.1358, 0.0364, 0.0666,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3020: Current Top 1 Accuracy: 0.1775074452161789, Current Top 1 PC Accuracy: tensor([0.0653, 0.0060, 0.5648, 0.1360, 0.0337, 0.0644,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3060: Current Top 1 Accuracy: 0.1767396330833435, Current Top 1 PC Accuracy: tensor([0.0628, 0.0077, 0.5633, 0.1362, 0.0366, 0.0625,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3060: Current Top 1 Accuracy: 0.17831863462924957, Current Top 1 PC Accuracy: tensor([0.0632, 0.0097, 0.5652, 0.1358, 0.0381, 0.0662,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3040: Current Top 1 Accuracy: 0.17735393345355988, Current Top 1 PC Accuracy: tensor([0.0652, 0.0062, 0.5659, 0.1354, 0.0361, 0.0649,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3080: Current Top 1 Accuracy: 0.17713405191898346, Current Top 1 PC Accuracy: tensor([0.0625, 0.0079, 0.5659, 0.1362, 0.0382, 0.0622,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3080: Current Top 1 Accuracy: 0.1788109987974167, Current Top 1 PC Accuracy: tensor([0.0629, 0.0102, 0.5678, 0.1358, 0.0401, 0.0658,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3060: Current Top 1 Accuracy: 0.17744745314121246, Current Top 1 PC Accuracy: tensor([0.0647, 0.0070, 0.5675, 0.1354, 0.0382, 0.0645,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3100: Current Top 1 Accuracy: 0.17760400474071503, Current Top 1 PC Accuracy: tensor([0.0621, 0.0087, 0.5678, 0.1362, 0.0421, 0.0617,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3100: Current Top 1 Accuracy: 0.1792163848876953, Current Top 1 PC Accuracy: tensor([0.0625, 0.0111, 0.5697, 0.1358, 0.0435, 0.0653,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3080: Current Top 1 Accuracy: 0.1779184192419052, Current Top 1 PC Accuracy: tensor([0.0645, 0.0075, 0.5699, 0.1353, 0.0409, 0.0641,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3120: Current Top 1 Accuracy: 0.177293598651886, Current Top 1 PC Accuracy: tensor([0.0619, 0.0086, 0.5690, 0.1356, 0.0435, 0.0615,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3120: Current Top 1 Accuracy: 0.1788155436515808, Current Top 1 PC Accuracy: tensor([0.0621, 0.0112, 0.5708, 0.1353, 0.0446, 0.0650,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3100: Current Top 1 Accuracy: 0.17838332056999207, Current Top 1 PC Accuracy: tensor([0.0641, 0.0089, 0.5720, 0.1353, 0.0437, 0.0636,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3140: Current Top 1 Accuracy: 0.17621776461601257, Current Top 1 PC Accuracy: tensor([0.0622, 0.0084, 0.5690, 0.1344, 0.0431, 0.0614,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3140: Current Top 1 Accuracy: 0.17770348489284515, Current Top 1 PC Accuracy: tensor([0.0622, 0.0109, 0.5708, 0.1341, 0.0442, 0.0649,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3120: Current Top 1 Accuracy: 0.17809462547302246, Current Top 1 PC Accuracy: tensor([0.0638, 0.0088, 0.5732, 0.1348, 0.0450, 0.0635,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3160: Current Top 1 Accuracy: 0.17573553323745728, Current Top 1 PC Accuracy: tensor([0.0653, 0.0081, 0.5685, 0.1334, 0.0429, 0.0619,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3160: Current Top 1 Accuracy: 0.17708003520965576, Current Top 1 PC Accuracy: tensor([0.0650, 0.0106, 0.5703, 0.1331, 0.0440, 0.0650,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3140: Current Top 1 Accuracy: 0.1770402193069458, Current Top 1 PC Accuracy: tensor([0.0641, 0.0086, 0.5732, 0.1336, 0.0446, 0.0635,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3180: Current Top 1 Accuracy: 0.17478780448436737, Current Top 1 PC Accuracy: tensor([0.0660, 0.0079, 0.5684, 0.1319, 0.0428, 0.0619,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3180: Current Top 1 Accuracy: 0.17612385749816895, Current Top 1 PC Accuracy: tensor([0.0658, 0.0103, 0.5703, 0.1316, 0.0439, 0.0650,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3160: Current Top 1 Accuracy: 0.176447331905365, Current Top 1 PC Accuracy: tensor([0.0669, 0.0083, 0.5728, 0.1326, 0.0443, 0.0637,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3200: Current Top 1 Accuracy: 0.17489326000213623, Current Top 1 PC Accuracy: tensor([0.0664, 0.0079, 0.5704, 0.1311, 0.0428, 0.0617,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3200: Current Top 1 Accuracy: 0.1762470006942749, Current Top 1 PC Accuracy: tensor([0.0663, 0.0103, 0.5722, 0.1307, 0.0437, 0.0648,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3180: Current Top 1 Accuracy: 0.17546893656253815, Current Top 1 PC Accuracy: tensor([0.0674, 0.0081, 0.5728, 0.1311, 0.0443, 0.0637,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3220: Current Top 1 Accuracy: 0.1752302646636963, Current Top 1 PC Accuracy: tensor([0.0654, 0.0078, 0.5722, 0.1310, 0.0439, 0.0615,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3220: Current Top 1 Accuracy: 0.1765238493680954, Current Top 1 PC Accuracy: tensor([0.0655, 0.0102, 0.5737, 0.1307, 0.0446, 0.0645,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3200: Current Top 1 Accuracy: 0.17562219500541687, Current Top 1 PC Accuracy: tensor([0.0680, 0.0081, 0.5748, 0.1303, 0.0440, 0.0635,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3240: Current Top 1 Accuracy: 0.17620590329170227, Current Top 1 PC Accuracy: tensor([0.0648, 0.0078, 0.5756, 0.1315, 0.0436, 0.0614,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3240: Current Top 1 Accuracy: 0.1772858202457428, Current Top 1 PC Accuracy: tensor([0.0647, 0.0102, 0.5770, 0.1307, 0.0443, 0.0644,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3220: Current Top 1 Accuracy: 0.175954669713974, Current Top 1 PC Accuracy: tensor([0.0671, 0.0080, 0.5764, 0.1302, 0.0449, 0.0632,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3260: Current Top 1 Accuracy: 0.17624962329864502, Current Top 1 PC Accuracy: tensor([0.0637, 0.0078, 0.5773, 0.1312, 0.0444, 0.0612,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3260: Current Top 1 Accuracy: 0.17734846472740173, Current Top 1 PC Accuracy: tensor([0.0638, 0.0101, 0.5786, 0.1304, 0.0452, 0.0642,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3240: Current Top 1 Accuracy: 0.17687441408634186, Current Top 1 PC Accuracy: tensor([0.0665, 0.0080, 0.5798, 0.1304, 0.0446, 0.0631,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3280: Current Top 1 Accuracy: 0.17659758031368256, Current Top 1 PC Accuracy: tensor([0.0648, 0.0077, 0.5787, 0.1310, 0.0444, 0.0610,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3280: Current Top 1 Accuracy: 0.17771512269973755, Current Top 1 PC Accuracy: tensor([0.0649, 0.0100, 0.5800, 0.1303, 0.0453, 0.0640,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3260: Current Top 1 Accuracy: 0.1769651472568512, Current Top 1 PC Accuracy: tensor([0.0654, 0.0080, 0.5813, 0.1302, 0.0458, 0.0629,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3300: Current Top 1 Accuracy: 0.1759820282459259, Current Top 1 PC Accuracy: tensor([0.0675, 0.0075, 0.5784, 0.1297, 0.0444, 0.0610,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3300: Current Top 1 Accuracy: 0.17699182033538818, Current Top 1 PC Accuracy: tensor([0.0669, 0.0097, 0.5796, 0.1290, 0.0452, 0.0640,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3280: Current Top 1 Accuracy: 0.17730875313282013, Current Top 1 PC Accuracy: tensor([0.0666, 0.0079, 0.5825, 0.1301, 0.0456, 0.0627,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3320: Current Top 1 Accuracy: 0.1752484142780304, Current Top 1 PC Accuracy: tensor([0.0689, 0.0074, 0.5784, 0.1288, 0.0440, 0.0610,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3320: Current Top 1 Accuracy: 0.17625212669372559, Current Top 1 PC Accuracy: tensor([0.0684, 0.0096, 0.5796, 0.1282, 0.0448, 0.0640,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3300: Current Top 1 Accuracy: 0.17661315202713013, Current Top 1 PC Accuracy: tensor([0.0688, 0.0077, 0.5821, 0.1287, 0.0455, 0.0627,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3340: Current Top 1 Accuracy: 0.17427417635917664, Current Top 1 PC Accuracy: tensor([0.0683, 0.0072, 0.5784, 0.1280, 0.0437, 0.0613,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3340: Current Top 1 Accuracy: 0.1752219945192337, Current Top 1 PC Accuracy: tensor([0.0677, 0.0094, 0.5796, 0.1274, 0.0445, 0.0641,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3320: Current Top 1 Accuracy: 0.1758255511522293, Current Top 1 PC Accuracy: tensor([0.0699, 0.0076, 0.5821, 0.1279, 0.0452, 0.0627,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3360: Current Top 1 Accuracy: 0.17455121874809265, Current Top 1 PC Accuracy: tensor([0.0684, 0.0072, 0.5794, 0.1278, 0.0444, 0.0609,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3360: Current Top 1 Accuracy: 0.17536942660808563, Current Top 1 PC Accuracy: tensor([0.0676, 0.0093, 0.5808, 0.1271, 0.0447, 0.0638,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3340: Current Top 1 Accuracy: 0.17482291162014008, Current Top 1 PC Accuracy: tensor([0.0693, 0.0074, 0.5821, 0.1271, 0.0448, 0.0628,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3380: Current Top 1 Accuracy: 0.17494824528694153, Current Top 1 PC Accuracy: tensor([0.0677, 0.0072, 0.5803, 0.1278, 0.0459, 0.0603,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3380: Current Top 1 Accuracy: 0.1757616102695465, Current Top 1 PC Accuracy: tensor([0.0669, 0.0093, 0.5818, 0.1272, 0.0464, 0.0631,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3360: Current Top 1 Accuracy: 0.1750471144914627, Current Top 1 PC Accuracy: tensor([0.0693, 0.0074, 0.5833, 0.1269, 0.0455, 0.0625,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3400: Current Top 1 Accuracy: 0.17551210522651672, Current Top 1 PC Accuracy: tensor([0.0669, 0.0072, 0.5823, 0.1278, 0.0465, 0.0599,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3400: Current Top 1 Accuracy: 0.17634519934654236, Current Top 1 PC Accuracy: tensor([0.0661, 0.0093, 0.5835, 0.1272, 0.0471, 0.0627,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3380: Current Top 1 Accuracy: 0.1754411906003952, Current Top 1 PC Accuracy: tensor([0.0686, 0.0074, 0.5843, 0.1269, 0.0470, 0.0618,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3420: Current Top 1 Accuracy: 0.17597194015979767, Current Top 1 PC Accuracy: tensor([0.0662, 0.0072, 0.5845, 0.1278, 0.0473, 0.0593,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3420: Current Top 1 Accuracy: 0.17682451009750366, Current Top 1 PC Accuracy: tensor([0.0655, 0.0093, 0.5857, 0.1273, 0.0479, 0.0620,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3400: Current Top 1 Accuracy: 0.1759776473045349, Current Top 1 PC Accuracy: tensor([0.0678, 0.0074, 0.5863, 0.1269, 0.0471, 0.0614,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3440: Current Top 1 Accuracy: 0.175917848944664, Current Top 1 PC Accuracy: tensor([0.0662, 0.0071, 0.5850, 0.1275, 0.0479, 0.0590,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3440: Current Top 1 Accuracy: 0.17678968608379364, Current Top 1 PC Accuracy: tensor([0.0656, 0.0093, 0.5862, 0.1270, 0.0486, 0.0618,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3420: Current Top 1 Accuracy: 0.17645911872386932, Current Top 1 PC Accuracy: tensor([0.0671, 0.0074, 0.5885, 0.1271, 0.0478, 0.0607,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3460: Current Top 1 Accuracy: 0.17492535710334778, Current Top 1 PC Accuracy: tensor([0.0657, 0.0070, 0.5850, 0.1266, 0.0475, 0.0592,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3460: Current Top 1 Accuracy: 0.1757921576499939, Current Top 1 PC Accuracy: tensor([0.0651, 0.0091, 0.5862, 0.1261, 0.0482, 0.0619,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3440: Current Top 1 Accuracy: 0.17630533874034882, Current Top 1 PC Accuracy: tensor([0.0668, 0.0073, 0.5889, 0.1268, 0.0481, 0.0605,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3480: Current Top 1 Accuracy: 0.17444700002670288, Current Top 1 PC Accuracy: tensor([0.0677, 0.0070, 0.5850, 0.1254, 0.0472, 0.0598,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3480: Current Top 1 Accuracy: 0.17526094615459442, Current Top 1 PC Accuracy: tensor([0.0669, 0.0090, 0.5862, 0.1248, 0.0479, 0.0625,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3460: Current Top 1 Accuracy: 0.17531059682369232, Current Top 1 PC Accuracy: tensor([0.0663, 0.0072, 0.5889, 0.1259, 0.0477, 0.0607,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3500: Current Top 1 Accuracy: 0.17423593997955322, Current Top 1 PC Accuracy: tensor([0.0687, 0.0069, 0.5855, 0.1250, 0.0472, 0.0597,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3500: Current Top 1 Accuracy: 0.17514044046401978, Current Top 1 PC Accuracy: tensor([0.0684, 0.0089, 0.5866, 0.1246, 0.0478, 0.0625,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3480: Current Top 1 Accuracy: 0.17487791180610657, Current Top 1 PC Accuracy: tensor([0.0684, 0.0071, 0.5889, 0.1246, 0.0475, 0.0614,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3520: Current Top 1 Accuracy: 0.17523430287837982, Current Top 1 PC Accuracy: tensor([0.0679, 0.0069, 0.5886, 0.1265, 0.0471, 0.0594,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3520: Current Top 1 Accuracy: 0.17601533234119415, Current Top 1 PC Accuracy: tensor([0.0675, 0.0089, 0.5896, 0.1258, 0.0478, 0.0622,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3500: Current Top 1 Accuracy: 0.17473578453063965, Current Top 1 PC Accuracy: tensor([0.0701, 0.0071, 0.5894, 0.1243, 0.0474, 0.0614,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3540: Current Top 1 Accuracy: 0.1765979528427124, Current Top 1 PC Accuracy: tensor([0.0671, 0.0069, 0.5917, 0.1291, 0.0471, 0.0592,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3540: Current Top 1 Accuracy: 0.17735102772712708, Current Top 1 PC Accuracy: tensor([0.0668, 0.0089, 0.5929, 0.1281, 0.0478, 0.0620,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3520: Current Top 1 Accuracy: 0.17566032707691193, Current Top 1 PC Accuracy: tensor([0.0693, 0.0071, 0.5925, 0.1254, 0.0473, 0.0611,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3560: Current Top 1 Accuracy: 0.17771224677562714, Current Top 1 PC Accuracy: tensor([0.0664, 0.0069, 0.5937, 0.1325, 0.0470, 0.0591,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3560: Current Top 1 Accuracy: 0.1784377098083496, Current Top 1 PC Accuracy: tensor([0.0661, 0.0089, 0.5948, 0.1315, 0.0477, 0.0618,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3540: Current Top 1 Accuracy: 0.17699801921844482, Current Top 1 PC Accuracy: tensor([0.0686, 0.0070, 0.5956, 0.1279, 0.0473, 0.0609,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3580: Current Top 1 Accuracy: 0.17830215394496918, Current Top 1 PC Accuracy: tensor([0.0660, 0.0068, 0.5960, 0.1331, 0.0470, 0.0589,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3580: Current Top 1 Accuracy: 0.1791166365146637, Current Top 1 PC Accuracy: tensor([0.0660, 0.0089, 0.5972, 0.1321, 0.0478, 0.0617,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3560: Current Top 1 Accuracy: 0.17811007797718048, Current Top 1 PC Accuracy: tensor([0.0679, 0.0070, 0.5975, 0.1312, 0.0472, 0.0607,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3600: Current Top 1 Accuracy: 0.17786726355552673, Current Top 1 PC Accuracy: tensor([0.0686, 0.0068, 0.5960, 0.1314, 0.0469, 0.0594,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3600: Current Top 1 Accuracy: 0.17874664068222046, Current Top 1 PC Accuracy: tensor([0.0687, 0.0088, 0.5972, 0.1304, 0.0477, 0.0625,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3580: Current Top 1 Accuracy: 0.17874430119991302, Current Top 1 PC Accuracy: tensor([0.0677, 0.0070, 0.5998, 0.1319, 0.0472, 0.0605,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3620: Current Top 1 Accuracy: 0.17723004519939423, Current Top 1 PC Accuracy: tensor([0.0695, 0.0066, 0.5955, 0.1304, 0.0467, 0.0603,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3620: Current Top 1 Accuracy: 0.17808155715465546, Current Top 1 PC Accuracy: tensor([0.0695, 0.0086, 0.5965, 0.1294, 0.0475, 0.0633,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3600: Current Top 1 Accuracy: 0.1782606691122055, Current Top 1 PC Accuracy: tensor([0.0698, 0.0069, 0.5998, 0.1301, 0.0471, 0.0613,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3640: Current Top 1 Accuracy: 0.17705757915973663, Current Top 1 PC Accuracy: tensor([0.0707, 0.0065, 0.5949, 0.1298, 0.0465, 0.0630,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3640: Current Top 1 Accuracy: 0.17783576250076294, Current Top 1 PC Accuracy: tensor([0.0705, 0.0085, 0.5959, 0.1288, 0.0474, 0.0659,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3620: Current Top 1 Accuracy: 0.1776673048734665, Current Top 1 PC Accuracy: tensor([0.0707, 0.0068, 0.5992, 0.1291, 0.0470, 0.0624,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3660: Current Top 1 Accuracy: 0.17756988108158112, Current Top 1 PC Accuracy: tensor([0.0702, 0.0065, 0.5958, 0.1298, 0.0466, 0.0624,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3660: Current Top 1 Accuracy: 0.17841209471225739, Current Top 1 PC Accuracy: tensor([0.0700, 0.0085, 0.5968, 0.1287, 0.0477, 0.0652,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3640: Current Top 1 Accuracy: 0.17740090191364288, Current Top 1 PC Accuracy: tensor([0.0717, 0.0067, 0.5986, 0.1285, 0.0468, 0.0647,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3680: Current Top 1 Accuracy: 0.17775966227054596, Current Top 1 PC Accuracy: tensor([0.0695, 0.0068, 0.5953, 0.1298, 0.0473, 0.0618,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3680: Current Top 1 Accuracy: 0.17848411202430725, Current Top 1 PC Accuracy: tensor([0.0694, 0.0085, 0.5962, 0.1287, 0.0478, 0.0645,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3660: Current Top 1 Accuracy: 0.17793408036231995, Current Top 1 PC Accuracy: tensor([0.0712, 0.0067, 0.5990, 0.1285, 0.0475, 0.0640,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3700: Current Top 1 Accuracy: 0.17815004289150238, Current Top 1 PC Accuracy: tensor([0.0689, 0.0067, 0.5957, 0.1298, 0.0473, 0.0612,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3700: Current Top 1 Accuracy: 0.1789381206035614, Current Top 1 PC Accuracy: tensor([0.0688, 0.0085, 0.5967, 0.1287, 0.0478, 0.0639,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3720: Current Top 1 Accuracy: 0.17822270095348358, Current Top 1 PC Accuracy: tensor([0.0684, 0.0069, 0.5952, 0.1296, 0.0479, 0.0606,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3680: Current Top 1 Accuracy: 0.17814452946186066, Current Top 1 PC Accuracy: tensor([0.0705, 0.0069, 0.5984, 0.1285, 0.0486, 0.0634,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3720: Current Top 1 Accuracy: 0.1789393573999405, Current Top 1 PC Accuracy: tensor([0.0683, 0.0085, 0.5960, 0.1286, 0.0488, 0.0632,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3740: Current Top 1 Accuracy: 0.17775996029376984, Current Top 1 PC Accuracy: tensor([0.0696, 0.0068, 0.5951, 0.1289, 0.0477, 0.0618,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3700: Current Top 1 Accuracy: 0.17857785522937775, Current Top 1 PC Accuracy: tensor([0.0699, 0.0069, 0.5989, 0.1286, 0.0485, 0.0628,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3740: Current Top 1 Accuracy: 0.17858415842056274, Current Top 1 PC Accuracy: tensor([0.0700, 0.0083, 0.5960, 0.1279, 0.0485, 0.0646,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 1/iteration 3752: Current Top 1 Accuracy: 0.17783699929714203, Current Top 1 PC Accuracy: tensor([0.0703, 0.0068, 0.5951, 0.1285, 0.0477, 0.0643,    nan,    nan],
+       device='cuda:0')
+[rank1]:[W1118 18:27:44.033371103 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+INFO:root:rank 2/iteration 3720: Current Top 1 Accuracy: 0.1786034256219864, Current Top 1 PC Accuracy: tensor([0.0694, 0.0071, 0.5985, 0.1284, 0.0490, 0.0621,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 0/iteration 3752: Current Top 1 Accuracy: 0.17859205603599548, Current Top 1 PC Accuracy: tensor([0.0704, 0.0082, 0.5960, 0.1275, 0.0485, 0.0671,    nan,    nan],
+       device='cuda:0')
+[rank0]:[W1118 18:28:01.974406115 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+INFO:root:rank 2/iteration 3740: Current Top 1 Accuracy: 0.17811636626720428, Current Top 1 PC Accuracy: tensor([0.0709, 0.0070, 0.5985, 0.1277, 0.0488, 0.0630,    nan,    nan],
+       device='cuda:0')
+INFO:root:rank 2/iteration 3752: Current Top 1 Accuracy: 0.17805907130241394, Current Top 1 PC Accuracy: tensor([0.0713, 0.0069, 0.5985, 0.1273, 0.0487, 0.0651,    nan,    nan],
+       device='cuda:0')
+[rank2]:[W1118 18:28:52.605508990 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+Process Process-2:
+Process Process-3:
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_1_16x8x3_pretrained_full_video.yaml'
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_1_16x8x3_pretrained_full_video.yaml'
+Process Process-1:
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_1_16x8x3_pretrained_full_video.yaml'
+Process Process-2:
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_2_16x8x3_pretrained_full_video.yaml'
+Process Process-3:
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+INFO:root:called-params /mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_2_16x8x3_preFileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_2_16x8x3_pretrained_full_video.yaml'
+Process Process-1:
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_2_16x8x3_pretrained_full_video.yaml'
+INFO:root:called-params /mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_3_16x8x3_pretrained_full_video.yaml
+Process Process-2:
+Process Process-1:
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+Process Process-3:
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_3_16x8x3_pretrained_full_video.yaml'
+Traceback (most recent call last):
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_3_16x8x3_pretrained_full_video.yaml'
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_3_16x8x3_pretrained_full_video.yaml'
+INFO:root:called-params /mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_4_16x8x3_pretrained_full_video.yaml
+Process Process-1:
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_4_16x8x3_pretrained_full_video.yaml'
+Process Process-3:
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_4_16x8x3_pretrained_full_video.yaml'
+Process Process-2:
+Traceback (most recent call last):
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/data/miniforge3/envs/jepaslt/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/slurm/lennart/jepaslt/evals/main.py", line 51, in process_main
+    with open(fname, 'r') as y_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/slurm/lennart/jepaslt/configs/evals/vith16_384_crema_d_to_ravdess_split_4_16x8x3_pretrained_full_video.yaml'

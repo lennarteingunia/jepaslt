@@ -7,12 +7,15 @@ import sklearn.metrics as metrics
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--input-file', required=True)
-    parser.add_argument('--split-file', required=True)
+    parser.add_argument('--split-file', required=True, nargs='+')
     parser.add_argument('--output-file', required=True)
     args = parser.parse_args()
 
     predictions = pd.read_csv(args.input_file, sep=' ', header=None)
-    split = pd.read_csv(args.split_file, sep=' ', header=None)
+
+    split = [pd.read_csv(path, sep=' ', header=None)
+             for path in args.split_file]
+    split = pd.concat(split)
 
     predictions = predictions[[
         predictions.columns[0], predictions.columns[-1]]]
@@ -26,7 +29,8 @@ if __name__ == '__main__':
     split['ground_truth'] = split['ground_truth'].astype(int)
     split.set_index('path')
 
-    assert len(predictions) == len(split), f"There are {len(split) - len(predictions)} predictions missing!"
+    assert len(predictions) == len(
+        split), f"There are {len(split) - len(predictions)} predictions missing!"
 
     joined = pd.merge(predictions, split)
     confusion_matrix = metrics.confusion_matrix(
