@@ -1,4 +1,5 @@
 import argparse
+from enum import Enum
 from functools import reduce
 import glob
 import os
@@ -7,6 +8,12 @@ from typing import List, Tuple
 import pandas as pd
 
 from patterns import split_paths, ranked_confidences_pattern, ranked_confusion_matrix_pattern, ranked_votes_pattern
+
+
+class CombinationType(Enum):
+    ConfusionMatrix = 'confusion_matrix'
+    Confidences = 'confidences'
+    Votes = 'votes'
 
 
 def combine_confusion_matrizes(paths: List[str]) -> List[pd.DataFrame]:
@@ -67,7 +74,10 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', required=True)
+    parser.add_argument('--type', choices=[e.value for e in CombinationType], required=True)
     args = parser.parse_args()
+
+    combination_type = CombinationType(args.type)
 
     csv_paths = glob.glob(os.path.join(args.path, '*.csv'))
     confidence_csv_paths, vote_csv_paths, confusion_matrix_paths = split_paths(
