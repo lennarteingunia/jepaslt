@@ -74,7 +74,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', required=True)
-    parser.add_argument('--type', choices=[e.value for e in CombinationType], required=True)
+    parser.add_argument(
+        '--type', choices=[e.value for e in CombinationType], required=True)
     args = parser.parse_args()
 
     combination_type = CombinationType(args.type)
