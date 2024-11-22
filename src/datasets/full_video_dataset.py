@@ -134,7 +134,7 @@ class FullVideoDataset(torch.utils.data.Dataset):
                             'path': video_path,
                             'indices': indices,
                             'label': label,
-                            'position': start_idx,
+                            'position': 0,
                             'video_len': num_clips
                         })
 

@@ -3,7 +3,8 @@ from enum import Enum
 from functools import reduce
 import glob
 import os
-from typing import List, Tuple
+import re
+from typing import Dict, List, Tuple, Union
 
 import pandas as pd
 
@@ -16,20 +17,17 @@ class CombinationType(Enum):
     Votes = 'votes'
 
 
-def combine_confusion_matrizes(paths: List[str]) -> List[pd.DataFrame]:
+def combine_confusion_matrizes(path_infos: List[Dict[str, str]]) -> List[Dict[str, Union[int, pd.DataFrame]]]:
+    for path_info in path_infos:
+        assert 'path' in path_info and 'rank' in path_info and 'split' in path_info
 
-    paths = [(path, int(ranked_confusion_matrix_pattern.match(path).group('split')))
-             for path in paths]
-    splits = set(map(lambda x: x[1], paths))
-    paths = [(x, [y[0] for y in paths if y[1] == x]) for x in splits]
-
-    col = []
-    for split, split_paths in paths:
-        cms = [pd.read_csv(path, sep=' ', header=None).to_numpy()
-               for path in split_paths]
-        cm = reduce(lambda m1, m2: m1 + m2, cms)
-        col.append((split, cm))
-    return col
+    combined = {}
+    for path_info in path_infos:
+        split = path_info['split']
+        if split not in combined:
+            combined[split] = []
+        combined[split].append(path_info['path'])
+    return [(split, sum([pd.read_csv(path, header=None, index_col=False, sep=' ') for path in paths])) for split, paths in combined.items()]
 
 
 def combine_confidences_and_predict(confidence_csv_paths) -> List[Tuple[int, pd.DataFrame]]:
@@ -76,13 +74,32 @@ if __name__ == '__main__':
     parser.add_argument('--path', required=True)
     parser.add_argument(
         '--type', choices=[e.value for e in CombinationType], required=True)
+    parser.add_argument('--glob-pattern', required=True)
+    parser.add_argument('--info-pattern', required=True)
     args = parser.parse_args()
 
     combination_type = CombinationType(args.type)
+    file_pattern = os.path.join(args.path, args.info_pattern)
+    file_pattern = re.compile(file_pattern)
 
-    csv_paths = glob.glob(os.path.join(args.path, '*.csv'))
-    confidence_csv_paths, vote_csv_paths, confusion_matrix_paths = split_paths(
-        csv_paths)
+    glob_pattern = os.path.join(args.path, args.glob_pattern)
+    paths = glob.glob(glob_pattern)
+
+    path_infos = [dict(path=path, **file_pattern.match(path).groupdict())
+                  for path in paths]
+
+    type = CombinationType(args.type)
+    if type == CombinationType.ConfusionMatrix:
+
+        combined_confusion_matrix_infos = combine_confusion_matrizes(
+            path_infos=path_infos)
+
+        for split, cm in combined_confusion_matrix_infos:
+
+            output_path = os.path.join(
+                args.path, f'clip_{split}_confusion_matrix.csv')
+            cm.to_csv(output_path, header=False, index=False, sep=' ')
+            print(f'Wrote confusion matrix to {output_path}')
 
     # # Be careful as these combined confusion matrizes don't actually have any meaning (as we don't know which video was predicted when and where)
 
@@ -94,17 +111,17 @@ if __name__ == '__main__':
     # combined_confidences = combine_confidences_and_predict(
     #     confidence_csv_paths)
 
-    confidence_based_votes = combine_confidences_and_predict(
-        confidence_csv_paths)
+    # confidence_based_votes = combine_confidences_and_predict(
+    #     confidence_csv_paths)
 
-    for split, votes in confidence_based_votes:
-        path = os.path.join(args.path, f'{split}_confidences.csv')
-        votes.to_csv(path, header=False, index=False, sep=' ')
-        print(f'Saving confidences file to: {path}')
+    # for split, votes in confidence_based_votes:
+    #     path = os.path.join(args.path, f'{split}_confidences.csv')
+    #     votes.to_csv(path, header=False, index=False, sep=' ')
+    #     print(f'Saving confidences file to: {path}')
 
-    direct_votes = combine_votes_and_predict(vote_csv_paths)
+    # direct_votes = combine_votes_and_predict(vote_csv_paths)
 
-    for split, votes in direct_votes:
-        path = os.path.join(args.path, f'{split}_votes.csv')
-        votes.to_csv(path, header=False, index=False, sep=' ')
-        print(f'Saving votes file to: {path}')
+    # for split, votes in direct_votes:
+    #     path = os.path.join(args.path, f'{split}_votes.csv')
+    #     votes.to_csv(path, header=False, index=False, sep=' ')
+    #     print(f'Saving votes file to: {path}')

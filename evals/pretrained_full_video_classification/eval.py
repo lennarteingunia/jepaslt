@@ -12,7 +12,7 @@ import torch.distributed
 
 from datasets.full_video_dataset import make_fullvideodata
 from evals.video_classification_frozen.utils import ClipAggregation, FrameAggregation, make_transforms
-from utils.logging import FullVideoClassificationMeter
+from utils.logging import ClassificationMeter, FullVideoClassificationMeter
 
 # -- FOR DISTRIBUTED TRAINING ENSURE ONLY 1 DEVICE VISIBLE PER PROCESS
 try:
@@ -205,6 +205,7 @@ def run_validation(
 
     meter = FullVideoClassificationMeter(
         num_classes=num_classes)
+    clip_meter = ClassificationMeter(num_classes=num_classes)
 
     def log(msg, it) -> None:
         logger.info(
@@ -255,17 +256,34 @@ def run_validation(
                 ) / len(outputs) / len(outputs[0])
 
             meter.update(confidences=outputs, labels=labels, paths=video_paths)
+            clip_meter.update(predictions=outputs.argmax(dim=1), labels=labels)
 
             if iteration % 20 == 0:
 
                 _log(
-                    f'Current Top 1 Accuracy: {meter.top1_acc}, Current Top 1 PC Accuracy: {meter.top1_pc_acc}')
+                    f'Current Top 1 Accuracy on Full Video: {meter.top1_acc}\nCurrent Top 1 PC Accuracy on Full Video: {meter.top1_pc_acc}\nCurrent Top 1 Accuracy on Clips: {clip_meter.top1_acc}\nCurrent Top 1 PC Accuracy on Clips: {clip_meter.top1_pc_acc}')
+                
                 meter.tofile(
-                    log_dir, file_prefix=f'{write_tag}_r{torch.distributed.get_rank()}_')
+                    log_dir, 
+                    file_prefix=f'{write_tag}_r{torch.distributed.get_rank()}_')
+                
+                clip_meter.tofile(
+                    log_dir, 
+                    file_prefix=f'clip_{write_tag}_r{torch.distributed.get_rank()}_'
+                )
+                
     _log(
-        f'Current Top 1 Accuracy: {meter.top1_acc}, Current Top 1 PC Accuracy: {meter.top1_pc_acc}')
+        f'Current Top 1 Accuracy on Full Video: {meter.top1_acc}\nCurrent Top 1 PC Accuracy on Full Video: {meter.top1_pc_acc}\nCurrent Top 1 Accuracy on Clips: {clip_meter.top1_acc}\nCurrent Top 1 PC Accuracy on Clips: {clip_meter.top1_pc_acc}')
+
     meter.tofile(
-        log_dir, file_prefix=f'{write_tag}_r{torch.distributed.get_rank()}_')
+        log_dir, 
+        file_prefix=f'{write_tag}_r{torch.distributed.get_rank()}_'
+    )
+                
+    clip_meter.tofile(
+        log_dir, 
+        file_prefix=f'clip_{write_tag}_r{torch.distributed.get_rank()}_'
+    )
 
 
 def load_checkpoint(

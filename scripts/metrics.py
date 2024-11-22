@@ -1,7 +1,9 @@
 import argparse
+import os
 
 import numpy as np
 import pandas as pd
+import yaml
 
 
 def calculate_metrics(cm: np.ndarray) -> None:
@@ -50,10 +52,20 @@ def calculate_metrics(cm: np.ndarray) -> None:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', required=True, type=str)
+    parser.add_argument('--drop-indices', required=False,
+                        default=None, nargs='+')
     args = parser.parse_args()
 
-    df = pd.read_csv(args.file, header=None, sep='\t')
-
+    df = pd.read_csv(args.file, header=None, sep=' ')
     cm = df.to_numpy()
 
-    calculate_metrics(df)
+    if args.drop_indices is not None:
+        drop_indices = list(map(int, args.drop_indices))
+        cm = np.delete(cm, drop_indices, axis=0)
+        cm = np.delete(cm, drop_indices, axis=1)
+
+    metrics = calculate_metrics(cm)
+    output_path = args.file[:-4] + '_metrics.yaml'
+    with open(output_path, 'w') as f:
+        yaml.dump(metrics, f, default_flow_style=False)
+    print(f'Wrote metrics to {output_path}')
